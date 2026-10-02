@@ -4,12 +4,14 @@
 - expected answers fit the case type, and a regression's bug_id is in that case's history
 - the four types have the same number of cases
 - no duplicate case ids, and no duplicate bug ids within a history
+- cue words ("again", "used to", ...) and a missing component don't give the answer away
 
 Usage: python validate.py [cases.json]
 """
 
 import ast
 import json
+import re
 import sys
 from collections import Counter
 
@@ -18,6 +20,17 @@ CASE_FIELDS = ["id", "type", "history", "new_report", "expected", "why"]
 BUG_FIELDS = ["id", "name", "cause", "language", "component", "symptoms", "fix_summary"]
 REPORT_FIELDS = ["title", "description", "language", "component"]
 HISTORY_SIZE = range(5, 9)
+# Phrases that sound like "it came back". They must not predict the answer on their own.
+CUE_WORDS = {
+    "again": r"\bagain\b",
+    "still": r"\bstill\b",
+    "came back": r"\b(?:came|come|comes|coming|is|are|was|were) back\b",
+    "used to": r"\bused to\b",
+    "stopped working": r"\bstopped working\b",
+    "no longer / anymore": r"\bno longer\b|\banymore\b",
+    "reappeared": r"\breappear\w*",
+    "regressed": r"\bregress\w*",
+}
 
 
 def is_text(value):
@@ -76,11 +89,8 @@ def check_case(case, errors):
     for field in ("title", "description", "language"):
         if field in report and not is_text(report[field]):
             error(f"new_report {field} must be text")
-    if case.get("type") == "B":
-        if report.get("component") is not None:
-            error("a B report must not state its component (use null)")
-    elif "component" in report and not is_text(report["component"]):
-        error("new_report component must be text")
+    if report.get("component") is not None and not is_text(report["component"]):
+        error("new_report component must be text, or null when the report doesn't say")
 
     expected = case.get("expected")
     if not isinstance(expected, dict):
@@ -92,6 +102,36 @@ def check_case(case, errors):
         error(f"expected bug_id {bug_id!r} is not in the history")
     if verdict == "new" and bug_id is not None:
         error("a 'new' verdict must have bug_id null")
+
+
+def check_leaks(cases, errors):
+    """Prints how many reports of each type carry a cue word or a null component.
+
+    A signal that shows up only in regressions (A, B) or only in new bugs (C, D)
+    predicts the answer without reading the bug, so it's an error.
+    """
+    reports = [(c["type"], c["new_report"]) for c in cases
+               if c.get("type") in TYPES and isinstance(c.get("new_report"), dict)]
+
+    def cues_in(report):
+        text = f"{report.get('title', '')} {report.get('description', '')}"
+        return {label for label, pattern in CUE_WORDS.items() if re.search(pattern, text, re.I)}
+
+    rows = {label: lambda report, label=label: label in cues_in(report) for label in CUE_WORDS}
+    rows["any cue word"] = lambda report: bool(cues_in(report))
+    rows["component: null"] = lambda report: report.get("component") is None
+
+    print(f"{'Reports per type with':<22}" + "".join(f"{t:>4}" for t in TYPES))
+    for label, has in rows.items():
+        counts = Counter(case_type for case_type, report in reports if has(report))
+        print(f"{label:<22}" + "".join(f"{counts.get(t, 0):>4}" for t in TYPES))
+        in_regressions = any(counts[t] for t in TYPES if TYPES[t] == "regression")
+        in_new_bugs = any(counts[t] for t in TYPES if TYPES[t] == "new")
+        if in_regressions != in_new_bugs:
+            where = "regressions (A, B)" if in_regressions else "new bugs (C, D)"
+            errors.append(f"'{label}' only appears in {where}, so it gives the answer away")
+    print(f"{'reports':<22}" + "".join(f"{sum(1 for t2, _ in reports if t2 == t):>4}" for t in TYPES))
+    print()
 
 
 def embedded_cases():
@@ -124,6 +164,8 @@ def main():
     counts = [per_type.get(t, 0) for t in TYPES]
     if len(set(counts)) != 1:
         errors.append("types are unbalanced: " + ", ".join(f"{t}={per_type.get(t, 0)}" for t in TYPES))
+
+    check_leaks(cases, errors)
 
     if embedded_cases() != cases:
         errors.append("kaggle_task.py's CASES differ from cases.json: run python embed_cases.py")

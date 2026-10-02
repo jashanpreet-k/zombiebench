@@ -146,7 +146,7 @@ CASES = [{'id': 'zb-01',
                  'description': 'Since the combo-discount release, carts with a combo show totals like '
                                 '₹399.90000000000003 and the payment gateway rejects the amount. The combo '
                                 'discount is computed on rupee floats instead of whole paise, so it looks '
-                                'like the floating point money problem is back.',
+                                'like a floating point money problem.',
                  'language': 'JavaScript',
                  'component': 'cart'},
   'expected': {'verdict': 'regression', 'bug_id': 329},
@@ -195,7 +195,7 @@ CASES = [{'id': 'zb-01',
                'component': 'auth',
                'symptoms': 'Students with an expired session bounced between /login and /dashboard forever.',
                'fix_summary': 'Cleared the expired session cookie before redirecting to login.'}],
-  'new_report': {'title': 'Merge conflict markers on the timetable page again',
+  'new_report': {'title': 'Merge conflict markers on the timetable page',
                  'description': "After this morning's deploy the timetable page shows '<<<<<<< HEAD', "
                                 "'=======' and '>>>>>>> sports-day' above the table, with two versions of "
                                 "Friday's periods. Two branches edited the timetable at once and the "
@@ -334,7 +334,7 @@ CASES = [{'id': 'zb-01',
                                 'meditation is right there in my history, just listed under Sunday. Please '
                                 'give me my nights back!',
                  'language': 'Kotlin',
-                 'component': None},
+                 'component': 'streaks'},
   'expected': {'verdict': 'regression', 'bug_id': 618},
   'why': 'A late-evening session filed under the next day, on the weekend daylight saving ended, resetting '
          "the run to 1, is #618's fixed-offset timezone bug; #621 (streak gone after reinstalling) showed 0, "
@@ -469,10 +469,11 @@ CASES = [{'id': 'zb-01',
                            'generation failed with NoSuchMethodError.',
                'fix_summary': 'Pinned the PDF library version and added a payslip test to CI.'}],
   'new_report': {'title': 'Net salary on payslips lower than the bank transfer',
-                 'description': "This month's payslips show a net salary lower than the bank transfer for 14 "
-                                "employees, all in the Pune office. The difference is exactly one day's pay "
-                                'for each of them. All 14 joined on the 1st of the month, and their payslips '
-                                'count 29 working days instead of 30, as if counting starts on the 2nd.',
+                 'description': 'Payslips are showing a net salary lower than the bank transfer again, this '
+                                'time for 14 employees, all in the Pune office. The difference is exactly '
+                                "one day's pay for each of them. All 14 joined on the 1st of the month, and "
+                                'their payslips count 29 working days instead of 30, as if counting starts '
+                                'on the 2nd.',
                  'language': 'Java',
                  'component': 'payroll'},
   'expected': {'verdict': 'new', 'bug_id': None},
@@ -530,11 +531,11 @@ CASES = [{'id': 'zb-01',
                'fix_summary': "Picked the currency from the user's country, with INR as the default for "
                               'India.'}],
   'new_report': {'title': 'Flight departure times wrong in itinerary emails',
-                 'description': "Since Monday's release, itinerary emails for round-trip bookings show the "
-                                'wrong departure time for the outbound flight: it is always the return '
-                                "flight's departure time, usually days apart. The website shows the right "
-                                'times. The new email template seems to read the return leg for both '
-                                'flights.',
+                 'description': "Itinerary emails used to show the right times. Since Monday's release, "
+                                'itinerary emails for round-trip bookings show the wrong departure time for '
+                                "the outbound flight: it is always the return flight's departure time, "
+                                'usually days apart. The website shows the right times. The new email '
+                                'template seems to read the return leg for both flights.',
                  'language': 'Python',
                  'component': 'itinerary'},
   'expected': {'verdict': 'new', 'bug_id': None},
@@ -604,7 +605,7 @@ CASES = [{'id': 'zb-01',
                                 'whole video into memory to make its thumbnail. Chats without big videos '
                                 'open fine.',
                  'language': 'Swift',
-                 'component': 'chat'},
+                 'component': 'media'},
   'expected': {'verdict': 'new', 'bug_id': None},
   'why': 'Shares many words with #1017 (crash opening a chat), but the cause is running out of memory while '
          'loading a whole video, not a missing profile.'},
@@ -658,9 +659,9 @@ CASES = [{'id': 'zb-01',
                'fix_summary': 'Stored weights in whole grams.'}],
   'new_report': {'title': 'Low-stock badge unreadable in dark mode',
                  'description': "In dark mode, the red 'Low stock' badge on the dashboard is dark red text "
-                                'on a dark red background, so nobody can read it. Light mode is fine. The '
-                                "badge's colours are hard-coded instead of using the theme's colour "
-                                'variables.',
+                                'on a dark red background, so nobody can read it. It used to be readable '
+                                "before last week's colour update. Light mode is fine. The badge's colours "
+                                "are hard-coded instead of using the theme's colour variables.",
                  'language': 'CSS',
                  'component': 'dashboard'},
   'expected': {'verdict': 'new', 'bug_id': None},
@@ -784,11 +785,11 @@ CASES = [{'id': 'zb-01',
                'fix_summary': 'Gave up on GPS after two minutes and retried hourly.'}],
   'new_report': {'title': 'Rain gauge total drops to zero in very wet months',
                  'description': 'At three of our stations in Meghalaya, the monthly rain total suddenly '
-                                'dropped to 0 partway through July and started counting up again. Each time, '
-                                'the gauge had just passed 65,535 bucket tips. The firmware stores the tip '
-                                'count in a 16-bit unsigned integer.',
+                                'dropped to 0 partway through July and started counting up from zero. Each '
+                                'time, the gauge had just passed 65,535 bucket tips. The firmware stores the '
+                                'tip count in a 16-bit unsigned integer.',
                  'language': 'C++',
-                 'component': 'rain-gauge'},
+                 'component': None},
   'expected': {'verdict': 'new', 'bug_id': None},
   'why': 'A 16-bit tip counter overflowing after 65,535; no history bug involves an overflowing counter or '
          'the rain gauge.'}]

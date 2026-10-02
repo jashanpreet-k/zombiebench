@@ -23,7 +23,7 @@ All cases are invented for this benchmark.
 - `baseline.py`: the Bug Graveyard Zombie Detector formula, as a baseline
 - `kaggle_task.py`: the Kaggle Benchmarks task (one file, cases embedded)
 - `embed_cases.py`: copies `cases.json` into `kaggle_task.py`
-- `validate.py`: checks the cases
+- `validate.py`: checks the cases, including that cue words like "again" don't give the answer away
 - `NOTES.md`: build log
 
 ## Run
@@ -39,4 +39,4 @@ On Kaggle, paste `kaggle_task.py` into a Benchmarks notebook cell, then run
 
 ## Results
 
-Baseline (12 cases): A 3/3, B 0/3, C 0/3, D 3/3, overall 50%. Model results to come.
+Baseline (12 cases): A 3/3, B 0/3, C 1/3, D 3/3, overall 7/12 = 58%. Model results to come.
