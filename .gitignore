@@ -1,0 +1,14 @@
+# Secrets
+kaggle.json
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+
+# Kaggle Benchmarks run files
+*.run.json
+*.task.json
+
+.DS_Store
