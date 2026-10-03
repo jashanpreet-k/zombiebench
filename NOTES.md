@@ -123,7 +123,7 @@ Baseline: A 3/3, B 0/3, C 1/3, D 3/3, overall 7/12 = 58% (was 6/12).
 - Keep the cue-word, null-component, answer-position and no-copied-data rules. Report every
   score per tier and per type.
 
-### First Kaggle test (easy tier, 12 cases, commit 15ce866)
+### First Kaggle test (easy tier, 12 cases, commit e3c278a)
 | Model | A | B | C | D | Total |
 |---|---|---|---|---|---|
 | google/gemini-3.8-flash | 3/3 | 3/3 | 3/3 | 3/3 | 12/12 |

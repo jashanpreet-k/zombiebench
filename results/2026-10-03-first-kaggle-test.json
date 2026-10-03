@@ -1,7 +1,7 @@
 {
   "date": "2026-10-03",
   "what": "First Kaggle Benchmarks test run: the 12 easy cases (zb-01 to zb-12) on 2 models",
-  "cases_commit": "15ce866",
+  "cases_commit": "e3c278a",
   "source": "Summary I pasted from the Kaggle notebook output; the full output (with each model's reasons) was not saved",
   "runs": [
     {
