@@ -1,3 +1,11 @@
+# Generated from kaggle_task.py by embed_cases.py: edit kaggle_task.py or cases.json, then run it.
+# This file defines the cases, the task and its helpers, and calls no model when it runs.
+# In a Kaggle Benchmarks notebook:
+#
+#   import urllib.request
+#   exec(urllib.request.urlopen("https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/kaggle_paste.py").read().decode())
+#   run_models(["google/gemini-3.8-flash"])
+
 """ZombieBench: can a model tell a bug coming back from a new one?
 
 Paste this whole file into one cell of a Kaggle Benchmarks notebook and run it,
@@ -4184,6 +4192,3 @@ def run_models(models, rerun_errors=False):
         print(f"\n===== {name} =====")
         zombiebench.run(llm=kbench.llms[name], rerun_errors=rerun_errors)
 
-
-if __name__ == "__main__":
-    zombiebench.run(kbench.llm)

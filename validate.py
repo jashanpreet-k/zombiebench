@@ -8,6 +8,7 @@
 - key_clue is quoted exactly from the report
 - the four types have the same number of cases in each tier
 - no duplicate case ids, and no duplicate bug ids within a history
+- kaggle_task.py and kaggle_paste.py carry the same cases and code
 - cue words ("again", "used to", ...) and a missing component don't give the answer away
 - answers aren't bunched in one part of the history
 
@@ -19,6 +20,8 @@ import json
 import re
 import sys
 from collections import Counter
+
+from embed_cases import paste_file
 
 TYPES = {"A": "regression", "B": "regression", "C": "new", "D": "new"}
 TIERS = {"easy": range(5, 9), "hard": range(12, 16)}
@@ -238,6 +241,13 @@ def main():
 
     if embedded_cases() != cases:
         errors.append("kaggle_task.py's CASES differ from cases.json: run python embed_cases.py")
+    try:
+        with open("kaggle_task.py", encoding="utf-8") as f, open("kaggle_paste.py", encoding="utf-8") as g:
+            in_sync = g.read() == paste_file(f.read())
+    except (OSError, ValueError):
+        in_sync = False
+    if not in_sync:
+        errors.append("kaggle_paste.py is out of date: run python embed_cases.py")
 
     if errors:
         print(f"{len(errors)} problem(s):")

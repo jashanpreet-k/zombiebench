@@ -28,7 +28,8 @@ All cases are invented for this benchmark.
 - `cases.json`: the cases
 - `baseline.py`: the Bug Graveyard Zombie Detector formula, as a baseline
 - `kaggle_task.py`: the Kaggle Benchmarks task (one file, cases embedded)
-- `embed_cases.py`: copies `cases.json` into `kaggle_task.py`
+- `kaggle_paste.py`: the same without the lines that run a model, for loading from GitHub
+- `embed_cases.py`: copies `cases.json` into `kaggle_task.py` and writes `kaggle_paste.py`
 - `validate.py`: checks the cases, including that cue words like "again" don't give the answer away
 - `results/`: saved model runs
 - `NOTES.md`: build log
@@ -41,9 +42,18 @@ python baseline.py --verbose
 python embed_cases.py       # after editing cases.json
 ```
 
-On Kaggle, paste `kaggle_task.py` into a Benchmarks notebook cell, then run
-`%choose zombiebench` in the last cell. If the summary reports errors, run
-`zombiebench.run(llm=kbench.llms["<model>"], rerun_errors=True)` to retry only those cases.
+On Kaggle, load the code from GitHub in a Benchmarks notebook, then run the models you want:
+
+```python
+import urllib.request
+exec(urllib.request.urlopen("https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/kaggle_paste.py").read().decode())
+run_models(["google/gemini-3.8-flash"])
+```
+
+`kaggle_paste.py` is `kaggle_task.py` without its last two lines, so loading it calls no model.
+If a model's summary reports errors, `run_models([...], rerun_errors=True)` retries only those
+cases. For the leaderboard, run `zombiebench.run(kbench.llm)` and then `%choose zombiebench` in
+the last cell.
 
 ## Results
 

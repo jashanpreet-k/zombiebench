@@ -13,8 +13,5 @@ __pycache__/
 
 .DS_Store
 
-# Local paste file for Kaggle (generated from kaggle_task.py)
-kaggle_paste.py
-
 # Per-model results that kaggle_task.py saves where it runs
 zombiebench_results_*.json
