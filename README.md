@@ -20,6 +20,9 @@ There are two tiers:
 - **Easy:** 12 cases, 3 per type, with 5–8 fixed bugs each.
 - **Hard:** 24 cases, 6 per type, with 12–15 fixed bugs each. Every right answer has 2–3
   "sibling" bugs in the same component or with the same cause, and the reports are messy.
+- **Expert:** 12 cases, 3 per type, with 25–30 fixed bugs each, many with similar names. They
+  include twin candidates decided by a fix-summary detail, two issues in one report, a
+  confident but wrong diagnosis, and the same kind of mistake made again in different code.
 
 All cases are invented for this benchmark.
 
@@ -57,12 +60,16 @@ the last cell.
 
 ## Results
 
-| | Easy | Hard (A / B / C / D) | All |
+Easy and hard tiers (36 cases):
+
+| | Easy | Hard (A / B / C / D) | All 36 |
 |---|---|---|---|
+| gpt-5.5 | 12/12 | 24/24 | 36/36 |
+| claude-opus-5 | | | 35/36 (the miss was an empty proxy response) |
 | anthropic/claude-haiku-4-5@20251001 | 12/12 | 21/24 (6/6, 6/6, 6/6, 3/6) | 33/36 |
 | openai/gpt-5.4-nano-2026-03-17 | 11/12 | 13/24 (5/6, 1/6, 2/6, 5/6) | 24/36 |
-| Baseline formula | 7/12 | 5/24 (2/6, 0/6, 1/6, 2/6) | 12/36 |
 | Always answering "new" | 6/12 | 12/24 | 18/36 |
+| Baseline formula | 7/12 | 5/24 (2/6, 0/6, 1/6, 2/6) | 12/36 |
 
-google/gemini-3.8-flash's run is invalid (every call failed with 429 "heavy load") and is being
-rerun. Saved runs are in `results/`.
+Expert tier (12 cases, added after these runs): baseline 3/12, always "new" 6/12. Model runs to
+come. Saved runs are in `results/`.

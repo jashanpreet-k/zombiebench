@@ -363,3 +363,88 @@ are where that confusion shows.
   - the Bug Graveyard formula: 12/36
 - Haiku's only weakness is "same cause category, different defect". A strong model gets every
   A, B and C case, so the separation lives in hard D.
+
+## Phase 6: Four models on 36 cases, empty replies, and an expert tier (2026-10-03)
+
+### What I asked for
+- Save the 36-case results for gpt-5.5, claude-opus-5, Claude Haiku 4.5 and gpt-5.4-nano.
+- Retry an empty proxy response ("message=None") with the same backoff, count it as ERROR
+  (not "unreadable") if it stays empty, and let `rerun_errors` re-ask it.
+- A third tier, "expert": 12 cases (3 per type) that frontier models can still fail but that
+  stay fair and answerable from the text. They should include:
+  - 25–30 fixed bugs per history, with similar-sounding names
+  - "same mistake class, different bug"
+  - "twin candidates" decided only by a fix-summary detail
+  - two issues in one report
+  - a confident but wrong diagnosis inside the report
+- A blind audit of the 12 expert cases, then a push.
+
+### Results on the 36 easy and hard cases
+| Model | Easy | Hard | All 36 |
+|---|---|---|---|
+| gpt-5.5 | 12/12 | 24/24 | **36/36** |
+| claude-opus-5 | | | **35/36**; the miss was an empty proxy response, so 35/35 answered |
+| Claude Haiku 4.5 | 12/12 | 21/24 (D 3/6) | **33/36** |
+| gpt-5.4-nano | 11/12 | 13/24 (B 1/6, C 2/6) | **24/36** |
+| Always answering "new" | 6/12 | 12/24 | 18/36 |
+| Baseline formula | 7/12 | 5/24 | 12/36 |
+
+Two frontier models are at or near 100%, so the 36 cases no longer separate the strongest
+models. That's why I added the expert tier. Saved in
+`results/2026-10-03-kaggle-36-cases-four-models.json`.
+
+### Empty proxy responses
+- Kaggle's model proxy sometimes returns `choices[0].message=None`. The library logs it and
+  returns an empty string, which our parser called "unreadable" (a wrong answer). That's what
+  happened to claude-opus-5 on zb-20.
+- `ask()` now treats an empty or blank reply like a 429: retry after 5, 10, 20, 40, 60, 60 s,
+  then ERROR ("empty response from the model proxy (message=None) on every try").
+- `rerun_errors=True` re-asks ERROR cases, and also cases an older run saved as "unreadable"
+  with an empty reply, so results saved before this fix can still be repaired.
+
+### The expert tier (zb-37 to zb-48)
+- **3 invented projects with 27–28 fixed bugs each:** a hotel booking system, a stock-trading
+  app and a video-streaming service. Each project has one case of each type sharing its
+  history.
+- **Similar-sounding names on purpose:** "…a rupee off…" ×4, "Special requests…" ×3,
+  "Stop-loss orders fire…" ×2, "Price alerts…" ×4, "Subtitles…drift out of sync…" ×2,
+  "…'link expired'…" ×2.
+- **Which case uses which element:**
+  - **Twin candidates:** zb-37 (booking-page vs invoice rounding), zb-41 (bonus vs split),
+    zb-39 (subtitle converter vs Android TV pause), zb-42 (signed URLs vs live tokens); zb-43
+    matches neither twin.
+  - **Confident wrong diagnosis:** zb-37 and zb-41 (the wrong twin is named), zb-44 and
+    zb-45 ("definitely #… again", but it's new).
+  - **Two issues in one report:** zb-38 (double stop-loss plus grey logos), zb-40 (lost cot
+    request plus logouts).
+  - **Same mistake class, different code:** zb-46 (timezone, new night-audit scheduler),
+    zb-47 (rounding, capital gains report), zb-48 (stale data in downloads), plus zb-43
+    and zb-45.
+- **Checks kept:**
+  - cue words balanced within the tier: any cue word in A 2/3, B 3/3, C 2/3, D 2/3
+  - null components in both regressions and new bugs
+  - answers spread 2 / 2 / 2 across the first, middle and last third of the history
+  - key clues quoted exactly
+  - siblings computed (expert regressions have 2–6 each)
+- **Baseline on expert:** 3/12 (A 0/3, B 0/3, C 0/3, D 3/3). All 48: 15/48.
+
+### What went wrong and how we fixed it
+- **The leak check caught the wrong diagnoses.** "The overnight batch **is back**" (zb-44) and
+  "the rating filter **regressed**" (zb-45) appeared only in new bugs. Developers say the same
+  about real regressions, so the wrong diagnoses in zb-37 (A) and zb-41 (B) now say
+  "…regressed" and "…is back" too.
+- **Two expert B reports echoed their answers.** zb-40 and zb-42 shared 3 and 5 keywords with
+  their answers ("clock", "link", "phone", "because"…). I reworded them in a user's own words
+  ("My TV's time runs 20 min fast", "an error says the video address has run out"). They now
+  share 0.
+
+### Blind audit of the expert tier
+Same method as Phase 4: a fresh agent saw only each case's history and report, shuffled and
+renamed E1–E12. **It agreed on 12/12.** Its one doubt was zb-40: the report implies but doesn't
+prove that the cot request was on record before the date change, so it could have been #3115
+(the housekeeping list hiding requests) or a new bug.
+
+I fixed zb-40's wording. The guest's first confirmation email now lists "Baby cot" under
+requests, and "The new confirmation email has no requests at all" (the new key clue). That
+shows the request was saved and then lost on the date change. A second fresh agent re-audited
+just zb-40 blind: regression #3139, **no doubt**.

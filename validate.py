@@ -1,10 +1,10 @@
 """Checks cases.json, and that kaggle_task.py carries the same cases.
 
 - every case, history bug and report has all its fields
-- history size fits the tier (easy 5–8 bugs, hard 12–15)
+- history size fits the tier (easy 5–8 bugs, hard 12–15, expert 25–30)
 - expected answers fit the case type, and a regression's bug_id is in that case's history
 - siblings are exactly the other history bugs that share the answer's component or cause
-  (2–3 for hard regressions); a C case names its decoy bug
+  (2–3 for hard regressions, at least 2 for expert); a C case names its decoy bug
 - key_clue is quoted exactly from the report
 - the four types have the same number of cases in each tier
 - no duplicate case ids, and no duplicate bug ids within a history
@@ -24,8 +24,9 @@ from collections import Counter
 from embed_cases import paste_file
 
 TYPES = {"A": "regression", "B": "regression", "C": "new", "D": "new"}
-TIERS = {"easy": range(5, 9), "hard": range(12, 16)}
+TIERS = {"easy": range(5, 9), "hard": range(12, 16), "expert": range(25, 31)}
 HARD_SIBLINGS = range(2, 4)
+EXPERT_MIN_SIBLINGS = 2
 CASE_FIELDS = ["id", "tier", "type", "history", "new_report", "expected", "siblings", "decoy_bug_id", "key_clue", "why"]
 BUG_FIELDS = ["id", "name", "cause", "language", "component", "symptoms", "fix_summary"]
 REPORT_FIELDS = ["title", "description", "language", "component"]
@@ -146,6 +147,8 @@ def check_case(case, errors):
             error(f"siblings should be {should_be} (bugs sharing #{bug_id}'s component or cause), not {sorted(siblings)}")
         if case.get("tier") == "hard" and len(should_be) not in HARD_SIBLINGS:
             error(f"a hard regression needs {HARD_SIBLINGS.start}–{HARD_SIBLINGS.stop - 1} siblings, has {len(should_be)}")
+        if case.get("tier") == "expert" and len(should_be) < EXPERT_MIN_SIBLINGS:
+            error(f"an expert regression needs at least {EXPERT_MIN_SIBLINGS} siblings, has {len(should_be)}")
     elif siblings:
         error("only regressions have siblings")
 

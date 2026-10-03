@@ -114,8 +114,8 @@ def describe(answer):
 
 def print_summary(results):
     """results: (tier, type, passed) per case. One row per tier, then all tiers together."""
-    tiers = [t for t in ("easy", "hard") if any(r[0] == t for r in results)]
-    print(f"{'':<6}" + "".join(f"{t:>7}" for t in "ABCD") + f"{'all':>14}")
+    tiers = [t for t in ("easy", "hard", "expert") if any(r[0] == t for r in results)]
+    print(f"{'':<7}" + "".join(f"{t:>7}" for t in "ABCD") + f"{'all':>14}")
     for tier in tiers + ["all"]:
         rows = [r for r in results if tier in ("all", r[0])]
         cells = []
@@ -123,7 +123,7 @@ def print_summary(results):
             oks = [ok for _, t, ok in rows if t == case_type]
             cells.append(f"{sum(oks)}/{len(oks)}" if oks else "-")
         passed = sum(ok for _, _, ok in rows)
-        print(f"{tier:<6}" + "".join(f"{c:>7}" for c in cells)
+        print(f"{tier:<7}" + "".join(f"{c:>7}" for c in cells)
               + f"{passed:>6}/{len(rows)} = {passed / len(rows):.0%}")
 
 
@@ -134,19 +134,19 @@ def main():
         cases = json.load(f)
 
     results = []
-    print(f"{'case':<7}{'tier':<6}{'type':<6}{'expected':<18}{'baseline':<18}{'best match':<12}{'score':>5}  ok")
+    print(f"{'case':<7}{'tier':<7}{'type':<6}{'expected':<18}{'baseline':<18}{'best match':<12}{'score':>5}  ok")
     for case in cases:
         prediction, best = predict(case)
         ok = is_correct(prediction, case["expected"])
         results.append((case["tier"], case["type"], ok))
         print(
-            f"{case['id']:<7}{case['tier']:<6}{case['type']:<6}{describe(case['expected']):<18}{describe(prediction):<18}"
+            f"{case['id']:<7}{case['tier']:<7}{case['type']:<6}{describe(case['expected']):<18}{describe(prediction):<18}"
             f"#{best['bug']['id']:<11}{best['score']:>5}  {'✓' if ok else '✗'}"
         )
         if verbose:
             p = best["points"]
             print(
-                f"{'':19}cause {p['cause']}, language {p['language']}, component {p['component']}, "
+                f"{'':20}cause {p['cause']}, language {p['language']}, component {p['component']}, "
                 f"keywords {p['keywords']} ({', '.join(best['shared']) or 'none'})"
             )
 

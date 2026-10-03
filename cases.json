@@ -4282,5 +4282,3173 @@
     "decoy_bug_id": null,
     "key_clue": "three trips from 29, 30 and 31 December last year",
     "why": "Only the last three days of December filed under the next year is a week-based-year date format bug, which is new; it isn't #2808 (last leg hidden) or #2825 (expiry shown in UTC)."
+  },
+  {
+    "id": "zb-37",
+    "tier": "expert",
+    "type": "A",
+    "history": [
+      {
+        "id": 3101,
+        "name": "Room rates shown without GST on the booking page",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests outside India saw room rates without GST on the booking page, and the GST was only added at payment.",
+        "fix_summary": "Showed GST-inclusive rates to every guest in rateLabel()."
+      },
+      {
+        "id": 3104,
+        "name": "Channel sync drops the last room type",
+        "cause": "Off-by-one",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Only the first N−1 room types reached the travel agencies, so suites were never sold there.",
+        "fix_summary": "Included the last room type in the loop in pushInventory()."
+      },
+      {
+        "id": 3108,
+        "name": "Booking total a rupee off on the confirmation page",
+        "cause": "Rounding",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Totals on the booking confirmation page were sometimes ₹1 higher than the card charge, because the page rounded each night's rate before adding them up.",
+        "fix_summary": "Added up the unrounded nightly rates and rounded once in quoteTotal() in booking-engine/pricing.ts."
+      },
+      {
+        "id": 3111,
+        "name": "Check-in times shown in UTC in the staff app",
+        "cause": "Timezone",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "The front-desk app showed expected arrival times 5½ hours early, because they were shown in UTC.",
+        "fix_summary": "Formatted arrival times in the property's timezone in ArrivalList.kt."
+      },
+      {
+        "id": 3115,
+        "name": "Special requests missing from the housekeeping list",
+        "cause": "Missing filter",
+        "language": "Kotlin",
+        "component": "special-requests",
+        "symptoms": "The housekeeping app didn't show requests like extra pillows, because it only listed requests tagged 'room'.",
+        "fix_summary": "Listed every request type for the room in TaskList.kt."
+      },
+      {
+        "id": 3118,
+        "name": "Two guests booked into the last room",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "availability",
+        "symptoms": "Two guests booking the last free room at the same moment both got a confirmation.",
+        "fix_summary": "Reserved the room with a conditional update before taking payment."
+      },
+      {
+        "id": 3122,
+        "name": "Weekend rates applied on Thursdays",
+        "cause": "Off-by-one",
+        "language": "Python",
+        "component": "rates",
+        "symptoms": "Thursday nights were charged the weekend rate, because the rate calendar counted weekdays from Monday = 0 while rate plans used Sunday = 0.",
+        "fix_summary": "Used ISO weekday numbers in RatePlan.rate_for()."
+      },
+      {
+        "id": 3125,
+        "name": "Guest app crashes on bookings without a room number",
+        "cause": "Null reference",
+        "language": "Swift",
+        "component": "guest-app",
+        "symptoms": "The iOS guest app crashed when opening a booking that had no room assigned yet.",
+        "fix_summary": "Showed 'Room assigned at check-in' when there's no room."
+      },
+      {
+        "id": 3129,
+        "name": "Occupancy report puts early check-ins on the wrong day",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "reports",
+        "symptoms": "The daily occupancy report counted guests who checked in between midnight and 5:30 AM on the previous day, because report days were cut at midnight UTC.",
+        "fix_summary": "Cut report days at the property's local midnight in reports/occupancy.py."
+      },
+      {
+        "id": 3132,
+        "name": "Deposit a rupee off on the payment link",
+        "cause": "Floating point",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Payment links for 30% deposits asked for amounts like ₹4,449.9000001, and banks rejected them, because the deposit was computed in floating point.",
+        "fix_summary": "Computed deposits in whole paise in payments/deposit.py."
+      },
+      {
+        "id": 3136,
+        "name": "Booking page shows yesterday's rates",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "rates",
+        "symptoms": "After a revenue manager changed rates, the booking page kept showing the old prices for up to an hour, because rate pages were cached.",
+        "fix_summary": "Purged the rate page cache on every rate change."
+      },
+      {
+        "id": 3139,
+        "name": "Special requests wiped when a booking's dates change",
+        "cause": "Lost data",
+        "language": "Python",
+        "component": "special-requests",
+        "symptoms": "Changing the dates of a booking deleted the guest's special requests (extra bed, early check-in, dietary notes), because modify_booking() rebuilt the booking without them.",
+        "fix_summary": "Copied special requests onto the changed booking in modify_booking() and tested every request type."
+      },
+      {
+        "id": 3143,
+        "name": "Rates sync twice after a restart",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "After a restart, the channel manager pushed every rate twice, and some agencies kept the older one.",
+        "fix_summary": "Locked the sync job per property while it runs."
+      },
+      {
+        "id": 3146,
+        "name": "Hindi guest names garbled on registration cards",
+        "cause": "Encoding",
+        "language": "Python",
+        "component": "check-in",
+        "symptoms": "Guest names in Devanagari printed as question marks on registration cards.",
+        "fix_summary": "Rendered registration cards with a Unicode font."
+      },
+      {
+        "id": 3150,
+        "name": "Late-checkout fee an hour early after the clock change",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "At the London property, the late-checkout fee started at 11 AM instead of noon after the clocks went forward, because the cutoff was stored with a fixed UTC offset.",
+        "fix_summary": "Stored the cutoff as local time with the property's zone rules in invoices/fees.py."
+      },
+      {
+        "id": 3153,
+        "name": "Special requests lost on agency bookings",
+        "cause": "Lost data",
+        "language": "Go",
+        "component": "special-requests",
+        "symptoms": "Special requests on bookings from travel agencies never reached the hotel, because the channel mapping skipped the comments field.",
+        "fix_summary": "Mapped the agency comments field to special requests in mapBooking()."
+      },
+      {
+        "id": 3157,
+        "name": "Staff app crashes on walk-ins without an email",
+        "cause": "Null reference",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "Checking in a walk-in guest without an email address crashed the staff app.",
+        "fix_summary": "Made email optional on the check-in form."
+      },
+      {
+        "id": 3160,
+        "name": "Agencies sell rooms that are already gone",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Travel agencies kept selling rooms for up to 10 minutes after they sold out, because availability was cached in the sync service.",
+        "fix_summary": "Pushed availability changes to agencies as they happen."
+      },
+      {
+        "id": 3164,
+        "name": "Refund a rupee short after a cancellation",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Refunds after a partial cancellation were sometimes ₹1 short, because each night's refund was rounded down.",
+        "fix_summary": "Rounded the refund once, half up, in refunds.calculate()."
+      },
+      {
+        "id": 3167,
+        "name": "Housekeeping rooms assigned to staff on leave",
+        "cause": "Missing check",
+        "language": "Kotlin",
+        "component": "housekeeping",
+        "symptoms": "Rooms were assigned to housekeepers who were on leave that day.",
+        "fix_summary": "Skipped staff on leave when assigning rooms."
+      },
+      {
+        "id": 3171,
+        "name": "Loyalty points added twice for long stays",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "loyalty",
+        "symptoms": "Stays longer than 7 nights earned points twice, because the nightly job and the checkout job both credited them.",
+        "fix_summary": "Credited points only at checkout."
+      },
+      {
+        "id": 3174,
+        "name": "Invoice total a rupee off at checkout",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Checkout invoices were sometimes ₹1 more than the booking total, because the invoice rounded the GST on each line separately.",
+        "fix_summary": "Calculated GST once on the invoice subtotal in invoices/tax.py and rounded once."
+      },
+      {
+        "id": 3178,
+        "name": "Availability calendar a day off for guests in the US",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "availability",
+        "symptoms": "Guests in the US saw rooms free one day earlier than they really were, because the calendar read dates as midnight UTC.",
+        "fix_summary": "Sent availability as plain dates and showed them without timezone conversion."
+      },
+      {
+        "id": 3181,
+        "name": "Booking emails sent twice",
+        "cause": "Missing deduplication",
+        "language": "Python",
+        "component": "notifications",
+        "symptoms": "Guests got two confirmation emails when the payment callback arrived twice.",
+        "fix_summary": "Sent one confirmation per booking ID."
+      },
+      {
+        "id": 3185,
+        "name": "Goa invoices show the Mumbai address",
+        "cause": "Config",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Invoices from the Goa property showed the Mumbai head office address.",
+        "fix_summary": "Read the address from each property's settings."
+      },
+      {
+        "id": 3188,
+        "name": "Promo codes stack with member rates",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests could apply a promo code on top of the member rate and get two discounts.",
+        "fix_summary": "Allowed one discount per booking."
+      },
+      {
+        "id": 3192,
+        "name": "Channel sync stops after one agency errors",
+        "cause": "Error handling",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "One travel agency returning an error stopped rate updates for every agency.",
+        "fix_summary": "Synced each agency separately and retried failures."
+      }
+    ],
+    "new_report": {
+      "title": "Totals a rupee off again",
+      "description": "Front desk at the Pune property says several guests paid ₹1 more at checkout than their booking total this week. The developer on call wrote: 'This is definitely #3108 again, the confirmation-page fix regressed.' But for room 412 the confirmation page and the card charge at booking match exactly at ₹14,832; it's the checkout invoice that says ₹14,833, and its GST is rounded line by line. The invoice printer is also out of toner.",
+      "language": "TypeScript",
+      "component": "booking-engine"
+    },
+    "expected": {"verdict": "regression", "bug_id": 3174},
+    "siblings": [3108, 3150, 3164, 3185],
+    "decoy_bug_id": null,
+    "key_clue": "it's the checkout invoice that says ₹14,833, and its GST is rounded line by line",
+    "why": "The developer blames #3108, but the confirmation page matches the card charge, so quoteTotal() is fine; the extra ₹1 is on the checkout invoice with GST rounded per line, which is #3174's defect returning (filed under booking-engine by mistake)."
+  },
+  {
+    "id": "zb-38",
+    "tier": "expert",
+    "type": "A",
+    "history": [
+      {
+        "id": 3301,
+        "name": "KYC selfie check fails in low light",
+        "cause": "Image handling",
+        "language": "Kotlin",
+        "component": "kyc",
+        "symptoms": "The KYC selfie check rejected most photos taken indoors at night.",
+        "fix_summary": "Raised the camera exposure before taking the selfie."
+      },
+      {
+        "id": 3304,
+        "name": "Stop-loss orders fire late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "At 9:15, stop-loss orders triggered up to 40 seconds late, because triggers waited behind the pre-open order queue.",
+        "fix_summary": "Gave stop-loss triggers their own queue."
+      },
+      {
+        "id": 3308,
+        "name": "Contract note brokerage a paisa off",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Contract notes sometimes showed brokerage ₹0.01 higher than the ledger, because brokerage was rounded per trade and then added up.",
+        "fix_summary": "Rounded brokerage once per contract note in statements/contract_note.py."
+      },
+      {
+        "id": 3311,
+        "name": "Stop-loss orders fire twice in fast markets",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "In fast markets some stop-loss orders were sent to the exchange twice, because two price ticks triggered the same order before its status was saved.",
+        "fix_summary": "Claimed each triggered order with a compare-and-set on its status in StopLossTrigger.fire()."
+      },
+      {
+        "id": 3315,
+        "name": "Chart times in UTC for users abroad",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "Users who set their country to UAE saw chart times in UTC.",
+        "fix_summary": "Showed chart times in the exchange's timezone."
+      },
+      {
+        "id": 3318,
+        "name": "Price alerts an hour late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Price alerts set overnight fired up to an hour after the price was hit at market open, because all overnight alerts were checked in one slow batch.",
+        "fix_summary": "Checked alerts on every price tick instead of in a batch."
+      },
+      {
+        "id": 3322,
+        "name": "Funds added twice on a slow UPI callback",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "When the UPI callback was slow and the user retried, the money was credited twice.",
+        "fix_summary": "Credited funds once per UPI transaction ID."
+      },
+      {
+        "id": 3325,
+        "name": "Average buy price wrong after a stock split",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:5 split, the average price was divided by 5 but the quantity wasn't multiplied, so holdings showed a fifth of the shares.",
+        "fix_summary": "Applied the split ratio to quantity as well as price in CorporateActions.apply_split()."
+      },
+      {
+        "id": 3329,
+        "name": "PAN check rejects lowercase letters",
+        "cause": "Validation",
+        "language": "TypeScript",
+        "component": "kyc",
+        "symptoms": "Typing a PAN in lowercase failed the format check.",
+        "fix_summary": "Uppercased the PAN before checking it."
+      },
+      {
+        "id": 3332,
+        "name": "Stop-limit orders rejected near the circuit limit",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Stop-limit orders priced within 1% of the circuit limit were rejected by our own checks, which used yesterday's limits.",
+        "fix_summary": "Loaded the day's circuit limits at 9:00."
+      },
+      {
+        "id": 3336,
+        "name": "Statement sell prices rounded down",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Monthly statements showed sell prices rounded down to the rupee, so realised gains looked smaller.",
+        "fix_summary": "Printed prices to two decimals in statements/monthly.py."
+      },
+      {
+        "id": 3339,
+        "name": "Price alerts sent twice",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Some price alerts were sent twice when two servers checked the same alert.",
+        "fix_summary": "Marked alerts as sent with a conditional update."
+      },
+      {
+        "id": 3343,
+        "name": "Holdings show sold shares until the next day",
+        "cause": "Cache",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "Shares sold in the morning still showed in Android holdings until the next day.",
+        "fix_summary": "Refreshed holdings after every executed order."
+      },
+      {
+        "id": 3346,
+        "name": "Tax report counts early 1 April dividends in the old year",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "Dividends credited between midnight and 5:30 AM on 1 April were counted in the previous year's tax report, because the year was cut by UTC date.",
+        "fix_summary": "Cut tax years by Indian date in tax/years.py."
+      },
+      {
+        "id": 3350,
+        "name": "IPO bids lost when the UPI mandate is approved late",
+        "cause": "Lost event",
+        "language": "Java",
+        "component": "ipo",
+        "symptoms": "IPO bids whose UPI mandate was approved after 5 PM were silently dropped.",
+        "fix_summary": "Showed the mandate deadline and kept bids until it passed."
+      },
+      {
+        "id": 3353,
+        "name": "Portfolio value rounded on the widget",
+        "cause": "Rounding",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "The Android home-screen widget showed portfolio value rounded to the nearest ₹1,000.",
+        "fix_summary": "Showed whole rupees on the widget."
+      },
+      {
+        "id": 3357,
+        "name": "Price alerts never fire for symbols with a dot",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Alerts for symbols with a dot or an ampersand never fired, because the symbol check rejected them.",
+        "fix_summary": "Allowed dots and ampersands in symbols."
+      },
+      {
+        "id": 3360,
+        "name": "Bracket orders lose their stop leg after an edit",
+        "cause": "Lost data",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Editing the target price of a bracket order silently removed its stop-loss leg.",
+        "fix_summary": "Kept every leg when changing a bracket order."
+      },
+      {
+        "id": 3364,
+        "name": "Withdrawals fail on bank holidays",
+        "cause": "Business rule",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "Withdrawals requested on bank holidays failed instead of waiting for the next working day.",
+        "fix_summary": "Queued withdrawals made on holidays."
+      },
+      {
+        "id": 3367,
+        "name": "Watchlist order mixed up after editing on two devices",
+        "cause": "Race condition",
+        "language": "Kotlin",
+        "component": "watchlist",
+        "symptoms": "Reordering a watchlist on the phone and the web at the same time left a mixed-up order.",
+        "fix_summary": "Saved the order with a version number and rejected stale writes."
+      },
+      {
+        "id": 3371,
+        "name": "Tax report crashes on delisted stocks",
+        "cause": "Null reference",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "The tax report failed for anyone who had held a stock that was later delisted, because its current price was null.",
+        "fix_summary": "Used the last traded price for delisted stocks."
+      },
+      {
+        "id": 3374,
+        "name": "Average buy price wrong after a bonus issue",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:1 bonus issue, holdings showed twice the shares at the old average price, so the app showed a large loss.",
+        "fix_summary": "Applied the bonus ratio to both quantity and average price in CorporateActions.apply_bonus()."
+      },
+      {
+        "id": 3378,
+        "name": "1-minute chart skips the 9:15 candle",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "The 1-minute chart left out the 9:15 candle, because candles started at the first full minute after the open.",
+        "fix_summary": "Included the opening minute's candle."
+      },
+      {
+        "id": 3381,
+        "name": "Watchlist keeps delisted stocks",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "watchlist",
+        "symptoms": "Delisted stocks stayed in watchlists with a frozen price.",
+        "fix_summary": "Removed delisted stocks nightly and told the user."
+      },
+      {
+        "id": 3385,
+        "name": "Order-fill notifications missing on iOS",
+        "cause": "Config",
+        "language": "Swift",
+        "component": "notifications",
+        "symptoms": "Order-fill notifications stopped arriving on iPhones after the push certificate was renewed.",
+        "fix_summary": "Installed the new push certificate and added an expiry alert."
+      },
+      {
+        "id": 3388,
+        "name": "IPO allotment status a day late",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "ipo",
+        "symptoms": "The app showed 'allotment pending' for a day after the registrar published results.",
+        "fix_summary": "Checked the registrar every 15 minutes on allotment day."
+      },
+      {
+        "id": 3392,
+        "name": "Market depth shows filled bids",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "market-data",
+        "symptoms": "The market depth panel on the web kept showing bids for up to 5 seconds after they were filled.",
+        "fix_summary": "Streamed depth updates instead of polling."
+      }
+    ],
+    "new_report": {
+      "title": "Stop-loss orders executed twice at the open, and grey logos",
+      "description": "On Tuesday, 37 customers had stop-loss orders executed twice during the 9:15 spike. The order log shows two `StopLossTrigger.fire` entries for the same order ID 3 ms apart, both reading status OPEN. Separately, since the CDN change, watchlist logos show as grey squares on Android.",
+      "language": "Java",
+      "component": null
+    },
+    "expected": {"verdict": "regression", "bug_id": 3311},
+    "siblings": [3304, 3322, 3332, 3339, 3360, 3367],
+    "decoy_bug_id": null,
+    "key_clue": "two `StopLossTrigger.fire` entries for the same order ID 3 ms apart, both reading status OPEN",
+    "why": "Two triggers claiming the same OPEN order at once is #3311's race in StopLossTrigger.fire() returning; #3304 made triggers late, not double; the grey logos are unrelated noise."
+  },
+  {
+    "id": "zb-39",
+    "tier": "expert",
+    "type": "A",
+    "history": [
+      {
+        "id": 3501,
+        "name": "Tamil subtitles garbled on the web player",
+        "cause": "Encoding",
+        "language": "TypeScript",
+        "component": "subtitles",
+        "symptoms": "Tamil subtitles showed as boxes on the web player, because the subtitle file was read as Latin-1.",
+        "fix_summary": "Read subtitle files as UTF-8."
+      },
+      {
+        "id": 3504,
+        "name": "Profile pictures don't update",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "cdn",
+        "symptoms": "New profile pictures didn't show for up to a week, because the CDN cached them under the same URL.",
+        "fix_summary": "Versioned profile picture URLs."
+      },
+      {
+        "id": 3508,
+        "name": "Subtitles slowly drift out of sync on long films",
+        "cause": "Frame rate",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "On every device, subtitles fell steadily behind on films mastered at 25 fps, about 2½ minutes an hour, because the subtitle converter assumed 24 fps.",
+        "fix_summary": "Read the frame rate from the stream manifest in subtitles/vtt_convert.go before converting timestamps."
+      },
+      {
+        "id": 3511,
+        "name": "Charged twice when switching plans",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Switching plans twice quickly charged the card for both plans.",
+        "fix_summary": "Locked the subscription while a plan change is in progress."
+      },
+      {
+        "id": 3515,
+        "name": "Downloads stuck at 99% on Android",
+        "cause": "Off-by-one",
+        "language": "Kotlin",
+        "component": "downloads",
+        "symptoms": "Downloads stopped at 99%, because the last segment was never marked done.",
+        "fix_summary": "Marked the final segment done when its last byte arrives."
+      },
+      {
+        "id": 3518,
+        "name": "Kids profiles show 16+ titles in search",
+        "cause": "Missing filter",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching from a kids profile showed 16+ titles, because the search index ignored the profile's rating limit.",
+        "fix_summary": "Applied the profile's rating limit in search/filter.go."
+      },
+      {
+        "id": 3522,
+        "name": "TV home-screen previews play with sound",
+        "cause": "Config",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "Previews on the Android TV home screen played with sound despite the 'muted previews' setting.",
+        "fix_summary": "Read the setting before starting previews."
+      },
+      {
+        "id": 3525,
+        "name": "Live channels fail with 'link expired' at 5:30 AM",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Live channels stopped with 'link expired' at 5:30 AM every morning, because live tokens expired at the end of the UTC day.",
+        "fix_summary": "Issued live tokens with a rolling 6-hour expiry in LiveToken.Issue()."
+      },
+      {
+        "id": 3529,
+        "name": "Second subtitle track missing from the menu",
+        "cause": "Missing data",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "Titles with two subtitle tracks only showed the first one in the menu.",
+        "fix_summary": "Listed every track from the manifest."
+      },
+      {
+        "id": 3532,
+        "name": "Continue watching shows finished episodes",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "profiles",
+        "symptoms": "Finished episodes stayed in Continue watching for hours, because progress was cached per profile.",
+        "fix_summary": "Cleared the progress cache when an episode finishes."
+      },
+      {
+        "id": 3536,
+        "name": "Recommendations repeat the title you just finished",
+        "cause": "Missing filter",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "The 'Because you watched' row often started with the title the viewer had just finished.",
+        "fix_summary": "Left watched titles out of the row."
+      },
+      {
+        "id": 3539,
+        "name": "Subtitles drift out of sync on Android TV",
+        "cause": "State handling",
+        "language": "Kotlin",
+        "component": "subtitles",
+        "symptoms": "On Android TV, subtitles fell behind after the viewer paused for more than a minute, because the player restarted the subtitle clock from the pause position.",
+        "fix_summary": "Drove subtitles from the video's own clock in SubtitleRenderer.kt."
+      },
+      {
+        "id": 3543,
+        "name": "Downloads fail with 'link expired' when the phone's clock is wrong",
+        "cause": "Clock skew",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Downloads failed with 'link expired' on phones whose clock was more than 5 minutes off, because signed URLs were checked against the device clock.",
+        "fix_summary": "Signed every playback and download URL with the server's time in SignURL() in cdn/sign.go."
+      },
+      {
+        "id": 3546,
+        "name": "Renewal charged a day early for users in the US",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Monthly renewals were charged a day early for users in the US, because the renewal date was worked out at midnight UTC.",
+        "fix_summary": "Worked out renewal dates in the user's timezone."
+      },
+      {
+        "id": 3550,
+        "name": "Android TV player freezes on 4K HDR titles",
+        "cause": "Memory",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "4K HDR titles froze after about 20 minutes on TVs with 2 GB of memory, because decoded frames were never released.",
+        "fix_summary": "Released frames after rendering."
+      },
+      {
+        "id": 3553,
+        "name": "Kids profiles can play 16+ titles from a shared link",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "Opening a shared link to a 16+ title from a kids profile played it without asking for the PIN.",
+        "fix_summary": "Checked the rating limit before playback starts."
+      },
+      {
+        "id": 3557,
+        "name": "Plans page shows old prices after a change",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "billing",
+        "symptoms": "After a price change, the plans page showed the old prices for up to an hour.",
+        "fix_summary": "Purged the plans page cache on price changes."
+      },
+      {
+        "id": 3560,
+        "name": "iOS player loses audio after a phone call",
+        "cause": "Lifecycle",
+        "language": "Swift",
+        "component": "player-ios",
+        "symptoms": "After a phone call, playback resumed without audio.",
+        "fix_summary": "Reactivated the audio session after interruptions."
+      },
+      {
+        "id": 3564,
+        "name": "Search can't find titles with an apostrophe",
+        "cause": "Escaping",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching for titles with an apostrophe, like 'Raja's Return', found nothing.",
+        "fix_summary": "Escaped apostrophes in search queries."
+      },
+      {
+        "id": 3567,
+        "name": "Old parental PIN works on TVs after a change",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "The old parental PIN kept working on TVs for up to a day after it was changed.",
+        "fix_summary": "Checked the PIN with the server instead of a cached copy."
+      },
+      {
+        "id": 3571,
+        "name": "Renamed episodes keep their old titles in the app",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "catalog",
+        "symptoms": "After a studio renamed episodes, the app showed the old titles for a week, because catalog entries were cached.",
+        "fix_summary": "Purged the catalog cache when a title's details change."
+      },
+      {
+        "id": 3574,
+        "name": "Renewed downloads deleted after 30 days anyway",
+        "cause": "Lost data",
+        "language": "Swift",
+        "component": "downloads",
+        "symptoms": "On iOS, renewed downloads were still deleted 30 days after the first download.",
+        "fix_summary": "Updated the expiry date when a download is renewed."
+      },
+      {
+        "id": 3578,
+        "name": "GST added twice on annual plans",
+        "cause": "Double counting",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Annual plans added GST twice: on the plan price and again on the total.",
+        "fix_summary": "Applied GST once, on the plan price."
+      },
+      {
+        "id": 3581,
+        "name": "Recommendation rows titled in the wrong language",
+        "cause": "Localization",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "Viewers who chose Hindi got recommendation rows titled in English.",
+        "fix_summary": "Used the profile language for row titles."
+      },
+      {
+        "id": 3585,
+        "name": "Web player crashes on Safari when skipping the intro",
+        "cause": "Browser compatibility",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Clicking 'Skip intro' on Safari crashed the web player.",
+        "fix_summary": "Seeked with a Safari-safe call."
+      },
+      {
+        "id": 3588,
+        "name": "Downloads count twice toward the device limit",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "downloads",
+        "symptoms": "Downloading on two phones at once counted each phone twice toward the 5-device limit.",
+        "fix_summary": "Counted devices once per device ID."
+      },
+      {
+        "id": 3592,
+        "name": "Autoplay skips an episode on the web",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Autoplay jumped from episode 3 to episode 5 on the web.",
+        "fix_summary": "Picked the next episode by number, not by list position."
+      },
+      {
+        "id": 3595,
+        "name": "Basic plan allows two streams at once",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Basic-plan accounts could stream on two TVs at once, because the stream count was checked before the first stream registered.",
+        "fix_summary": "Registered each stream before checking the plan's limit."
+      }
+    ],
+    "new_report": {
+      "title": "Subtitles drifting out of sync again on Android TV",
+      "description": "Viewers on Android TV say subtitles fall behind on some films, and the Android TV team thinks it's the pause problem. Our test on 'The Long Monsoon', mastered at 25 fps: after two hours of playback without a single pause, subtitles are about 5 minutes behind, and the web player is behind by the same amount. Films mastered at 24 fps are fine on every device.",
+      "language": "Kotlin",
+      "component": "player-android-tv"
+    },
+    "expected": {"verdict": "regression", "bug_id": 3508},
+    "siblings": [3501, 3529, 3539],
+    "decoy_bug_id": null,
+    "key_clue": "after two hours of playback without a single pause, subtitles are about 5 minutes behind, and the web player is behind by the same amount",
+    "why": "A steady drift on 25 fps films, with no pause and on the web too, is #3508 (the shared converter assuming 24 fps); #3539 drifted only on Android TV after a pause, so the Android TV team's guess is wrong."
+  },
+  {
+    "id": "zb-40",
+    "tier": "expert",
+    "type": "B",
+    "history": [
+      {
+        "id": 3101,
+        "name": "Room rates shown without GST on the booking page",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests outside India saw room rates without GST on the booking page, and the GST was only added at payment.",
+        "fix_summary": "Showed GST-inclusive rates to every guest in rateLabel()."
+      },
+      {
+        "id": 3104,
+        "name": "Channel sync drops the last room type",
+        "cause": "Off-by-one",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Only the first N−1 room types reached the travel agencies, so suites were never sold there.",
+        "fix_summary": "Included the last room type in the loop in pushInventory()."
+      },
+      {
+        "id": 3108,
+        "name": "Booking total a rupee off on the confirmation page",
+        "cause": "Rounding",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Totals on the booking confirmation page were sometimes ₹1 higher than the card charge, because the page rounded each night's rate before adding them up.",
+        "fix_summary": "Added up the unrounded nightly rates and rounded once in quoteTotal() in booking-engine/pricing.ts."
+      },
+      {
+        "id": 3111,
+        "name": "Check-in times shown in UTC in the staff app",
+        "cause": "Timezone",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "The front-desk app showed expected arrival times 5½ hours early, because they were shown in UTC.",
+        "fix_summary": "Formatted arrival times in the property's timezone in ArrivalList.kt."
+      },
+      {
+        "id": 3115,
+        "name": "Special requests missing from the housekeeping list",
+        "cause": "Missing filter",
+        "language": "Kotlin",
+        "component": "special-requests",
+        "symptoms": "The housekeeping app didn't show requests like extra pillows, because it only listed requests tagged 'room'.",
+        "fix_summary": "Listed every request type for the room in TaskList.kt."
+      },
+      {
+        "id": 3118,
+        "name": "Two guests booked into the last room",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "availability",
+        "symptoms": "Two guests booking the last free room at the same moment both got a confirmation.",
+        "fix_summary": "Reserved the room with a conditional update before taking payment."
+      },
+      {
+        "id": 3122,
+        "name": "Weekend rates applied on Thursdays",
+        "cause": "Off-by-one",
+        "language": "Python",
+        "component": "rates",
+        "symptoms": "Thursday nights were charged the weekend rate, because the rate calendar counted weekdays from Monday = 0 while rate plans used Sunday = 0.",
+        "fix_summary": "Used ISO weekday numbers in RatePlan.rate_for()."
+      },
+      {
+        "id": 3125,
+        "name": "Guest app crashes on bookings without a room number",
+        "cause": "Null reference",
+        "language": "Swift",
+        "component": "guest-app",
+        "symptoms": "The iOS guest app crashed when opening a booking that had no room assigned yet.",
+        "fix_summary": "Showed 'Room assigned at check-in' when there's no room."
+      },
+      {
+        "id": 3129,
+        "name": "Occupancy report puts early check-ins on the wrong day",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "reports",
+        "symptoms": "The daily occupancy report counted guests who checked in between midnight and 5:30 AM on the previous day, because report days were cut at midnight UTC.",
+        "fix_summary": "Cut report days at the property's local midnight in reports/occupancy.py."
+      },
+      {
+        "id": 3132,
+        "name": "Deposit a rupee off on the payment link",
+        "cause": "Floating point",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Payment links for 30% deposits asked for amounts like ₹4,449.9000001, and banks rejected them, because the deposit was computed in floating point.",
+        "fix_summary": "Computed deposits in whole paise in payments/deposit.py."
+      },
+      {
+        "id": 3136,
+        "name": "Booking page shows yesterday's rates",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "rates",
+        "symptoms": "After a revenue manager changed rates, the booking page kept showing the old prices for up to an hour, because rate pages were cached.",
+        "fix_summary": "Purged the rate page cache on every rate change."
+      },
+      {
+        "id": 3139,
+        "name": "Special requests wiped when a booking's dates change",
+        "cause": "Lost data",
+        "language": "Python",
+        "component": "special-requests",
+        "symptoms": "Changing the dates of a booking deleted the guest's special requests (extra bed, early check-in, dietary notes), because modify_booking() rebuilt the booking without them.",
+        "fix_summary": "Copied special requests onto the changed booking in modify_booking() and tested every request type."
+      },
+      {
+        "id": 3143,
+        "name": "Rates sync twice after a restart",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "After a restart, the channel manager pushed every rate twice, and some agencies kept the older one.",
+        "fix_summary": "Locked the sync job per property while it runs."
+      },
+      {
+        "id": 3146,
+        "name": "Hindi guest names garbled on registration cards",
+        "cause": "Encoding",
+        "language": "Python",
+        "component": "check-in",
+        "symptoms": "Guest names in Devanagari printed as question marks on registration cards.",
+        "fix_summary": "Rendered registration cards with a Unicode font."
+      },
+      {
+        "id": 3150,
+        "name": "Late-checkout fee an hour early after the clock change",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "At the London property, the late-checkout fee started at 11 AM instead of noon after the clocks went forward, because the cutoff was stored with a fixed UTC offset.",
+        "fix_summary": "Stored the cutoff as local time with the property's zone rules in invoices/fees.py."
+      },
+      {
+        "id": 3153,
+        "name": "Special requests lost on agency bookings",
+        "cause": "Lost data",
+        "language": "Go",
+        "component": "special-requests",
+        "symptoms": "Special requests on bookings from travel agencies never reached the hotel, because the channel mapping skipped the comments field.",
+        "fix_summary": "Mapped the agency comments field to special requests in mapBooking()."
+      },
+      {
+        "id": 3157,
+        "name": "Staff app crashes on walk-ins without an email",
+        "cause": "Null reference",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "Checking in a walk-in guest without an email address crashed the staff app.",
+        "fix_summary": "Made email optional on the check-in form."
+      },
+      {
+        "id": 3160,
+        "name": "Agencies sell rooms that are already gone",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Travel agencies kept selling rooms for up to 10 minutes after they sold out, because availability was cached in the sync service.",
+        "fix_summary": "Pushed availability changes to agencies as they happen."
+      },
+      {
+        "id": 3164,
+        "name": "Refund a rupee short after a cancellation",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Refunds after a partial cancellation were sometimes ₹1 short, because each night's refund was rounded down.",
+        "fix_summary": "Rounded the refund once, half up, in refunds.calculate()."
+      },
+      {
+        "id": 3167,
+        "name": "Housekeeping rooms assigned to staff on leave",
+        "cause": "Missing check",
+        "language": "Kotlin",
+        "component": "housekeeping",
+        "symptoms": "Rooms were assigned to housekeepers who were on leave that day.",
+        "fix_summary": "Skipped staff on leave when assigning rooms."
+      },
+      {
+        "id": 3171,
+        "name": "Loyalty points added twice for long stays",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "loyalty",
+        "symptoms": "Stays longer than 7 nights earned points twice, because the nightly job and the checkout job both credited them.",
+        "fix_summary": "Credited points only at checkout."
+      },
+      {
+        "id": 3174,
+        "name": "Invoice total a rupee off at checkout",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Checkout invoices were sometimes ₹1 more than the booking total, because the invoice rounded the GST on each line separately.",
+        "fix_summary": "Calculated GST once on the invoice subtotal in invoices/tax.py and rounded once."
+      },
+      {
+        "id": 3178,
+        "name": "Availability calendar a day off for guests in the US",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "availability",
+        "symptoms": "Guests in the US saw rooms free one day earlier than they really were, because the calendar read dates as midnight UTC.",
+        "fix_summary": "Sent availability as plain dates and showed them without timezone conversion."
+      },
+      {
+        "id": 3181,
+        "name": "Booking emails sent twice",
+        "cause": "Missing deduplication",
+        "language": "Python",
+        "component": "notifications",
+        "symptoms": "Guests got two confirmation emails when the payment callback arrived twice.",
+        "fix_summary": "Sent one confirmation per booking ID."
+      },
+      {
+        "id": 3185,
+        "name": "Goa invoices show the Mumbai address",
+        "cause": "Config",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Invoices from the Goa property showed the Mumbai head office address.",
+        "fix_summary": "Read the address from each property's settings."
+      },
+      {
+        "id": 3188,
+        "name": "Promo codes stack with member rates",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests could apply a promo code on top of the member rate and get two discounts.",
+        "fix_summary": "Allowed one discount per booking."
+      },
+      {
+        "id": 3192,
+        "name": "Channel sync stops after one agency errors",
+        "cause": "Error handling",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "One travel agency returning an error stopped rate updates for every agency.",
+        "fix_summary": "Synced each agency separately and retried failures."
+      }
+    ],
+    "new_report": {
+      "title": "Hotel lost my baby cot",
+      "description": "I reserved two nights at your Goa hotel on your app and asked for a baby cot at the time; my first confirmation email lists 'Baby cot' under requests. Last week I moved the stay one day later in the app. The new confirmation email has no requests at all, and when I phoned the hotel, they said there's nothing about a cot and they still can't see it. Also, your app logged me out twice this week, which is annoying.",
+      "language": "Python",
+      "component": null
+    },
+    "expected": {"verdict": "regression", "bug_id": 3139},
+    "siblings": [3115, 3153],
+    "decoy_bug_id": null,
+    "key_clue": "The new confirmation email has no requests at all",
+    "why": "The cot request was saved (the first confirmation lists it) and vanished when the guest moved the dates (the new confirmation has no requests), which is #3139 (modify_booking() dropping special requests); #3115 only hid requests from housekeeping and #3153 lost requests on agency bookings; the logouts are unrelated."
+  },
+  {
+    "id": "zb-41",
+    "tier": "expert",
+    "type": "B",
+    "history": [
+      {
+        "id": 3301,
+        "name": "KYC selfie check fails in low light",
+        "cause": "Image handling",
+        "language": "Kotlin",
+        "component": "kyc",
+        "symptoms": "The KYC selfie check rejected most photos taken indoors at night.",
+        "fix_summary": "Raised the camera exposure before taking the selfie."
+      },
+      {
+        "id": 3304,
+        "name": "Stop-loss orders fire late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "At 9:15, stop-loss orders triggered up to 40 seconds late, because triggers waited behind the pre-open order queue.",
+        "fix_summary": "Gave stop-loss triggers their own queue."
+      },
+      {
+        "id": 3308,
+        "name": "Contract note brokerage a paisa off",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Contract notes sometimes showed brokerage ₹0.01 higher than the ledger, because brokerage was rounded per trade and then added up.",
+        "fix_summary": "Rounded brokerage once per contract note in statements/contract_note.py."
+      },
+      {
+        "id": 3311,
+        "name": "Stop-loss orders fire twice in fast markets",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "In fast markets some stop-loss orders were sent to the exchange twice, because two price ticks triggered the same order before its status was saved.",
+        "fix_summary": "Claimed each triggered order with a compare-and-set on its status in StopLossTrigger.fire()."
+      },
+      {
+        "id": 3315,
+        "name": "Chart times in UTC for users abroad",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "Users who set their country to UAE saw chart times in UTC.",
+        "fix_summary": "Showed chart times in the exchange's timezone."
+      },
+      {
+        "id": 3318,
+        "name": "Price alerts an hour late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Price alerts set overnight fired up to an hour after the price was hit at market open, because all overnight alerts were checked in one slow batch.",
+        "fix_summary": "Checked alerts on every price tick instead of in a batch."
+      },
+      {
+        "id": 3322,
+        "name": "Funds added twice on a slow UPI callback",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "When the UPI callback was slow and the user retried, the money was credited twice.",
+        "fix_summary": "Credited funds once per UPI transaction ID."
+      },
+      {
+        "id": 3325,
+        "name": "Average buy price wrong after a stock split",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:5 split, the average price was divided by 5 but the quantity wasn't multiplied, so holdings showed a fifth of the shares.",
+        "fix_summary": "Applied the split ratio to quantity as well as price in CorporateActions.apply_split()."
+      },
+      {
+        "id": 3329,
+        "name": "PAN check rejects lowercase letters",
+        "cause": "Validation",
+        "language": "TypeScript",
+        "component": "kyc",
+        "symptoms": "Typing a PAN in lowercase failed the format check.",
+        "fix_summary": "Uppercased the PAN before checking it."
+      },
+      {
+        "id": 3332,
+        "name": "Stop-limit orders rejected near the circuit limit",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Stop-limit orders priced within 1% of the circuit limit were rejected by our own checks, which used yesterday's limits.",
+        "fix_summary": "Loaded the day's circuit limits at 9:00."
+      },
+      {
+        "id": 3336,
+        "name": "Statement sell prices rounded down",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Monthly statements showed sell prices rounded down to the rupee, so realised gains looked smaller.",
+        "fix_summary": "Printed prices to two decimals in statements/monthly.py."
+      },
+      {
+        "id": 3339,
+        "name": "Price alerts sent twice",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Some price alerts were sent twice when two servers checked the same alert.",
+        "fix_summary": "Marked alerts as sent with a conditional update."
+      },
+      {
+        "id": 3343,
+        "name": "Holdings show sold shares until the next day",
+        "cause": "Cache",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "Shares sold in the morning still showed in Android holdings until the next day.",
+        "fix_summary": "Refreshed holdings after every executed order."
+      },
+      {
+        "id": 3346,
+        "name": "Tax report counts early 1 April dividends in the old year",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "Dividends credited between midnight and 5:30 AM on 1 April were counted in the previous year's tax report, because the year was cut by UTC date.",
+        "fix_summary": "Cut tax years by Indian date in tax/years.py."
+      },
+      {
+        "id": 3350,
+        "name": "IPO bids lost when the UPI mandate is approved late",
+        "cause": "Lost event",
+        "language": "Java",
+        "component": "ipo",
+        "symptoms": "IPO bids whose UPI mandate was approved after 5 PM were silently dropped.",
+        "fix_summary": "Showed the mandate deadline and kept bids until it passed."
+      },
+      {
+        "id": 3353,
+        "name": "Portfolio value rounded on the widget",
+        "cause": "Rounding",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "The Android home-screen widget showed portfolio value rounded to the nearest ₹1,000.",
+        "fix_summary": "Showed whole rupees on the widget."
+      },
+      {
+        "id": 3357,
+        "name": "Price alerts never fire for symbols with a dot",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Alerts for symbols with a dot or an ampersand never fired, because the symbol check rejected them.",
+        "fix_summary": "Allowed dots and ampersands in symbols."
+      },
+      {
+        "id": 3360,
+        "name": "Bracket orders lose their stop leg after an edit",
+        "cause": "Lost data",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Editing the target price of a bracket order silently removed its stop-loss leg.",
+        "fix_summary": "Kept every leg when changing a bracket order."
+      },
+      {
+        "id": 3364,
+        "name": "Withdrawals fail on bank holidays",
+        "cause": "Business rule",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "Withdrawals requested on bank holidays failed instead of waiting for the next working day.",
+        "fix_summary": "Queued withdrawals made on holidays."
+      },
+      {
+        "id": 3367,
+        "name": "Watchlist order mixed up after editing on two devices",
+        "cause": "Race condition",
+        "language": "Kotlin",
+        "component": "watchlist",
+        "symptoms": "Reordering a watchlist on the phone and the web at the same time left a mixed-up order.",
+        "fix_summary": "Saved the order with a version number and rejected stale writes."
+      },
+      {
+        "id": 3371,
+        "name": "Tax report crashes on delisted stocks",
+        "cause": "Null reference",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "The tax report failed for anyone who had held a stock that was later delisted, because its current price was null.",
+        "fix_summary": "Used the last traded price for delisted stocks."
+      },
+      {
+        "id": 3374,
+        "name": "Average buy price wrong after a bonus issue",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:1 bonus issue, holdings showed twice the shares at the old average price, so the app showed a large loss.",
+        "fix_summary": "Applied the bonus ratio to both quantity and average price in CorporateActions.apply_bonus()."
+      },
+      {
+        "id": 3378,
+        "name": "1-minute chart skips the 9:15 candle",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "The 1-minute chart left out the 9:15 candle, because candles started at the first full minute after the open.",
+        "fix_summary": "Included the opening minute's candle."
+      },
+      {
+        "id": 3381,
+        "name": "Watchlist keeps delisted stocks",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "watchlist",
+        "symptoms": "Delisted stocks stayed in watchlists with a frozen price.",
+        "fix_summary": "Removed delisted stocks nightly and told the user."
+      },
+      {
+        "id": 3385,
+        "name": "Order-fill notifications missing on iOS",
+        "cause": "Config",
+        "language": "Swift",
+        "component": "notifications",
+        "symptoms": "Order-fill notifications stopped arriving on iPhones after the push certificate was renewed.",
+        "fix_summary": "Installed the new push certificate and added an expiry alert."
+      },
+      {
+        "id": 3388,
+        "name": "IPO allotment status a day late",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "ipo",
+        "symptoms": "The app showed 'allotment pending' for a day after the registrar published results.",
+        "fix_summary": "Checked the registrar every 15 minutes on allotment day."
+      },
+      {
+        "id": 3392,
+        "name": "Market depth shows filled bids",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "market-data",
+        "symptoms": "The market depth panel on the web kept showing bids for up to 5 seconds after they were filled.",
+        "fix_summary": "Streamed depth updates instead of polling."
+      }
+    ],
+    "new_report": {
+      "title": "App says I've lost ₹42,000 on Infosys",
+      "description": "Last month I got free Infosys shares, one for every one I already had. Since then the app says I'm down ₹42,000, which is about what I put in. It's as if the app thinks I paid for the free ones too. Support note on this ticket: 'The split bug, #3325, is back; splits and these go through the same code.'",
+      "language": "Python",
+      "component": "portfolio"
+    },
+    "expected": {"verdict": "regression", "bug_id": 3374},
+    "siblings": [3325, 3343, 3353],
+    "decoy_bug_id": null,
+    "key_clue": "I got free Infosys shares, one for every one I already had",
+    "why": "Free shares one for one is a bonus issue, and holdings costed as if the free shares were bought at full price is #3374 (apply_bonus() not adjusting the average); support's #3325 is the split twin, which shrank the quantity instead."
+  },
+  {
+    "id": "zb-42",
+    "tier": "expert",
+    "type": "B",
+    "history": [
+      {
+        "id": 3501,
+        "name": "Tamil subtitles garbled on the web player",
+        "cause": "Encoding",
+        "language": "TypeScript",
+        "component": "subtitles",
+        "symptoms": "Tamil subtitles showed as boxes on the web player, because the subtitle file was read as Latin-1.",
+        "fix_summary": "Read subtitle files as UTF-8."
+      },
+      {
+        "id": 3504,
+        "name": "Profile pictures don't update",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "cdn",
+        "symptoms": "New profile pictures didn't show for up to a week, because the CDN cached them under the same URL.",
+        "fix_summary": "Versioned profile picture URLs."
+      },
+      {
+        "id": 3508,
+        "name": "Subtitles slowly drift out of sync on long films",
+        "cause": "Frame rate",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "On every device, subtitles fell steadily behind on films mastered at 25 fps, about 2½ minutes an hour, because the subtitle converter assumed 24 fps.",
+        "fix_summary": "Read the frame rate from the stream manifest in subtitles/vtt_convert.go before converting timestamps."
+      },
+      {
+        "id": 3511,
+        "name": "Charged twice when switching plans",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Switching plans twice quickly charged the card for both plans.",
+        "fix_summary": "Locked the subscription while a plan change is in progress."
+      },
+      {
+        "id": 3515,
+        "name": "Downloads stuck at 99% on Android",
+        "cause": "Off-by-one",
+        "language": "Kotlin",
+        "component": "downloads",
+        "symptoms": "Downloads stopped at 99%, because the last segment was never marked done.",
+        "fix_summary": "Marked the final segment done when its last byte arrives."
+      },
+      {
+        "id": 3518,
+        "name": "Kids profiles show 16+ titles in search",
+        "cause": "Missing filter",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching from a kids profile showed 16+ titles, because the search index ignored the profile's rating limit.",
+        "fix_summary": "Applied the profile's rating limit in search/filter.go."
+      },
+      {
+        "id": 3522,
+        "name": "TV home-screen previews play with sound",
+        "cause": "Config",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "Previews on the Android TV home screen played with sound despite the 'muted previews' setting.",
+        "fix_summary": "Read the setting before starting previews."
+      },
+      {
+        "id": 3525,
+        "name": "Live channels fail with 'link expired' at 5:30 AM",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Live channels stopped with 'link expired' at 5:30 AM every morning, because live tokens expired at the end of the UTC day.",
+        "fix_summary": "Issued live tokens with a rolling 6-hour expiry in LiveToken.Issue()."
+      },
+      {
+        "id": 3529,
+        "name": "Second subtitle track missing from the menu",
+        "cause": "Missing data",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "Titles with two subtitle tracks only showed the first one in the menu.",
+        "fix_summary": "Listed every track from the manifest."
+      },
+      {
+        "id": 3532,
+        "name": "Continue watching shows finished episodes",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "profiles",
+        "symptoms": "Finished episodes stayed in Continue watching for hours, because progress was cached per profile.",
+        "fix_summary": "Cleared the progress cache when an episode finishes."
+      },
+      {
+        "id": 3536,
+        "name": "Recommendations repeat the title you just finished",
+        "cause": "Missing filter",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "The 'Because you watched' row often started with the title the viewer had just finished.",
+        "fix_summary": "Left watched titles out of the row."
+      },
+      {
+        "id": 3539,
+        "name": "Subtitles drift out of sync on Android TV",
+        "cause": "State handling",
+        "language": "Kotlin",
+        "component": "subtitles",
+        "symptoms": "On Android TV, subtitles fell behind after the viewer paused for more than a minute, because the player restarted the subtitle clock from the pause position.",
+        "fix_summary": "Drove subtitles from the video's own clock in SubtitleRenderer.kt."
+      },
+      {
+        "id": 3543,
+        "name": "Downloads fail with 'link expired' when the phone's clock is wrong",
+        "cause": "Clock skew",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Downloads failed with 'link expired' on phones whose clock was more than 5 minutes off, because signed URLs were checked against the device clock.",
+        "fix_summary": "Signed every playback and download URL with the server's time in SignURL() in cdn/sign.go."
+      },
+      {
+        "id": 3546,
+        "name": "Renewal charged a day early for users in the US",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Monthly renewals were charged a day early for users in the US, because the renewal date was worked out at midnight UTC.",
+        "fix_summary": "Worked out renewal dates in the user's timezone."
+      },
+      {
+        "id": 3550,
+        "name": "Android TV player freezes on 4K HDR titles",
+        "cause": "Memory",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "4K HDR titles froze after about 20 minutes on TVs with 2 GB of memory, because decoded frames were never released.",
+        "fix_summary": "Released frames after rendering."
+      },
+      {
+        "id": 3553,
+        "name": "Kids profiles can play 16+ titles from a shared link",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "Opening a shared link to a 16+ title from a kids profile played it without asking for the PIN.",
+        "fix_summary": "Checked the rating limit before playback starts."
+      },
+      {
+        "id": 3557,
+        "name": "Plans page shows old prices after a change",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "billing",
+        "symptoms": "After a price change, the plans page showed the old prices for up to an hour.",
+        "fix_summary": "Purged the plans page cache on price changes."
+      },
+      {
+        "id": 3560,
+        "name": "iOS player loses audio after a phone call",
+        "cause": "Lifecycle",
+        "language": "Swift",
+        "component": "player-ios",
+        "symptoms": "After a phone call, playback resumed without audio.",
+        "fix_summary": "Reactivated the audio session after interruptions."
+      },
+      {
+        "id": 3564,
+        "name": "Search can't find titles with an apostrophe",
+        "cause": "Escaping",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching for titles with an apostrophe, like 'Raja's Return', found nothing.",
+        "fix_summary": "Escaped apostrophes in search queries."
+      },
+      {
+        "id": 3567,
+        "name": "Old parental PIN works on TVs after a change",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "The old parental PIN kept working on TVs for up to a day after it was changed.",
+        "fix_summary": "Checked the PIN with the server instead of a cached copy."
+      },
+      {
+        "id": 3571,
+        "name": "Renamed episodes keep their old titles in the app",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "catalog",
+        "symptoms": "After a studio renamed episodes, the app showed the old titles for a week, because catalog entries were cached.",
+        "fix_summary": "Purged the catalog cache when a title's details change."
+      },
+      {
+        "id": 3574,
+        "name": "Renewed downloads deleted after 30 days anyway",
+        "cause": "Lost data",
+        "language": "Swift",
+        "component": "downloads",
+        "symptoms": "On iOS, renewed downloads were still deleted 30 days after the first download.",
+        "fix_summary": "Updated the expiry date when a download is renewed."
+      },
+      {
+        "id": 3578,
+        "name": "GST added twice on annual plans",
+        "cause": "Double counting",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Annual plans added GST twice: on the plan price and again on the total.",
+        "fix_summary": "Applied GST once, on the plan price."
+      },
+      {
+        "id": 3581,
+        "name": "Recommendation rows titled in the wrong language",
+        "cause": "Localization",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "Viewers who chose Hindi got recommendation rows titled in English.",
+        "fix_summary": "Used the profile language for row titles."
+      },
+      {
+        "id": 3585,
+        "name": "Web player crashes on Safari when skipping the intro",
+        "cause": "Browser compatibility",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Clicking 'Skip intro' on Safari crashed the web player.",
+        "fix_summary": "Seeked with a Safari-safe call."
+      },
+      {
+        "id": 3588,
+        "name": "Downloads count twice toward the device limit",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "downloads",
+        "symptoms": "Downloading on two phones at once counted each phone twice toward the 5-device limit.",
+        "fix_summary": "Counted devices once per device ID."
+      },
+      {
+        "id": 3592,
+        "name": "Autoplay skips an episode on the web",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Autoplay jumped from episode 3 to episode 5 on the web.",
+        "fix_summary": "Picked the next episode by number, not by list position."
+      },
+      {
+        "id": 3595,
+        "name": "Basic plan allows two streams at once",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Basic-plan accounts could stream on two TVs at once, because the stream count was checked before the first stream registered.",
+        "fix_summary": "Registered each stream before checking the plan's limit."
+      }
+    ],
+    "new_report": {
+      "title": "Previews and shows just spin on my TV",
+      "description": "The little previews on my TV's home screen just show a spinning circle, and full episodes won't start either. If I wait, an error says the video address has run out. My TV's time runs 20 min fast, since my husband likes it that way. On my mobile everything plays, and the TV used to play fine before your update last week.",
+      "language": "Go",
+      "component": "player-android-tv"
+    },
+    "expected": {"verdict": "regression", "bug_id": 3543},
+    "siblings": [3525, 3595],
+    "decoy_bug_id": null,
+    "key_clue": "My TV's time runs 20 min fast",
+    "why": "Same root cause, different screen: playback failing with an expired address only on a TV whose time runs 20 minutes fast, right after an update, is #3543's defect (URLs checked against the device clock) returning on the TV; #3525 hit live channels at 5:30 AM, and #3522 is about preview sound."
+  },
+  {
+    "id": "zb-43",
+    "tier": "expert",
+    "type": "C",
+    "history": [
+      {
+        "id": 3101,
+        "name": "Room rates shown without GST on the booking page",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests outside India saw room rates without GST on the booking page, and the GST was only added at payment.",
+        "fix_summary": "Showed GST-inclusive rates to every guest in rateLabel()."
+      },
+      {
+        "id": 3104,
+        "name": "Channel sync drops the last room type",
+        "cause": "Off-by-one",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Only the first N−1 room types reached the travel agencies, so suites were never sold there.",
+        "fix_summary": "Included the last room type in the loop in pushInventory()."
+      },
+      {
+        "id": 3108,
+        "name": "Booking total a rupee off on the confirmation page",
+        "cause": "Rounding",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Totals on the booking confirmation page were sometimes ₹1 higher than the card charge, because the page rounded each night's rate before adding them up.",
+        "fix_summary": "Added up the unrounded nightly rates and rounded once in quoteTotal() in booking-engine/pricing.ts."
+      },
+      {
+        "id": 3111,
+        "name": "Check-in times shown in UTC in the staff app",
+        "cause": "Timezone",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "The front-desk app showed expected arrival times 5½ hours early, because they were shown in UTC.",
+        "fix_summary": "Formatted arrival times in the property's timezone in ArrivalList.kt."
+      },
+      {
+        "id": 3115,
+        "name": "Special requests missing from the housekeeping list",
+        "cause": "Missing filter",
+        "language": "Kotlin",
+        "component": "special-requests",
+        "symptoms": "The housekeeping app didn't show requests like extra pillows, because it only listed requests tagged 'room'.",
+        "fix_summary": "Listed every request type for the room in TaskList.kt."
+      },
+      {
+        "id": 3118,
+        "name": "Two guests booked into the last room",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "availability",
+        "symptoms": "Two guests booking the last free room at the same moment both got a confirmation.",
+        "fix_summary": "Reserved the room with a conditional update before taking payment."
+      },
+      {
+        "id": 3122,
+        "name": "Weekend rates applied on Thursdays",
+        "cause": "Off-by-one",
+        "language": "Python",
+        "component": "rates",
+        "symptoms": "Thursday nights were charged the weekend rate, because the rate calendar counted weekdays from Monday = 0 while rate plans used Sunday = 0.",
+        "fix_summary": "Used ISO weekday numbers in RatePlan.rate_for()."
+      },
+      {
+        "id": 3125,
+        "name": "Guest app crashes on bookings without a room number",
+        "cause": "Null reference",
+        "language": "Swift",
+        "component": "guest-app",
+        "symptoms": "The iOS guest app crashed when opening a booking that had no room assigned yet.",
+        "fix_summary": "Showed 'Room assigned at check-in' when there's no room."
+      },
+      {
+        "id": 3129,
+        "name": "Occupancy report puts early check-ins on the wrong day",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "reports",
+        "symptoms": "The daily occupancy report counted guests who checked in between midnight and 5:30 AM on the previous day, because report days were cut at midnight UTC.",
+        "fix_summary": "Cut report days at the property's local midnight in reports/occupancy.py."
+      },
+      {
+        "id": 3132,
+        "name": "Deposit a rupee off on the payment link",
+        "cause": "Floating point",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Payment links for 30% deposits asked for amounts like ₹4,449.9000001, and banks rejected them, because the deposit was computed in floating point.",
+        "fix_summary": "Computed deposits in whole paise in payments/deposit.py."
+      },
+      {
+        "id": 3136,
+        "name": "Booking page shows yesterday's rates",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "rates",
+        "symptoms": "After a revenue manager changed rates, the booking page kept showing the old prices for up to an hour, because rate pages were cached.",
+        "fix_summary": "Purged the rate page cache on every rate change."
+      },
+      {
+        "id": 3139,
+        "name": "Special requests wiped when a booking's dates change",
+        "cause": "Lost data",
+        "language": "Python",
+        "component": "special-requests",
+        "symptoms": "Changing the dates of a booking deleted the guest's special requests (extra bed, early check-in, dietary notes), because modify_booking() rebuilt the booking without them.",
+        "fix_summary": "Copied special requests onto the changed booking in modify_booking() and tested every request type."
+      },
+      {
+        "id": 3143,
+        "name": "Rates sync twice after a restart",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "After a restart, the channel manager pushed every rate twice, and some agencies kept the older one.",
+        "fix_summary": "Locked the sync job per property while it runs."
+      },
+      {
+        "id": 3146,
+        "name": "Hindi guest names garbled on registration cards",
+        "cause": "Encoding",
+        "language": "Python",
+        "component": "check-in",
+        "symptoms": "Guest names in Devanagari printed as question marks on registration cards.",
+        "fix_summary": "Rendered registration cards with a Unicode font."
+      },
+      {
+        "id": 3150,
+        "name": "Late-checkout fee an hour early after the clock change",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "At the London property, the late-checkout fee started at 11 AM instead of noon after the clocks went forward, because the cutoff was stored with a fixed UTC offset.",
+        "fix_summary": "Stored the cutoff as local time with the property's zone rules in invoices/fees.py."
+      },
+      {
+        "id": 3153,
+        "name": "Special requests lost on agency bookings",
+        "cause": "Lost data",
+        "language": "Go",
+        "component": "special-requests",
+        "symptoms": "Special requests on bookings from travel agencies never reached the hotel, because the channel mapping skipped the comments field.",
+        "fix_summary": "Mapped the agency comments field to special requests in mapBooking()."
+      },
+      {
+        "id": 3157,
+        "name": "Staff app crashes on walk-ins without an email",
+        "cause": "Null reference",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "Checking in a walk-in guest without an email address crashed the staff app.",
+        "fix_summary": "Made email optional on the check-in form."
+      },
+      {
+        "id": 3160,
+        "name": "Agencies sell rooms that are already gone",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Travel agencies kept selling rooms for up to 10 minutes after they sold out, because availability was cached in the sync service.",
+        "fix_summary": "Pushed availability changes to agencies as they happen."
+      },
+      {
+        "id": 3164,
+        "name": "Refund a rupee short after a cancellation",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Refunds after a partial cancellation were sometimes ₹1 short, because each night's refund was rounded down.",
+        "fix_summary": "Rounded the refund once, half up, in refunds.calculate()."
+      },
+      {
+        "id": 3167,
+        "name": "Housekeeping rooms assigned to staff on leave",
+        "cause": "Missing check",
+        "language": "Kotlin",
+        "component": "housekeeping",
+        "symptoms": "Rooms were assigned to housekeepers who were on leave that day.",
+        "fix_summary": "Skipped staff on leave when assigning rooms."
+      },
+      {
+        "id": 3171,
+        "name": "Loyalty points added twice for long stays",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "loyalty",
+        "symptoms": "Stays longer than 7 nights earned points twice, because the nightly job and the checkout job both credited them.",
+        "fix_summary": "Credited points only at checkout."
+      },
+      {
+        "id": 3174,
+        "name": "Invoice total a rupee off at checkout",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Checkout invoices were sometimes ₹1 more than the booking total, because the invoice rounded the GST on each line separately.",
+        "fix_summary": "Calculated GST once on the invoice subtotal in invoices/tax.py and rounded once."
+      },
+      {
+        "id": 3178,
+        "name": "Availability calendar a day off for guests in the US",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "availability",
+        "symptoms": "Guests in the US saw rooms free one day earlier than they really were, because the calendar read dates as midnight UTC.",
+        "fix_summary": "Sent availability as plain dates and showed them without timezone conversion."
+      },
+      {
+        "id": 3181,
+        "name": "Booking emails sent twice",
+        "cause": "Missing deduplication",
+        "language": "Python",
+        "component": "notifications",
+        "symptoms": "Guests got two confirmation emails when the payment callback arrived twice.",
+        "fix_summary": "Sent one confirmation per booking ID."
+      },
+      {
+        "id": 3185,
+        "name": "Goa invoices show the Mumbai address",
+        "cause": "Config",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Invoices from the Goa property showed the Mumbai head office address.",
+        "fix_summary": "Read the address from each property's settings."
+      },
+      {
+        "id": 3188,
+        "name": "Promo codes stack with member rates",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests could apply a promo code on top of the member rate and get two discounts.",
+        "fix_summary": "Allowed one discount per booking."
+      },
+      {
+        "id": 3192,
+        "name": "Channel sync stops after one agency errors",
+        "cause": "Error handling",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "One travel agency returning an error stopped rate updates for every agency.",
+        "fix_summary": "Synced each agency separately and retried failures."
+      }
+    ],
+    "new_report": {
+      "title": "Booking totals a rupee off",
+      "description": "Accounts found ₹1 differences on 23 bookings in September, all of them made through travel agencies. On every one, our confirmation page, the card charge and our checkout invoice agree to the paisa; the ₹1 is between our invoice and the commission statement our sync service sends the agency, which adds up a separately rounded commission for each night.",
+      "language": "Python",
+      "component": "invoices"
+    },
+    "expected": {"verdict": "new", "bug_id": null},
+    "siblings": [],
+    "decoy_bug_id": 3108,
+    "key_clue": "our confirmation page, the card charge and our checkout invoice agree to the paisa",
+    "why": "Looks like #3108 or #3174, but the confirmation page, card charge and invoice all agree, so neither fixed path is off; the gap is in the per-night rounding of agency commissions in the sync service, which no history bug touches, so it's new."
+  },
+  {
+    "id": "zb-44",
+    "tier": "expert",
+    "type": "C",
+    "history": [
+      {
+        "id": 3301,
+        "name": "KYC selfie check fails in low light",
+        "cause": "Image handling",
+        "language": "Kotlin",
+        "component": "kyc",
+        "symptoms": "The KYC selfie check rejected most photos taken indoors at night.",
+        "fix_summary": "Raised the camera exposure before taking the selfie."
+      },
+      {
+        "id": 3304,
+        "name": "Stop-loss orders fire late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "At 9:15, stop-loss orders triggered up to 40 seconds late, because triggers waited behind the pre-open order queue.",
+        "fix_summary": "Gave stop-loss triggers their own queue."
+      },
+      {
+        "id": 3308,
+        "name": "Contract note brokerage a paisa off",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Contract notes sometimes showed brokerage ₹0.01 higher than the ledger, because brokerage was rounded per trade and then added up.",
+        "fix_summary": "Rounded brokerage once per contract note in statements/contract_note.py."
+      },
+      {
+        "id": 3311,
+        "name": "Stop-loss orders fire twice in fast markets",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "In fast markets some stop-loss orders were sent to the exchange twice, because two price ticks triggered the same order before its status was saved.",
+        "fix_summary": "Claimed each triggered order with a compare-and-set on its status in StopLossTrigger.fire()."
+      },
+      {
+        "id": 3315,
+        "name": "Chart times in UTC for users abroad",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "Users who set their country to UAE saw chart times in UTC.",
+        "fix_summary": "Showed chart times in the exchange's timezone."
+      },
+      {
+        "id": 3318,
+        "name": "Price alerts an hour late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Price alerts set overnight fired up to an hour after the price was hit at market open, because all overnight alerts were checked in one slow batch.",
+        "fix_summary": "Checked alerts on every price tick instead of in a batch."
+      },
+      {
+        "id": 3322,
+        "name": "Funds added twice on a slow UPI callback",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "When the UPI callback was slow and the user retried, the money was credited twice.",
+        "fix_summary": "Credited funds once per UPI transaction ID."
+      },
+      {
+        "id": 3325,
+        "name": "Average buy price wrong after a stock split",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:5 split, the average price was divided by 5 but the quantity wasn't multiplied, so holdings showed a fifth of the shares.",
+        "fix_summary": "Applied the split ratio to quantity as well as price in CorporateActions.apply_split()."
+      },
+      {
+        "id": 3329,
+        "name": "PAN check rejects lowercase letters",
+        "cause": "Validation",
+        "language": "TypeScript",
+        "component": "kyc",
+        "symptoms": "Typing a PAN in lowercase failed the format check.",
+        "fix_summary": "Uppercased the PAN before checking it."
+      },
+      {
+        "id": 3332,
+        "name": "Stop-limit orders rejected near the circuit limit",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Stop-limit orders priced within 1% of the circuit limit were rejected by our own checks, which used yesterday's limits.",
+        "fix_summary": "Loaded the day's circuit limits at 9:00."
+      },
+      {
+        "id": 3336,
+        "name": "Statement sell prices rounded down",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Monthly statements showed sell prices rounded down to the rupee, so realised gains looked smaller.",
+        "fix_summary": "Printed prices to two decimals in statements/monthly.py."
+      },
+      {
+        "id": 3339,
+        "name": "Price alerts sent twice",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Some price alerts were sent twice when two servers checked the same alert.",
+        "fix_summary": "Marked alerts as sent with a conditional update."
+      },
+      {
+        "id": 3343,
+        "name": "Holdings show sold shares until the next day",
+        "cause": "Cache",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "Shares sold in the morning still showed in Android holdings until the next day.",
+        "fix_summary": "Refreshed holdings after every executed order."
+      },
+      {
+        "id": 3346,
+        "name": "Tax report counts early 1 April dividends in the old year",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "Dividends credited between midnight and 5:30 AM on 1 April were counted in the previous year's tax report, because the year was cut by UTC date.",
+        "fix_summary": "Cut tax years by Indian date in tax/years.py."
+      },
+      {
+        "id": 3350,
+        "name": "IPO bids lost when the UPI mandate is approved late",
+        "cause": "Lost event",
+        "language": "Java",
+        "component": "ipo",
+        "symptoms": "IPO bids whose UPI mandate was approved after 5 PM were silently dropped.",
+        "fix_summary": "Showed the mandate deadline and kept bids until it passed."
+      },
+      {
+        "id": 3353,
+        "name": "Portfolio value rounded on the widget",
+        "cause": "Rounding",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "The Android home-screen widget showed portfolio value rounded to the nearest ₹1,000.",
+        "fix_summary": "Showed whole rupees on the widget."
+      },
+      {
+        "id": 3357,
+        "name": "Price alerts never fire for symbols with a dot",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Alerts for symbols with a dot or an ampersand never fired, because the symbol check rejected them.",
+        "fix_summary": "Allowed dots and ampersands in symbols."
+      },
+      {
+        "id": 3360,
+        "name": "Bracket orders lose their stop leg after an edit",
+        "cause": "Lost data",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Editing the target price of a bracket order silently removed its stop-loss leg.",
+        "fix_summary": "Kept every leg when changing a bracket order."
+      },
+      {
+        "id": 3364,
+        "name": "Withdrawals fail on bank holidays",
+        "cause": "Business rule",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "Withdrawals requested on bank holidays failed instead of waiting for the next working day.",
+        "fix_summary": "Queued withdrawals made on holidays."
+      },
+      {
+        "id": 3367,
+        "name": "Watchlist order mixed up after editing on two devices",
+        "cause": "Race condition",
+        "language": "Kotlin",
+        "component": "watchlist",
+        "symptoms": "Reordering a watchlist on the phone and the web at the same time left a mixed-up order.",
+        "fix_summary": "Saved the order with a version number and rejected stale writes."
+      },
+      {
+        "id": 3371,
+        "name": "Tax report crashes on delisted stocks",
+        "cause": "Null reference",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "The tax report failed for anyone who had held a stock that was later delisted, because its current price was null.",
+        "fix_summary": "Used the last traded price for delisted stocks."
+      },
+      {
+        "id": 3374,
+        "name": "Average buy price wrong after a bonus issue",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:1 bonus issue, holdings showed twice the shares at the old average price, so the app showed a large loss.",
+        "fix_summary": "Applied the bonus ratio to both quantity and average price in CorporateActions.apply_bonus()."
+      },
+      {
+        "id": 3378,
+        "name": "1-minute chart skips the 9:15 candle",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "The 1-minute chart left out the 9:15 candle, because candles started at the first full minute after the open.",
+        "fix_summary": "Included the opening minute's candle."
+      },
+      {
+        "id": 3381,
+        "name": "Watchlist keeps delisted stocks",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "watchlist",
+        "symptoms": "Delisted stocks stayed in watchlists with a frozen price.",
+        "fix_summary": "Removed delisted stocks nightly and told the user."
+      },
+      {
+        "id": 3385,
+        "name": "Order-fill notifications missing on iOS",
+        "cause": "Config",
+        "language": "Swift",
+        "component": "notifications",
+        "symptoms": "Order-fill notifications stopped arriving on iPhones after the push certificate was renewed.",
+        "fix_summary": "Installed the new push certificate and added an expiry alert."
+      },
+      {
+        "id": 3388,
+        "name": "IPO allotment status a day late",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "ipo",
+        "symptoms": "The app showed 'allotment pending' for a day after the registrar published results.",
+        "fix_summary": "Checked the registrar every 15 minutes on allotment day."
+      },
+      {
+        "id": 3392,
+        "name": "Market depth shows filled bids",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "market-data",
+        "symptoms": "The market depth panel on the web kept showing bids for up to 5 seconds after they were filled.",
+        "fix_summary": "Streamed depth updates instead of polling."
+      }
+    ],
+    "new_report": {
+      "title": "Price alerts late again at market open",
+      "description": "Several iPhone users say alerts set overnight arrive up to 20 minutes late at the open. Developer comment: 'This is definitely #3318 again, the overnight batch is back.' But our alert log shows each alert triggered within a second of its price being hit (09:15:04 for a 09:15:03 tick), and Android users get the same alerts on time. The iOS pushes for these were sent to Apple with priority 5.",
+      "language": "Java",
+      "component": "alerts"
+    },
+    "expected": {"verdict": "new", "bug_id": null},
+    "siblings": [],
+    "decoy_bug_id": 3318,
+    "key_clue": "our alert log shows each alert triggered within a second of its price being hit",
+    "why": "The developer blames #3318, but alerts trigger on time and Android receives them on time, so the batch isn't back; the delay is in iOS push delivery (sent at low priority), a different defect (#3385 was missing notifications after a certificate renewal), so it's new."
+  },
+  {
+    "id": "zb-45",
+    "tier": "expert",
+    "type": "C",
+    "history": [
+      {
+        "id": 3501,
+        "name": "Tamil subtitles garbled on the web player",
+        "cause": "Encoding",
+        "language": "TypeScript",
+        "component": "subtitles",
+        "symptoms": "Tamil subtitles showed as boxes on the web player, because the subtitle file was read as Latin-1.",
+        "fix_summary": "Read subtitle files as UTF-8."
+      },
+      {
+        "id": 3504,
+        "name": "Profile pictures don't update",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "cdn",
+        "symptoms": "New profile pictures didn't show for up to a week, because the CDN cached them under the same URL.",
+        "fix_summary": "Versioned profile picture URLs."
+      },
+      {
+        "id": 3508,
+        "name": "Subtitles slowly drift out of sync on long films",
+        "cause": "Frame rate",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "On every device, subtitles fell steadily behind on films mastered at 25 fps, about 2½ minutes an hour, because the subtitle converter assumed 24 fps.",
+        "fix_summary": "Read the frame rate from the stream manifest in subtitles/vtt_convert.go before converting timestamps."
+      },
+      {
+        "id": 3511,
+        "name": "Charged twice when switching plans",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Switching plans twice quickly charged the card for both plans.",
+        "fix_summary": "Locked the subscription while a plan change is in progress."
+      },
+      {
+        "id": 3515,
+        "name": "Downloads stuck at 99% on Android",
+        "cause": "Off-by-one",
+        "language": "Kotlin",
+        "component": "downloads",
+        "symptoms": "Downloads stopped at 99%, because the last segment was never marked done.",
+        "fix_summary": "Marked the final segment done when its last byte arrives."
+      },
+      {
+        "id": 3518,
+        "name": "Kids profiles show 16+ titles in search",
+        "cause": "Missing filter",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching from a kids profile showed 16+ titles, because the search index ignored the profile's rating limit.",
+        "fix_summary": "Applied the profile's rating limit in search/filter.go."
+      },
+      {
+        "id": 3522,
+        "name": "TV home-screen previews play with sound",
+        "cause": "Config",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "Previews on the Android TV home screen played with sound despite the 'muted previews' setting.",
+        "fix_summary": "Read the setting before starting previews."
+      },
+      {
+        "id": 3525,
+        "name": "Live channels fail with 'link expired' at 5:30 AM",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Live channels stopped with 'link expired' at 5:30 AM every morning, because live tokens expired at the end of the UTC day.",
+        "fix_summary": "Issued live tokens with a rolling 6-hour expiry in LiveToken.Issue()."
+      },
+      {
+        "id": 3529,
+        "name": "Second subtitle track missing from the menu",
+        "cause": "Missing data",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "Titles with two subtitle tracks only showed the first one in the menu.",
+        "fix_summary": "Listed every track from the manifest."
+      },
+      {
+        "id": 3532,
+        "name": "Continue watching shows finished episodes",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "profiles",
+        "symptoms": "Finished episodes stayed in Continue watching for hours, because progress was cached per profile.",
+        "fix_summary": "Cleared the progress cache when an episode finishes."
+      },
+      {
+        "id": 3536,
+        "name": "Recommendations repeat the title you just finished",
+        "cause": "Missing filter",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "The 'Because you watched' row often started with the title the viewer had just finished.",
+        "fix_summary": "Left watched titles out of the row."
+      },
+      {
+        "id": 3539,
+        "name": "Subtitles drift out of sync on Android TV",
+        "cause": "State handling",
+        "language": "Kotlin",
+        "component": "subtitles",
+        "symptoms": "On Android TV, subtitles fell behind after the viewer paused for more than a minute, because the player restarted the subtitle clock from the pause position.",
+        "fix_summary": "Drove subtitles from the video's own clock in SubtitleRenderer.kt."
+      },
+      {
+        "id": 3543,
+        "name": "Downloads fail with 'link expired' when the phone's clock is wrong",
+        "cause": "Clock skew",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Downloads failed with 'link expired' on phones whose clock was more than 5 minutes off, because signed URLs were checked against the device clock.",
+        "fix_summary": "Signed every playback and download URL with the server's time in SignURL() in cdn/sign.go."
+      },
+      {
+        "id": 3546,
+        "name": "Renewal charged a day early for users in the US",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Monthly renewals were charged a day early for users in the US, because the renewal date was worked out at midnight UTC.",
+        "fix_summary": "Worked out renewal dates in the user's timezone."
+      },
+      {
+        "id": 3550,
+        "name": "Android TV player freezes on 4K HDR titles",
+        "cause": "Memory",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "4K HDR titles froze after about 20 minutes on TVs with 2 GB of memory, because decoded frames were never released.",
+        "fix_summary": "Released frames after rendering."
+      },
+      {
+        "id": 3553,
+        "name": "Kids profiles can play 16+ titles from a shared link",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "Opening a shared link to a 16+ title from a kids profile played it without asking for the PIN.",
+        "fix_summary": "Checked the rating limit before playback starts."
+      },
+      {
+        "id": 3557,
+        "name": "Plans page shows old prices after a change",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "billing",
+        "symptoms": "After a price change, the plans page showed the old prices for up to an hour.",
+        "fix_summary": "Purged the plans page cache on price changes."
+      },
+      {
+        "id": 3560,
+        "name": "iOS player loses audio after a phone call",
+        "cause": "Lifecycle",
+        "language": "Swift",
+        "component": "player-ios",
+        "symptoms": "After a phone call, playback resumed without audio.",
+        "fix_summary": "Reactivated the audio session after interruptions."
+      },
+      {
+        "id": 3564,
+        "name": "Search can't find titles with an apostrophe",
+        "cause": "Escaping",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching for titles with an apostrophe, like 'Raja's Return', found nothing.",
+        "fix_summary": "Escaped apostrophes in search queries."
+      },
+      {
+        "id": 3567,
+        "name": "Old parental PIN works on TVs after a change",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "The old parental PIN kept working on TVs for up to a day after it was changed.",
+        "fix_summary": "Checked the PIN with the server instead of a cached copy."
+      },
+      {
+        "id": 3571,
+        "name": "Renamed episodes keep their old titles in the app",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "catalog",
+        "symptoms": "After a studio renamed episodes, the app showed the old titles for a week, because catalog entries were cached.",
+        "fix_summary": "Purged the catalog cache when a title's details change."
+      },
+      {
+        "id": 3574,
+        "name": "Renewed downloads deleted after 30 days anyway",
+        "cause": "Lost data",
+        "language": "Swift",
+        "component": "downloads",
+        "symptoms": "On iOS, renewed downloads were still deleted 30 days after the first download.",
+        "fix_summary": "Updated the expiry date when a download is renewed."
+      },
+      {
+        "id": 3578,
+        "name": "GST added twice on annual plans",
+        "cause": "Double counting",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Annual plans added GST twice: on the plan price and again on the total.",
+        "fix_summary": "Applied GST once, on the plan price."
+      },
+      {
+        "id": 3581,
+        "name": "Recommendation rows titled in the wrong language",
+        "cause": "Localization",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "Viewers who chose Hindi got recommendation rows titled in English.",
+        "fix_summary": "Used the profile language for row titles."
+      },
+      {
+        "id": 3585,
+        "name": "Web player crashes on Safari when skipping the intro",
+        "cause": "Browser compatibility",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Clicking 'Skip intro' on Safari crashed the web player.",
+        "fix_summary": "Seeked with a Safari-safe call."
+      },
+      {
+        "id": 3588,
+        "name": "Downloads count twice toward the device limit",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "downloads",
+        "symptoms": "Downloading on two phones at once counted each phone twice toward the 5-device limit.",
+        "fix_summary": "Counted devices once per device ID."
+      },
+      {
+        "id": 3592,
+        "name": "Autoplay skips an episode on the web",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Autoplay jumped from episode 3 to episode 5 on the web.",
+        "fix_summary": "Picked the next episode by number, not by list position."
+      },
+      {
+        "id": 3595,
+        "name": "Basic plan allows two streams at once",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Basic-plan accounts could stream on two TVs at once, because the stream count was checked before the first stream registered.",
+        "fix_summary": "Registered each stream before checking the plan's limit."
+      }
+    ],
+    "new_report": {
+      "title": "Kids profile shows 16+ titles again",
+      "description": "A parent sent a screenshot: their child's kids profile shows 'Midnight Ward' (16+) on the home screen. Developer comment: 'This is definitely #3518 again, the rating filter regressed.' But searching for 'Midnight Ward' from the same kids profile finds nothing, and Browse hides it too; it only appears in the 'Because you watched' row.",
+      "language": "Go",
+      "component": "search"
+    },
+    "expected": {"verdict": "new", "bug_id": null},
+    "siblings": [],
+    "decoy_bug_id": 3518,
+    "key_clue": "searching for 'Midnight Ward' from the same kids profile finds nothing, and Browse hides it too",
+    "why": "The developer blames #3518, but search and browse correctly hide the 16+ title, so that filter works; it leaks only through the recommendations row, where no history bug covered ratings (#3536 was about repeating watched titles), so it's new."
+  },
+  {
+    "id": "zb-46",
+    "tier": "expert",
+    "type": "D",
+    "history": [
+      {
+        "id": 3101,
+        "name": "Room rates shown without GST on the booking page",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests outside India saw room rates without GST on the booking page, and the GST was only added at payment.",
+        "fix_summary": "Showed GST-inclusive rates to every guest in rateLabel()."
+      },
+      {
+        "id": 3104,
+        "name": "Channel sync drops the last room type",
+        "cause": "Off-by-one",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Only the first N−1 room types reached the travel agencies, so suites were never sold there.",
+        "fix_summary": "Included the last room type in the loop in pushInventory()."
+      },
+      {
+        "id": 3108,
+        "name": "Booking total a rupee off on the confirmation page",
+        "cause": "Rounding",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Totals on the booking confirmation page were sometimes ₹1 higher than the card charge, because the page rounded each night's rate before adding them up.",
+        "fix_summary": "Added up the unrounded nightly rates and rounded once in quoteTotal() in booking-engine/pricing.ts."
+      },
+      {
+        "id": 3111,
+        "name": "Check-in times shown in UTC in the staff app",
+        "cause": "Timezone",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "The front-desk app showed expected arrival times 5½ hours early, because they were shown in UTC.",
+        "fix_summary": "Formatted arrival times in the property's timezone in ArrivalList.kt."
+      },
+      {
+        "id": 3115,
+        "name": "Special requests missing from the housekeeping list",
+        "cause": "Missing filter",
+        "language": "Kotlin",
+        "component": "special-requests",
+        "symptoms": "The housekeeping app didn't show requests like extra pillows, because it only listed requests tagged 'room'.",
+        "fix_summary": "Listed every request type for the room in TaskList.kt."
+      },
+      {
+        "id": 3118,
+        "name": "Two guests booked into the last room",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "availability",
+        "symptoms": "Two guests booking the last free room at the same moment both got a confirmation.",
+        "fix_summary": "Reserved the room with a conditional update before taking payment."
+      },
+      {
+        "id": 3122,
+        "name": "Weekend rates applied on Thursdays",
+        "cause": "Off-by-one",
+        "language": "Python",
+        "component": "rates",
+        "symptoms": "Thursday nights were charged the weekend rate, because the rate calendar counted weekdays from Monday = 0 while rate plans used Sunday = 0.",
+        "fix_summary": "Used ISO weekday numbers in RatePlan.rate_for()."
+      },
+      {
+        "id": 3125,
+        "name": "Guest app crashes on bookings without a room number",
+        "cause": "Null reference",
+        "language": "Swift",
+        "component": "guest-app",
+        "symptoms": "The iOS guest app crashed when opening a booking that had no room assigned yet.",
+        "fix_summary": "Showed 'Room assigned at check-in' when there's no room."
+      },
+      {
+        "id": 3129,
+        "name": "Occupancy report puts early check-ins on the wrong day",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "reports",
+        "symptoms": "The daily occupancy report counted guests who checked in between midnight and 5:30 AM on the previous day, because report days were cut at midnight UTC.",
+        "fix_summary": "Cut report days at the property's local midnight in reports/occupancy.py."
+      },
+      {
+        "id": 3132,
+        "name": "Deposit a rupee off on the payment link",
+        "cause": "Floating point",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Payment links for 30% deposits asked for amounts like ₹4,449.9000001, and banks rejected them, because the deposit was computed in floating point.",
+        "fix_summary": "Computed deposits in whole paise in payments/deposit.py."
+      },
+      {
+        "id": 3136,
+        "name": "Booking page shows yesterday's rates",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "rates",
+        "symptoms": "After a revenue manager changed rates, the booking page kept showing the old prices for up to an hour, because rate pages were cached.",
+        "fix_summary": "Purged the rate page cache on every rate change."
+      },
+      {
+        "id": 3139,
+        "name": "Special requests wiped when a booking's dates change",
+        "cause": "Lost data",
+        "language": "Python",
+        "component": "special-requests",
+        "symptoms": "Changing the dates of a booking deleted the guest's special requests (extra bed, early check-in, dietary notes), because modify_booking() rebuilt the booking without them.",
+        "fix_summary": "Copied special requests onto the changed booking in modify_booking() and tested every request type."
+      },
+      {
+        "id": 3143,
+        "name": "Rates sync twice after a restart",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "After a restart, the channel manager pushed every rate twice, and some agencies kept the older one.",
+        "fix_summary": "Locked the sync job per property while it runs."
+      },
+      {
+        "id": 3146,
+        "name": "Hindi guest names garbled on registration cards",
+        "cause": "Encoding",
+        "language": "Python",
+        "component": "check-in",
+        "symptoms": "Guest names in Devanagari printed as question marks on registration cards.",
+        "fix_summary": "Rendered registration cards with a Unicode font."
+      },
+      {
+        "id": 3150,
+        "name": "Late-checkout fee an hour early after the clock change",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "At the London property, the late-checkout fee started at 11 AM instead of noon after the clocks went forward, because the cutoff was stored with a fixed UTC offset.",
+        "fix_summary": "Stored the cutoff as local time with the property's zone rules in invoices/fees.py."
+      },
+      {
+        "id": 3153,
+        "name": "Special requests lost on agency bookings",
+        "cause": "Lost data",
+        "language": "Go",
+        "component": "special-requests",
+        "symptoms": "Special requests on bookings from travel agencies never reached the hotel, because the channel mapping skipped the comments field.",
+        "fix_summary": "Mapped the agency comments field to special requests in mapBooking()."
+      },
+      {
+        "id": 3157,
+        "name": "Staff app crashes on walk-ins without an email",
+        "cause": "Null reference",
+        "language": "Kotlin",
+        "component": "check-in",
+        "symptoms": "Checking in a walk-in guest without an email address crashed the staff app.",
+        "fix_summary": "Made email optional on the check-in form."
+      },
+      {
+        "id": 3160,
+        "name": "Agencies sell rooms that are already gone",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "Travel agencies kept selling rooms for up to 10 minutes after they sold out, because availability was cached in the sync service.",
+        "fix_summary": "Pushed availability changes to agencies as they happen."
+      },
+      {
+        "id": 3164,
+        "name": "Refund a rupee short after a cancellation",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "payments",
+        "symptoms": "Refunds after a partial cancellation were sometimes ₹1 short, because each night's refund was rounded down.",
+        "fix_summary": "Rounded the refund once, half up, in refunds.calculate()."
+      },
+      {
+        "id": 3167,
+        "name": "Housekeeping rooms assigned to staff on leave",
+        "cause": "Missing check",
+        "language": "Kotlin",
+        "component": "housekeeping",
+        "symptoms": "Rooms were assigned to housekeepers who were on leave that day.",
+        "fix_summary": "Skipped staff on leave when assigning rooms."
+      },
+      {
+        "id": 3171,
+        "name": "Loyalty points added twice for long stays",
+        "cause": "Race condition",
+        "language": "Python",
+        "component": "loyalty",
+        "symptoms": "Stays longer than 7 nights earned points twice, because the nightly job and the checkout job both credited them.",
+        "fix_summary": "Credited points only at checkout."
+      },
+      {
+        "id": 3174,
+        "name": "Invoice total a rupee off at checkout",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Checkout invoices were sometimes ₹1 more than the booking total, because the invoice rounded the GST on each line separately.",
+        "fix_summary": "Calculated GST once on the invoice subtotal in invoices/tax.py and rounded once."
+      },
+      {
+        "id": 3178,
+        "name": "Availability calendar a day off for guests in the US",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "availability",
+        "symptoms": "Guests in the US saw rooms free one day earlier than they really were, because the calendar read dates as midnight UTC.",
+        "fix_summary": "Sent availability as plain dates and showed them without timezone conversion."
+      },
+      {
+        "id": 3181,
+        "name": "Booking emails sent twice",
+        "cause": "Missing deduplication",
+        "language": "Python",
+        "component": "notifications",
+        "symptoms": "Guests got two confirmation emails when the payment callback arrived twice.",
+        "fix_summary": "Sent one confirmation per booking ID."
+      },
+      {
+        "id": 3185,
+        "name": "Goa invoices show the Mumbai address",
+        "cause": "Config",
+        "language": "Python",
+        "component": "invoices",
+        "symptoms": "Invoices from the Goa property showed the Mumbai head office address.",
+        "fix_summary": "Read the address from each property's settings."
+      },
+      {
+        "id": 3188,
+        "name": "Promo codes stack with member rates",
+        "cause": "Business rule",
+        "language": "TypeScript",
+        "component": "booking-engine",
+        "symptoms": "Guests could apply a promo code on top of the member rate and get two discounts.",
+        "fix_summary": "Allowed one discount per booking."
+      },
+      {
+        "id": 3192,
+        "name": "Channel sync stops after one agency errors",
+        "cause": "Error handling",
+        "language": "Go",
+        "component": "channel-sync",
+        "symptoms": "One travel agency returning an error stopped rate updates for every agency.",
+        "fix_summary": "Synced each agency separately and retried failures."
+      }
+    ],
+    "new_report": {
+      "title": "Night audit posts early walk-ins to the previous day",
+      "description": "Since the night audit moved to the new job scheduler in v8.2, walk-ins who check in between midnight and 5:30 AM are posted to the previous business day in the audit. The occupancy report shows the same guests on the right day. The new scheduler starts the audit at 00:00 UTC, which is 5:30 AM here.",
+      "language": "Python",
+      "component": "night-audit"
+    },
+    "expected": {"verdict": "new", "bug_id": null},
+    "siblings": [],
+    "decoy_bug_id": null,
+    "key_clue": "The occupancy report shows the same guests on the right day",
+    "why": "The same timezone mistake as #3129, but the occupancy report (its fixed code) is right; the error is in the night audit's new scheduler running at 00:00 UTC, which is new code, so it's a new bug (#3111, #3150 and #3178 are other timezone bugs elsewhere)."
+  },
+  {
+    "id": "zb-47",
+    "tier": "expert",
+    "type": "D",
+    "history": [
+      {
+        "id": 3301,
+        "name": "KYC selfie check fails in low light",
+        "cause": "Image handling",
+        "language": "Kotlin",
+        "component": "kyc",
+        "symptoms": "The KYC selfie check rejected most photos taken indoors at night.",
+        "fix_summary": "Raised the camera exposure before taking the selfie."
+      },
+      {
+        "id": 3304,
+        "name": "Stop-loss orders fire late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "At 9:15, stop-loss orders triggered up to 40 seconds late, because triggers waited behind the pre-open order queue.",
+        "fix_summary": "Gave stop-loss triggers their own queue."
+      },
+      {
+        "id": 3308,
+        "name": "Contract note brokerage a paisa off",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Contract notes sometimes showed brokerage ₹0.01 higher than the ledger, because brokerage was rounded per trade and then added up.",
+        "fix_summary": "Rounded brokerage once per contract note in statements/contract_note.py."
+      },
+      {
+        "id": 3311,
+        "name": "Stop-loss orders fire twice in fast markets",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "In fast markets some stop-loss orders were sent to the exchange twice, because two price ticks triggered the same order before its status was saved.",
+        "fix_summary": "Claimed each triggered order with a compare-and-set on its status in StopLossTrigger.fire()."
+      },
+      {
+        "id": 3315,
+        "name": "Chart times in UTC for users abroad",
+        "cause": "Timezone",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "Users who set their country to UAE saw chart times in UTC.",
+        "fix_summary": "Showed chart times in the exchange's timezone."
+      },
+      {
+        "id": 3318,
+        "name": "Price alerts an hour late at market open",
+        "cause": "Queue backlog",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Price alerts set overnight fired up to an hour after the price was hit at market open, because all overnight alerts were checked in one slow batch.",
+        "fix_summary": "Checked alerts on every price tick instead of in a batch."
+      },
+      {
+        "id": 3322,
+        "name": "Funds added twice on a slow UPI callback",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "When the UPI callback was slow and the user retried, the money was credited twice.",
+        "fix_summary": "Credited funds once per UPI transaction ID."
+      },
+      {
+        "id": 3325,
+        "name": "Average buy price wrong after a stock split",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:5 split, the average price was divided by 5 but the quantity wasn't multiplied, so holdings showed a fifth of the shares.",
+        "fix_summary": "Applied the split ratio to quantity as well as price in CorporateActions.apply_split()."
+      },
+      {
+        "id": 3329,
+        "name": "PAN check rejects lowercase letters",
+        "cause": "Validation",
+        "language": "TypeScript",
+        "component": "kyc",
+        "symptoms": "Typing a PAN in lowercase failed the format check.",
+        "fix_summary": "Uppercased the PAN before checking it."
+      },
+      {
+        "id": 3332,
+        "name": "Stop-limit orders rejected near the circuit limit",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Stop-limit orders priced within 1% of the circuit limit were rejected by our own checks, which used yesterday's limits.",
+        "fix_summary": "Loaded the day's circuit limits at 9:00."
+      },
+      {
+        "id": 3336,
+        "name": "Statement sell prices rounded down",
+        "cause": "Rounding",
+        "language": "Python",
+        "component": "statements",
+        "symptoms": "Monthly statements showed sell prices rounded down to the rupee, so realised gains looked smaller.",
+        "fix_summary": "Printed prices to two decimals in statements/monthly.py."
+      },
+      {
+        "id": 3339,
+        "name": "Price alerts sent twice",
+        "cause": "Race condition",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Some price alerts were sent twice when two servers checked the same alert.",
+        "fix_summary": "Marked alerts as sent with a conditional update."
+      },
+      {
+        "id": 3343,
+        "name": "Holdings show sold shares until the next day",
+        "cause": "Cache",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "Shares sold in the morning still showed in Android holdings until the next day.",
+        "fix_summary": "Refreshed holdings after every executed order."
+      },
+      {
+        "id": 3346,
+        "name": "Tax report counts early 1 April dividends in the old year",
+        "cause": "Timezone",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "Dividends credited between midnight and 5:30 AM on 1 April were counted in the previous year's tax report, because the year was cut by UTC date.",
+        "fix_summary": "Cut tax years by Indian date in tax/years.py."
+      },
+      {
+        "id": 3350,
+        "name": "IPO bids lost when the UPI mandate is approved late",
+        "cause": "Lost event",
+        "language": "Java",
+        "component": "ipo",
+        "symptoms": "IPO bids whose UPI mandate was approved after 5 PM were silently dropped.",
+        "fix_summary": "Showed the mandate deadline and kept bids until it passed."
+      },
+      {
+        "id": 3353,
+        "name": "Portfolio value rounded on the widget",
+        "cause": "Rounding",
+        "language": "Kotlin",
+        "component": "portfolio",
+        "symptoms": "The Android home-screen widget showed portfolio value rounded to the nearest ₹1,000.",
+        "fix_summary": "Showed whole rupees on the widget."
+      },
+      {
+        "id": 3357,
+        "name": "Price alerts never fire for symbols with a dot",
+        "cause": "Validation",
+        "language": "Java",
+        "component": "alerts",
+        "symptoms": "Alerts for symbols with a dot or an ampersand never fired, because the symbol check rejected them.",
+        "fix_summary": "Allowed dots and ampersands in symbols."
+      },
+      {
+        "id": 3360,
+        "name": "Bracket orders lose their stop leg after an edit",
+        "cause": "Lost data",
+        "language": "Java",
+        "component": "orders",
+        "symptoms": "Editing the target price of a bracket order silently removed its stop-loss leg.",
+        "fix_summary": "Kept every leg when changing a bracket order."
+      },
+      {
+        "id": 3364,
+        "name": "Withdrawals fail on bank holidays",
+        "cause": "Business rule",
+        "language": "Java",
+        "component": "funds",
+        "symptoms": "Withdrawals requested on bank holidays failed instead of waiting for the next working day.",
+        "fix_summary": "Queued withdrawals made on holidays."
+      },
+      {
+        "id": 3367,
+        "name": "Watchlist order mixed up after editing on two devices",
+        "cause": "Race condition",
+        "language": "Kotlin",
+        "component": "watchlist",
+        "symptoms": "Reordering a watchlist on the phone and the web at the same time left a mixed-up order.",
+        "fix_summary": "Saved the order with a version number and rejected stale writes."
+      },
+      {
+        "id": 3371,
+        "name": "Tax report crashes on delisted stocks",
+        "cause": "Null reference",
+        "language": "Python",
+        "component": "tax-reports",
+        "symptoms": "The tax report failed for anyone who had held a stock that was later delisted, because its current price was null.",
+        "fix_summary": "Used the last traded price for delisted stocks."
+      },
+      {
+        "id": 3374,
+        "name": "Average buy price wrong after a bonus issue",
+        "cause": "Corporate action",
+        "language": "Python",
+        "component": "portfolio",
+        "symptoms": "After a 1:1 bonus issue, holdings showed twice the shares at the old average price, so the app showed a large loss.",
+        "fix_summary": "Applied the bonus ratio to both quantity and average price in CorporateActions.apply_bonus()."
+      },
+      {
+        "id": 3378,
+        "name": "1-minute chart skips the 9:15 candle",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "charts",
+        "symptoms": "The 1-minute chart left out the 9:15 candle, because candles started at the first full minute after the open.",
+        "fix_summary": "Included the opening minute's candle."
+      },
+      {
+        "id": 3381,
+        "name": "Watchlist keeps delisted stocks",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "watchlist",
+        "symptoms": "Delisted stocks stayed in watchlists with a frozen price.",
+        "fix_summary": "Removed delisted stocks nightly and told the user."
+      },
+      {
+        "id": 3385,
+        "name": "Order-fill notifications missing on iOS",
+        "cause": "Config",
+        "language": "Swift",
+        "component": "notifications",
+        "symptoms": "Order-fill notifications stopped arriving on iPhones after the push certificate was renewed.",
+        "fix_summary": "Installed the new push certificate and added an expiry alert."
+      },
+      {
+        "id": 3388,
+        "name": "IPO allotment status a day late",
+        "cause": "Cache",
+        "language": "Python",
+        "component": "ipo",
+        "symptoms": "The app showed 'allotment pending' for a day after the registrar published results.",
+        "fix_summary": "Checked the registrar every 15 minutes on allotment day."
+      },
+      {
+        "id": 3392,
+        "name": "Market depth shows filled bids",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "market-data",
+        "symptoms": "The market depth panel on the web kept showing bids for up to 5 seconds after they were filled.",
+        "fix_summary": "Streamed depth updates instead of polling."
+      }
+    ],
+    "new_report": {
+      "title": "Capital gains report off by a few rupees",
+      "description": "The FY 2025-26 capital gains report shows my total gain ₹14 lower than the sum of my contract notes. Every lot's gain in the report is a whole rupee, while the contract notes and monthly statements show paise and match my bank to the paisa. This report used to match to the paisa last year.",
+      "language": "Python",
+      "component": "tax-reports"
+    },
+    "expected": {"verdict": "new", "bug_id": null},
+    "siblings": [],
+    "decoy_bug_id": null,
+    "key_clue": "Every lot's gain in the report is a whole rupee, while the contract notes and monthly statements show paise and match my bank to the paisa",
+    "why": "The same rounding mistake as #3308, #3336 and #3353, but contract notes and statements (their fixed code) are exact; the whole-rupee lots are in the capital gains report, a code path none of them touched, so it's new."
+  },
+  {
+    "id": "zb-48",
+    "tier": "expert",
+    "type": "D",
+    "history": [
+      {
+        "id": 3501,
+        "name": "Tamil subtitles garbled on the web player",
+        "cause": "Encoding",
+        "language": "TypeScript",
+        "component": "subtitles",
+        "symptoms": "Tamil subtitles showed as boxes on the web player, because the subtitle file was read as Latin-1.",
+        "fix_summary": "Read subtitle files as UTF-8."
+      },
+      {
+        "id": 3504,
+        "name": "Profile pictures don't update",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "cdn",
+        "symptoms": "New profile pictures didn't show for up to a week, because the CDN cached them under the same URL.",
+        "fix_summary": "Versioned profile picture URLs."
+      },
+      {
+        "id": 3508,
+        "name": "Subtitles slowly drift out of sync on long films",
+        "cause": "Frame rate",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "On every device, subtitles fell steadily behind on films mastered at 25 fps, about 2½ minutes an hour, because the subtitle converter assumed 24 fps.",
+        "fix_summary": "Read the frame rate from the stream manifest in subtitles/vtt_convert.go before converting timestamps."
+      },
+      {
+        "id": 3511,
+        "name": "Charged twice when switching plans",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Switching plans twice quickly charged the card for both plans.",
+        "fix_summary": "Locked the subscription while a plan change is in progress."
+      },
+      {
+        "id": 3515,
+        "name": "Downloads stuck at 99% on Android",
+        "cause": "Off-by-one",
+        "language": "Kotlin",
+        "component": "downloads",
+        "symptoms": "Downloads stopped at 99%, because the last segment was never marked done.",
+        "fix_summary": "Marked the final segment done when its last byte arrives."
+      },
+      {
+        "id": 3518,
+        "name": "Kids profiles show 16+ titles in search",
+        "cause": "Missing filter",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching from a kids profile showed 16+ titles, because the search index ignored the profile's rating limit.",
+        "fix_summary": "Applied the profile's rating limit in search/filter.go."
+      },
+      {
+        "id": 3522,
+        "name": "TV home-screen previews play with sound",
+        "cause": "Config",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "Previews on the Android TV home screen played with sound despite the 'muted previews' setting.",
+        "fix_summary": "Read the setting before starting previews."
+      },
+      {
+        "id": 3525,
+        "name": "Live channels fail with 'link expired' at 5:30 AM",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Live channels stopped with 'link expired' at 5:30 AM every morning, because live tokens expired at the end of the UTC day.",
+        "fix_summary": "Issued live tokens with a rolling 6-hour expiry in LiveToken.Issue()."
+      },
+      {
+        "id": 3529,
+        "name": "Second subtitle track missing from the menu",
+        "cause": "Missing data",
+        "language": "Go",
+        "component": "subtitles",
+        "symptoms": "Titles with two subtitle tracks only showed the first one in the menu.",
+        "fix_summary": "Listed every track from the manifest."
+      },
+      {
+        "id": 3532,
+        "name": "Continue watching shows finished episodes",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "profiles",
+        "symptoms": "Finished episodes stayed in Continue watching for hours, because progress was cached per profile.",
+        "fix_summary": "Cleared the progress cache when an episode finishes."
+      },
+      {
+        "id": 3536,
+        "name": "Recommendations repeat the title you just finished",
+        "cause": "Missing filter",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "The 'Because you watched' row often started with the title the viewer had just finished.",
+        "fix_summary": "Left watched titles out of the row."
+      },
+      {
+        "id": 3539,
+        "name": "Subtitles drift out of sync on Android TV",
+        "cause": "State handling",
+        "language": "Kotlin",
+        "component": "subtitles",
+        "symptoms": "On Android TV, subtitles fell behind after the viewer paused for more than a minute, because the player restarted the subtitle clock from the pause position.",
+        "fix_summary": "Drove subtitles from the video's own clock in SubtitleRenderer.kt."
+      },
+      {
+        "id": 3543,
+        "name": "Downloads fail with 'link expired' when the phone's clock is wrong",
+        "cause": "Clock skew",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Downloads failed with 'link expired' on phones whose clock was more than 5 minutes off, because signed URLs were checked against the device clock.",
+        "fix_summary": "Signed every playback and download URL with the server's time in SignURL() in cdn/sign.go."
+      },
+      {
+        "id": 3546,
+        "name": "Renewal charged a day early for users in the US",
+        "cause": "Timezone",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Monthly renewals were charged a day early for users in the US, because the renewal date was worked out at midnight UTC.",
+        "fix_summary": "Worked out renewal dates in the user's timezone."
+      },
+      {
+        "id": 3550,
+        "name": "Android TV player freezes on 4K HDR titles",
+        "cause": "Memory",
+        "language": "Kotlin",
+        "component": "player-android-tv",
+        "symptoms": "4K HDR titles froze after about 20 minutes on TVs with 2 GB of memory, because decoded frames were never released.",
+        "fix_summary": "Released frames after rendering."
+      },
+      {
+        "id": 3553,
+        "name": "Kids profiles can play 16+ titles from a shared link",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "Opening a shared link to a 16+ title from a kids profile played it without asking for the PIN.",
+        "fix_summary": "Checked the rating limit before playback starts."
+      },
+      {
+        "id": 3557,
+        "name": "Plans page shows old prices after a change",
+        "cause": "Cache",
+        "language": "TypeScript",
+        "component": "billing",
+        "symptoms": "After a price change, the plans page showed the old prices for up to an hour.",
+        "fix_summary": "Purged the plans page cache on price changes."
+      },
+      {
+        "id": 3560,
+        "name": "iOS player loses audio after a phone call",
+        "cause": "Lifecycle",
+        "language": "Swift",
+        "component": "player-ios",
+        "symptoms": "After a phone call, playback resumed without audio.",
+        "fix_summary": "Reactivated the audio session after interruptions."
+      },
+      {
+        "id": 3564,
+        "name": "Search can't find titles with an apostrophe",
+        "cause": "Escaping",
+        "language": "Go",
+        "component": "search",
+        "symptoms": "Searching for titles with an apostrophe, like 'Raja's Return', found nothing.",
+        "fix_summary": "Escaped apostrophes in search queries."
+      },
+      {
+        "id": 3567,
+        "name": "Old parental PIN works on TVs after a change",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "parental-controls",
+        "symptoms": "The old parental PIN kept working on TVs for up to a day after it was changed.",
+        "fix_summary": "Checked the PIN with the server instead of a cached copy."
+      },
+      {
+        "id": 3571,
+        "name": "Renamed episodes keep their old titles in the app",
+        "cause": "Cache",
+        "language": "Go",
+        "component": "catalog",
+        "symptoms": "After a studio renamed episodes, the app showed the old titles for a week, because catalog entries were cached.",
+        "fix_summary": "Purged the catalog cache when a title's details change."
+      },
+      {
+        "id": 3574,
+        "name": "Renewed downloads deleted after 30 days anyway",
+        "cause": "Lost data",
+        "language": "Swift",
+        "component": "downloads",
+        "symptoms": "On iOS, renewed downloads were still deleted 30 days after the first download.",
+        "fix_summary": "Updated the expiry date when a download is renewed."
+      },
+      {
+        "id": 3578,
+        "name": "GST added twice on annual plans",
+        "cause": "Double counting",
+        "language": "Go",
+        "component": "billing",
+        "symptoms": "Annual plans added GST twice: on the plan price and again on the total.",
+        "fix_summary": "Applied GST once, on the plan price."
+      },
+      {
+        "id": 3581,
+        "name": "Recommendation rows titled in the wrong language",
+        "cause": "Localization",
+        "language": "Python",
+        "component": "recommendations",
+        "symptoms": "Viewers who chose Hindi got recommendation rows titled in English.",
+        "fix_summary": "Used the profile language for row titles."
+      },
+      {
+        "id": 3585,
+        "name": "Web player crashes on Safari when skipping the intro",
+        "cause": "Browser compatibility",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Clicking 'Skip intro' on Safari crashed the web player.",
+        "fix_summary": "Seeked with a Safari-safe call."
+      },
+      {
+        "id": 3588,
+        "name": "Downloads count twice toward the device limit",
+        "cause": "Race condition",
+        "language": "Go",
+        "component": "downloads",
+        "symptoms": "Downloading on two phones at once counted each phone twice toward the 5-device limit.",
+        "fix_summary": "Counted devices once per device ID."
+      },
+      {
+        "id": 3592,
+        "name": "Autoplay skips an episode on the web",
+        "cause": "Off-by-one",
+        "language": "TypeScript",
+        "component": "player-web",
+        "symptoms": "Autoplay jumped from episode 3 to episode 5 on the web.",
+        "fix_summary": "Picked the next episode by number, not by list position."
+      },
+      {
+        "id": 3595,
+        "name": "Basic plan allows two streams at once",
+        "cause": "Missing check",
+        "language": "Go",
+        "component": "playback-auth",
+        "symptoms": "Basic-plan accounts could stream on two TVs at once, because the stream count was checked before the first stream registered.",
+        "fix_summary": "Registered each stream before checking the plan's limit."
+      }
+    ],
+    "new_report": {
+      "title": "Downloaded episodes still show their old names",
+      "description": "The studio renamed the episodes of 'Dhaba Diaries' season 2 last week. When I stream an episode, the app shows the new names. But the episodes I downloaded to my phone before the rename still show the old names in my Downloads list, even after restarting the app. Is this a caching problem?",
+      "language": "Swift",
+      "component": null
+    },
+    "expected": {"verdict": "new", "bug_id": null},
+    "siblings": [],
+    "decoy_bug_id": null,
+    "key_clue": "When I stream an episode, the app shows the new names",
+    "why": "Streaming shows the new names, so #3571's catalog cache fix works; only episodes downloaded before the rename keep their old names, because downloads store their own copy of the details, a different code path, so it's new."
   }
 ]
