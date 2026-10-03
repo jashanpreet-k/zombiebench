@@ -11,17 +11,29 @@ and asks for JSON only:
     {"verdict": "regression" | "new", "bug_id": <number or null>, "reason": "<one sentence>"}
 
 A case passes only when both the verdict and the bug_id are right. A reply that
-can't be read as that JSON scores 0 for its case and never stops the run.
-The task's score is the share of cases passed, from 0.0 to 1.0.
+can't be read as that JSON counts as wrong and never stops the run.
+
+A call that fails with 429, 5xx, a timeout or a dropped connection is retried
+after 5, 10, 20, 40, 60 and 60 seconds. If it still fails, the case is an ERROR:
+it isn't scored, errors are counted apart, and over 10% errors marks the run
+invalid. Each model's results are saved to zombiebench_results_<model>.json, and
+
+    zombiebench.run(llm=kbench.llms["<model>"], rerun_errors=True)
+
+asks only that model's errored cases again and merges them in.
+
+The task's score is the share of answered cases passed, from 0.0 to 1.0.
 """
 
 import json
 import re
+import time
 
 import kaggle_benchmarks as kbench
 
 # --- CASES: copied from cases.json by embed_cases.py; edit cases.json, then run it ---
 CASES = [{'id': 'zb-01',
+  'tier': 'easy',
   'type': 'A',
   'history': [{'id': 211,
                'name': 'Two patients in one slot',
@@ -75,14 +87,18 @@ CASES = [{'id': 'zb-01',
   'new_report': {'title': 'Appointment reminders an hour early again after the clock change',
                  'description': 'Since the clocks went forward on Sunday, reminder SMSes for our London '
                                 'clinics arrive an hour early: a patient booked at 9:00 gets the 8:00 '
-                                'reminder at 7:00. The new recurring-appointments feature seems to save '
-                                'reminder times as local times without a timezone.',
+                                "reminder at 7:00. Reminder times saved since Friday's deploy are stored as "
+                                'local times without a timezone.',
                  'language': 'Python',
                  'component': 'reminders'},
   'expected': {'verdict': 'regression', 'bug_id': 226},
-  'why': 'Same symptom (reminders an hour early after the clock change), same component, and the same cause: '
-         'reminder times saved without a timezone.'},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': "Reminder times saved since Friday's deploy are stored as local times without a timezone",
+  'why': 'Same symptom (reminders an hour early after the clock change), same component, and the same cause '
+         'in the same code: the reminders code saving times without a timezone, which #226 fixed.'},
  {'id': 'zb-02',
+  'tier': 'easy',
   'type': 'A',
   'history': [{'id': 302,
                'name': 'Rider app crash before the first GPS fix',
@@ -143,16 +159,19 @@ CASES = [{'id': 'zb-01',
                'fix_summary': 'Kept all money as whole paise in integers and formatted it only for '
                               'display.'}],
   'new_report': {'title': 'Cart total showing long decimals again (₹399.90000000000003)',
-                 'description': 'Since the combo-discount release, carts with a combo show totals like '
-                                '₹399.90000000000003 and the payment gateway rejects the amount. The combo '
-                                'discount is computed on rupee floats instead of whole paise, so it looks '
-                                'like a floating point money problem.',
+                 'description': "Since Tuesday's release, carts with a percentage discount show totals like "
+                                '₹399.90000000000003 and the payment gateway rejects the amount. The cart '
+                                'total is being computed on rupee floats instead of whole paise.',
                  'language': 'JavaScript',
                  'component': 'cart'},
   'expected': {'verdict': 'regression', 'bug_id': 329},
-  'why': 'Same long-decimal cart totals rejected by the payment gateway, in the cart, caused again by '
-         'floating point money math.'},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'The cart total is being computed on rupee floats instead of whole paise',
+  'why': 'Same long-decimal totals on carts with a percentage discount, rejected by the payment gateway: the '
+         'cart total is computed in rupee floats again, the exact path #329 fixed.'},
  {'id': 'zb-03',
+  'tier': 'easy',
   'type': 'A',
   'history': [{'id': 403,
                'name': 'Deadlines shown in UTC',
@@ -199,13 +218,18 @@ CASES = [{'id': 'zb-01',
                  'description': "After this morning's deploy the timetable page shows '<<<<<<< HEAD', "
                                 "'=======' and '>>>>>>> sports-day' above the table, with two versions of "
                                 "Friday's periods. Two branches edited the timetable at once and the "
-                                'conflict was committed. Did the CI check for conflict markers get removed?',
+                                'conflict was committed. The CI run for that deploy shows the '
+                                'conflict-marker step was skipped.',
                  'language': 'TypeScript',
                  'component': 'timetable'},
   'expected': {'verdict': 'regression', 'bug_id': 406},
-  'why': 'Same conflict markers shipped on the same timetable page: the merge conflict bug is back, and the '
-         'CI check that stopped it may be gone.'},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'The CI run for that deploy shows the conflict-marker step was skipped',
+  'why': 'Same conflict markers shipped on the same timetable page because the CI conflict-marker step added '
+         "by #406's fix was skipped, so that fix stopped working."},
  {'id': 'zb-04',
+  'tier': 'easy',
   'type': 'B',
   'history': [{'id': 502,
                'name': "Shares that don't add up to the bill",
@@ -264,10 +288,14 @@ CASES = [{'id': 'zb-01',
                  'language': 'Python',
                  'component': None},
   'expected': {'verdict': 'regression', 'bug_id': 509},
+  'siblings': [505],
+  'decoy_bug_id': None,
+  'key_clue': "it greets me as 'RenÃ©' instead of René",
   'why': "Accented names turned into 'Ã©'-style characters only in the emailed message is the Latin-1 email "
          'encoding bug (#509) coming back; the duplicate-email bug (#505) is in the same component but has a '
          'different symptom.'},
  {'id': 'zb-05',
+  'tier': 'easy',
   'type': 'B',
   'history': [{'id': 603,
                'name': 'Audio stops when the screen locks',
@@ -336,10 +364,14 @@ CASES = [{'id': 'zb-01',
                  'language': 'Kotlin',
                  'component': 'streaks'},
   'expected': {'verdict': 'regression', 'bug_id': 618},
+  'siblings': [621],
+  'decoy_bug_id': None,
+  'key_clue': "Saturday's meditation is right there in my history, just listed under Sunday",
   'why': 'A late-evening session filed under the next day, on the weekend daylight saving ended, resetting '
          "the run to 1, is #618's fixed-offset timezone bug; #621 (streak gone after reinstalling) showed 0, "
          'not a one-day slip.'},
  {'id': 'zb-06',
+  'tier': 'easy',
   'type': 'B',
   'history': [{'id': 702,
                'name': 'Event dates a day early in Australia',
@@ -400,10 +432,14 @@ CASES = [{'id': 'zb-01',
                  'language': 'Java',
                  'component': None},
   'expected': {'verdict': 'regression', 'bug_id': 713},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'The passes on their phones showed the identical row and numbers as ours',
   'why': 'Two parties holding valid passes for identical places, both bought the instant sales opened, is '
          "#713's double-sale race condition; the cache bug (#705) only caused an error at payment, never two "
          'tickets.'},
  {'id': 'zb-07',
+  'tier': 'easy',
   'type': 'C',
   'history': [{'id': 803,
                'name': 'Leave approved twice',
@@ -477,9 +513,13 @@ CASES = [{'id': 'zb-01',
                  'language': 'Java',
                  'component': 'payroll'},
   'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 823,
+  'key_clue': 'their payslips count 29 working days instead of 30, as if counting starts on the 2nd',
   'why': "Shares many words with #823, but the gap is exactly one day's pay from a working-days count that "
          'skips the joining day: a counting bug, not floating point rounding.'},
  {'id': 'zb-08',
+  'tier': 'easy',
   'type': 'C',
   'history': [{'id': 904,
                'name': 'Hotel price goes up at checkout',
@@ -539,9 +579,13 @@ CASES = [{'id': 'zb-01',
                  'language': 'Python',
                  'component': 'itinerary'},
   'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 911,
+  'key_clue': "it is always the return flight's departure time, usually days apart",
   'why': "Shares many words with #911, but the outbound flight shows the return flight's time because the "
          'template reads the wrong leg, not a one-hour daylight saving shift.'},
  {'id': 'zb-09',
+  'tier': 'easy',
   'type': 'C',
   'history': [{'id': 1003,
                'name': 'Messages out of order on slow networks',
@@ -607,9 +651,13 @@ CASES = [{'id': 'zb-01',
                  'language': 'Swift',
                  'component': 'media'},
   'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 1017,
+  'key_clue': 'the app loads the whole video into memory to make its thumbnail',
   'why': 'Shares many words with #1017 (crash opening a chat), but the cause is running out of memory while '
          'loading a whole video, not a missing profile.'},
  {'id': 'zb-10',
+  'tier': 'easy',
   'type': 'D',
   'history': [{'id': 1102,
                'name': 'Stock count goes negative',
@@ -665,9 +713,13 @@ CASES = [{'id': 'zb-01',
                  'language': 'CSS',
                  'component': 'dashboard'},
   'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': "The badge's colours are hard-coded instead of using the theme's colour variables",
   'why': "A dark-mode colour problem in the dashboard's CSS; nothing in the history is about styling or the "
          'dashboard.'},
  {'id': 'zb-11',
+  'tier': 'easy',
   'type': 'D',
   'history': [{'id': 1203,
                'name': 'Due dates a day early',
@@ -717,8 +769,12 @@ CASES = [{'id': 'zb-01',
                  'language': 'Ruby',
                  'component': 'import'},
   'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'Every imported cover image is kept in an in-memory hash that is never cleared',
   'why': 'A memory leak in the import worker; no history bug involves memory or the import.'},
  {'id': 'zb-12',
+  'tier': 'easy',
   'type': 'D',
   'history': [{'id': 1302,
                'name': 'Daily highs on the wrong day',
@@ -791,11 +847,3073 @@ CASES = [{'id': 'zb-01',
                  'language': 'C++',
                  'component': None},
   'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'The firmware stores the tip count in a 16-bit unsigned integer',
   'why': 'A 16-bit tip counter overflowing after 65,535; no history bug involves an overflowing counter or '
-         'the rain gauge.'}]
+         'the rain gauge.'},
+ {'id': 'zb-13',
+  'tier': 'hard',
+  'type': 'A',
+  'history': [{'id': 2101,
+               'name': 'Prescription photos arrive sideways',
+               'cause': 'Image handling',
+               'language': 'Swift',
+               'component': 'prescriptions',
+               'symptoms': 'Photos of paper prescriptions taken on iPhones arrived rotated 90°, and '
+                           'pharmacists rejected them as unreadable.',
+               'fix_summary': "Applied the photo's orientation tag before uploading."},
+              {'id': 2104,
+               'name': 'Same-day delivery offered after the Sunday cutoff',
+               'cause': 'Off-by-one',
+               'language': 'TypeScript',
+               'component': 'delivery-slots',
+               'symptoms': 'On Sundays, same-day delivery was still offered after the 2 PM cutoff, because '
+                           'the cutoff table was indexed with Sunday as 7 while the date library returns 0.',
+               'fix_summary': "Used the date library's weekday numbers everywhere in isCutoffPassed()."},
+              {'id': 2108,
+               'name': 'Dose reminders an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'After the clocks went back in October, Android dose reminders fired exactly one '
+                           'hour late, because alarms were scheduled with the UTC offset saved when the '
+                           'reminder was created.',
+               'fix_summary': "Scheduled alarms from the user's zone rules in "
+                              'ReminderScheduler.reschedule().'},
+              {'id': 2111,
+               'name': "Search can't find medicines with a hyphen",
+               'cause': 'Regex',
+               'language': 'TypeScript',
+               'component': 'search',
+               'symptoms': "Searching for 'co-amoxiclav' found nothing, because the search box stripped "
+                           'hyphens but the index kept them.',
+               'fix_summary': 'Normalised hyphens the same way in the index and in queries.'},
+              {'id': 2115,
+               'name': 'Card charged twice when the network drops',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'payments',
+               'symptoms': 'If the connection dropped right after tapping Pay, the app retried the payment '
+                           'and the card was charged twice.',
+               'fix_summary': 'Sent one idempotency key per checkout attempt.'},
+              {'id': 2118,
+               'name': 'Dose reminders stop after the phone restarts',
+               'cause': 'Lifecycle',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'After a phone restart, no dose reminders fired until the app was opened again, '
+                           'because Android clears alarms on reboot.',
+               'fix_summary': 'Re-registered all alarms in a boot receiver.'},
+              {'id': 2122,
+               'name': 'Sold-out medicines still orderable',
+               'cause': 'Cache',
+               'language': 'TypeScript',
+               'component': 'inventory',
+               'symptoms': "Medicines that had sold out kept showing 'In stock' for up to 30 minutes, and "
+                           'those orders were cancelled later.',
+               'fix_summary': 'Cleared the stock cache on every stock change.'},
+              {'id': 2125,
+               'name': 'Evening slots shown as full',
+               'cause': 'Missing filter',
+               'language': 'TypeScript',
+               'component': 'delivery-slots',
+               'symptoms': 'Evening delivery slots showed as full while vans were half empty, because '
+                           'cancelled orders still counted toward slot capacity.',
+               'fix_summary': "Counted only active orders toward a slot's capacity."},
+              {'id': 2129,
+               'name': 'Login codes never reach UAE numbers',
+               'cause': 'Validation',
+               'language': 'TypeScript',
+               'component': 'auth',
+               'symptoms': 'Login codes were never sent to +971 numbers, because the phone check only '
+                           'accepted 10-digit Indian numbers.',
+               'fix_summary': 'Validated numbers with a phone-number library for every supported country.'},
+              {'id': 2132,
+               'name': 'Delivery slot times in UTC on iOS',
+               'cause': 'Timezone',
+               'language': 'Swift',
+               'component': 'delivery-slots',
+               'symptoms': "The iOS app showed delivery slots 5½ hours early, like '12:30–2:30 PM' for a 6–8 "
+                           'PM slot, because slot times were shown in UTC.',
+               'fix_summary': "Formatted slot times in the device's timezone."},
+              {'id': 2136,
+               'name': 'Order updates in English for Hindi users',
+               'cause': 'Localization',
+               'language': 'TypeScript',
+               'component': 'notifications',
+               'symptoms': 'People who chose Hindi still got order-status notifications in English, because '
+                           'the template ignored the language setting.',
+               'fix_summary': "Picked the notification template from the user's language."},
+              {'id': 2139,
+               'name': "Crash on prescriptions without a doctor's name",
+               'cause': 'Null reference',
+               'language': 'Swift',
+               'component': 'prescriptions',
+               'symptoms': "The iOS prescription screen crashed for uploads with no doctor's name, because "
+                           'the name was force-unwrapped.',
+               'fix_summary': "Showed 'Doctor not given' when the name is missing."},
+              {'id': 2143,
+               'name': 'Dose reminders fire twice after a restart',
+               'cause': 'Race condition',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'On some phones every dose reminder fired twice after a restart, because the boot '
+                           'receiver and WorkManager both re-created the same alarms.',
+               'fix_summary': 'Gave each alarm a unique work name and kept the existing one if it was '
+                              'already scheduled.'},
+              {'id': 2146,
+               'name': 'Coupon discount a paisa off',
+               'cause': 'Floating point',
+               'language': 'TypeScript',
+               'component': 'checkout',
+               'symptoms': 'Orders with a percentage coupon sometimes showed ₹0.01 more on the bill than the '
+                           'card was charged.',
+               'fix_summary': 'Calculated discounts in whole paise.'}],
+  'new_report': {'title': 'Dose reminders firing twice again since 6.4.0',
+                 'description': 'Since the 6.4.0 update, several Android users get every dose reminder '
+                                'twice, a few seconds apart. All of them restarted their phones after '
+                                "updating. From a Pixel 7's logcat: `WM-WorkerWrapper: Worker result SUCCESS "
+                                'for dose_reminder_0812` appears twice for the same alarm. Separately, the '
+                                "reminder sound is quieter on Samsung phones, but that's probably a "
+                                'different ticket.',
+                 'language': 'Kotlin',
+                 'component': 'reminders'},
+  'expected': {'verdict': 'regression', 'bug_id': 2143},
+  'siblings': [2108, 2115, 2118],
+  'decoy_bug_id': None,
+  'key_clue': 'every dose reminder twice, a few seconds apart. All of them restarted their phones after '
+              'updating',
+  'why': 'Every reminder firing twice after a restart is #2143 (boot receiver and WorkManager both '
+         're-creating alarms); siblings #2118 (reminders stop after a restart) and #2108 (an hour late) '
+         "don't double anything."},
+ {'id': 'zb-14',
+  'tier': 'hard',
+  'type': 'A',
+  'history': [{'id': 2201,
+               'name': 'Gate passes show the wrong hour',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'gate-pass',
+               'symptoms': 'Visitor gate passes showed times 5½ hours early, so guards turned visitors away, '
+                           'because pass times were printed in UTC.',
+               'fix_summary': "Fixed format_local() in common/timefmt.py to convert to the society's "
+                              'timezone; every screen formats times through it.'},
+              {'id': 2204,
+               'name': 'Two maintenance bills on the 1st',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Some flats got two maintenance bills on the 1st of the month, because two '
+                           'scheduler instances generated bills at the same time.',
+               'fix_summary': 'Took a database lock per month before generating bills.'},
+              {'id': 2208,
+               'name': 'Notices crash the app on long PDFs',
+               'cause': 'Memory',
+               'language': 'Dart',
+               'component': 'notices',
+               'symptoms': 'Opening notice PDFs longer than 30 pages crashed the app on older phones.',
+               'fix_summary': 'Rendered PDF pages one at a time as they scroll into view.'},
+              {'id': 2211,
+               'name': 'Complaint photos silently dropped',
+               'cause': 'Timeout',
+               'language': 'Dart',
+               'component': 'complaints',
+               'symptoms': 'Complaints filed with photos on slow networks were saved without the photos, '
+                           'because the upload gave up after 10 seconds without telling anyone.',
+               'fix_summary': 'Retried photo uploads in the background and showed their progress.'},
+              {'id': 2215,
+               'name': 'Late fee on bills paid on the due date',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Residents who paid just before midnight on the due date were charged a late fee, '
+                           'because the late-fee job ran before the payment confirmation was saved.',
+               'fix_summary': "Ran the late-fee job only after the day's payment confirmations are "
+                              'processed.'},
+              {'id': 2218,
+               'name': 'Clubhouse double-booked',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'amenities',
+               'symptoms': 'Two residents booking the clubhouse for the same evening at the same moment both '
+                           'got a confirmation.',
+               'fix_summary': 'Added a unique constraint on amenity and slot.'},
+              {'id': 2222,
+               'name': 'Maintenance bill shows ₹2,499.999',
+               'cause': 'Floating point',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Bills for flats with a parking add-on showed totals like ₹2,499.999, and the '
+                           'payment link rejected the amount.',
+               'fix_summary': 'Calculated every bill line in whole paise in billing/money.py.'},
+              {'id': 2225,
+               'name': 'Resident list shows tenants who moved out',
+               'cause': 'Cache',
+               'language': 'Python',
+               'component': 'accounts',
+               'symptoms': 'The resident list kept showing tenants for up to a day after they moved out, '
+                           'because the list was cached.',
+               'fix_summary': 'Cleared the resident cache whenever a tenant is removed.'},
+              {'id': 2229,
+               'name': 'Gate pass QR fails for Tamil names',
+               'cause': 'Encoding',
+               'language': 'Dart',
+               'component': 'gate-pass',
+               'symptoms': "QR codes on gate passes for visitors with Tamil names couldn't be scanned by the "
+                           "guard app, because the QR text wasn't UTF-8.",
+               'fix_summary': 'Encoded QR payloads as UTF-8.'},
+              {'id': 2232,
+               'name': 'Expense report skips the last flat in each wing',
+               'cause': 'Off-by-one',
+               'language': 'Python',
+               'component': 'reports',
+               'symptoms': 'The monthly expense report left out the last flat of every wing.',
+               'fix_summary': 'Included the last flat in the loop over each wing.'},
+              {'id': 2236,
+               'name': 'OTP login loops back on Android 14',
+               'cause': 'Lifecycle',
+               'language': 'Dart',
+               'component': 'accounts',
+               'symptoms': 'After entering the OTP, Android 14 users were sent back to the login screen, '
+                           'because the login token was saved after the app had already moved on.',
+               'fix_summary': 'Saved the token before navigating.'},
+              {'id': 2239,
+               'name': 'Owners who rent out get every notice twice',
+               'cause': 'Missing deduplication',
+               'language': 'Python',
+               'component': 'notices',
+               'symptoms': 'Owners who also rented out their flat got every notice twice, once as owner and '
+                           'once as resident.',
+               'fix_summary': 'Sent each notice once per person.'},
+              {'id': 2243,
+               'name': '1 April receipts numbered in the old financial year',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'payments',
+               'symptoms': 'Payments made between midnight and 5:30 AM on 1 April got receipt numbers from '
+                           'the old financial year, because the year came from the UTC date.',
+               'fix_summary': "Took the financial year from the society's local date."},
+              {'id': 2246,
+               'name': 'Water bills show 0 litres for new flats',
+               'cause': 'Missing value',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Water bills for newly added flats showed 0 litres, because a missing first meter '
+                           'reading was treated as 0.',
+               'fix_summary': 'Billed new flats from their first real reading and flagged them for the '
+                              'manager.'}],
+  'new_report': {'title': 'April bills with three decimals, payment link fails',
+                 'description': "Several B-wing residents can't pay April maintenance. Every affected flat "
+                                'has an add-on line on its bill, parking or the new EV charging, and the '
+                                'bill total shows amounts like ₹3,149.999. The payment page says '
+                                '`PaymentLinkError: amount must have at most 2 decimals (got 3149.999)`. '
+                                'Unrelated: the logo on the bill PDF looks stretched.',
+                 'language': 'Python',
+                 'component': 'billing'},
+  'expected': {'verdict': 'regression', 'bug_id': 2222},
+  'siblings': [2204, 2215, 2246],
+  'decoy_bug_id': None,
+  'key_clue': 'an add-on line on its bill, parking or the new EV charging, and the bill total shows amounts '
+              'like ₹3,149.999',
+  'why': "Three-decimal totals the payment link rejects, including on flats with a parking add-on (#2222's "
+         'original case), mean the shared bill money code is broken again; the other billing bugs (#2204 two '
+         'bills, #2215 late fee, #2246 zero litres) look different.'},
+ {'id': 'zb-15',
+  'tier': 'hard',
+  'type': 'A',
+  'history': [{'id': 2301,
+               'name': 'Exams open an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Java',
+               'component': 'exam-timer',
+               'symptoms': 'After daylight saving started, scheduled exams opened an hour late for students '
+                           'in London, because start times were stored with a fixed UTC offset.',
+               'fix_summary': "Stored start times in UTC and converted them with the exam centre's zone "
+                              'rules.'},
+              {'id': 2304,
+               'name': 'Last answer lost when time runs out',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': 'When the timer hit zero, the answer typed in the last few seconds was lost, '
+                           'because auto-submit fired before the pending autosave request finished.',
+               'fix_summary': 'Made submitExam() wait for the pending autosave before submitting.'},
+              {'id': 2308,
+               'name': 'Webcam check shows a black box on Safari',
+               'cause': 'Browser compatibility',
+               'language': 'TypeScript',
+               'component': 'proctoring',
+               'symptoms': 'The webcam check before the exam showed a black box on Safari, so students '
+                           "couldn't start.",
+               'fix_summary': 'Added the playsinline attribute to the video element.'},
+              {'id': 2311,
+               'name': 'Percentages rounded down',
+               'cause': 'Rounding',
+               'language': 'Java',
+               'component': 'grading',
+               'symptoms': 'Percentages like 89.5 were shown as 89%, because the percentage was cast to an '
+                           'integer.',
+               'fix_summary': 'Rounded half up to one decimal place.'},
+              {'id': 2315,
+               'name': "'Saved' shown when autosave failed",
+               'cause': 'Error handling',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': "Students whose login expired mid-exam saw 'Saved' after every answer, but "
+                           'nothing was saved, because a 401 response was treated as success.',
+               'fix_summary': "Showed 'Not saved: log in again' on any failed autosave."},
+              {'id': 2318,
+               'name': 'Question diagrams missing on small phones',
+               'cause': 'CSS',
+               'language': 'TypeScript',
+               'component': 'question-bank',
+               'symptoms': "Diagrams in questions didn't show on phones narrower than 380 px.",
+               'fix_summary': 'Let diagrams shrink to the screen width.'},
+              {'id': 2322,
+               'name': 'Skipped questions get negative marks',
+               'cause': 'Business rule',
+               'language': 'Java',
+               'component': 'grading',
+               'symptoms': "Skipped questions lost 0.25 marks as if they were wrong, because 'no answer' and "
+                           "'wrong answer' shared a status.",
+               'fix_summary': 'Gave skipped questions their own status worth 0 marks.'},
+              {'id': 2325,
+               'name': 'Two students get the same seat number',
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'seating',
+               'symptoms': 'Students who registered at the same moment were given the same exam-centre seat '
+                           'number.',
+               'fix_summary': 'Assigned seat numbers from a database sequence.'},
+              {'id': 2329,
+               'name': 'Long names cut off on certificates',
+               'cause': 'Data truncation',
+               'language': 'Java',
+               'component': 'certificates',
+               'symptoms': 'Names longer than 30 characters were cut off on certificates.',
+               'fix_summary': 'Shrank the font for long names instead of cutting them.'},
+              {'id': 2332,
+               'name': 'Results emailed before moderation',
+               'cause': 'Missing check',
+               'language': 'Java',
+               'component': 'results',
+               'symptoms': 'Students got their results by email before the moderators had approved them.',
+               'fix_summary': 'Sent results emails only after moderation is approved.'},
+              {'id': 2336,
+               'name': 'Autosave floods the server',
+               'cause': 'Missing debounce',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': 'Autosave sent a request on every keystroke, and the server slowed down during '
+                           'big exams.',
+               'fix_summary': 'Debounced autosave to once every 3 seconds.'},
+              {'id': 2339,
+               'name': 'Timer keeps running during an approved break',
+               'cause': 'State handling',
+               'language': 'TypeScript',
+               'component': 'exam-timer',
+               'symptoms': 'For students with an approved toilet break, the exam timer kept counting down '
+                           'during the break.',
+               'fix_summary': 'Paused the timer while a break is active.'},
+              {'id': 2343,
+               'name': 'Login fails for emails with a plus sign',
+               'cause': 'Validation',
+               'language': 'Java',
+               'component': 'auth',
+               'symptoms': "Students with a '+' in their email address couldn't log in, because the plus was "
+                           'turned into a space.',
+               'fix_summary': 'Encoded email addresses properly in the login request.'},
+              {'id': 2346,
+               'name': 'Exam fee shown in USD to Indian students',
+               'cause': 'Config',
+               'language': 'TypeScript',
+               'component': 'payments',
+               'symptoms': 'The exam fee page showed the price in USD to students in India, because the '
+                           "currency defaulted to the company's account.",
+               'fix_summary': "Took the currency from the student's country."}],
+  'new_report': {'title': 'Final answers missing after auto-submit',
+                 'description': "Three students in yesterday's 11:00 Chemistry exam say their last answer is "
+                                'missing from the submitted paper. All three were still typing when the '
+                                'timer hit zero. Server log for one of them: `10:59:59.120 POST /autosave '
+                                'started`, `10:59:59.410 POST /submit 200`, then `10:59:59.870 POST '
+                                '/autosave 200`. The invigilator thinks the exam closed early, but the timer '
+                                'on the projector looked right.',
+                 'language': 'TypeScript',
+                 'component': 'autosave'},
+  'expected': {'verdict': 'regression', 'bug_id': 2304},
+  'siblings': [2315, 2325, 2336],
+  'decoy_bug_id': None,
+  'key_clue': '`10:59:59.120 POST /autosave started`, `10:59:59.410 POST /submit 200`, then `10:59:59.870 '
+              'POST /autosave 200`',
+  'why': "The autosave started before the submit and finished after it, so submit didn't wait for the "
+         'pending autosave and lost the last answer, which is #2304; siblings #2315 (failed autosave shown '
+         'as saved), #2336 (autosave flooding the server) and #2325 (seat-number race) are other defects.'},
+ {'id': 'zb-16',
+  'tier': 'hard',
+  'type': 'A',
+  'history': [{'id': 2501,
+               'name': "Results stuck on 'Processing' after an analyser restart",
+               'cause': 'Lost event',
+               'language': 'C#',
+               'component': 'sample-tracking',
+               'symptoms': "Samples that were on the analyser when it restarted stayed on 'Processing' "
+                           'forever, because their results message was never re-sent.',
+               'fix_summary': 'Asked the analyser for missed results after every restart.'},
+              {'id': 2504,
+               'name': "'Report ready' text before the doctor signs",
+               'cause': 'Missing check',
+               'language': 'C#',
+               'component': 'sms',
+               'symptoms': "Patients got 'Your report is ready' texts before the doctor had signed the "
+                           'report, and then found nothing to download.',
+               'fix_summary': 'Sent the text only after the report is signed.'},
+              {'id': 2508,
+               'name': "Doctor portal shows the previous patient's results",
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'doctor-portal',
+               'symptoms': "Switching patients quickly showed the previous patient's results for a moment, "
+                           'because the older request finished last.',
+               'fix_summary': 'Cancelled the previous request when switching patients.'},
+              {'id': 2511,
+               'name': 'Haemoglobin 10 times too high from the new analyser',
+               'cause': 'Unit conversion',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'Haemoglobin showed as 135 g/dL instead of 13.5 for samples from the new '
+                           'analyser, because its g/L values were labelled g/dL.',
+               'fix_summary': "Mapped the new analyser's units in AnalyserImport.MapUnits()."},
+              {'id': 2515,
+               'name': 'Appointments booked twice on a double click',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'appointments',
+               'symptoms': "Double-clicking 'Book' created two appointments for the same slot.",
+               'fix_summary': 'Disabled the button while booking and rejected duplicate bookings on the '
+                              'server.'},
+              {'id': 2518,
+               'name': 'No reference ranges for children',
+               'cause': 'Missing data',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'Results for patients under 12 showed no normal range, because ranges were only '
+                           'loaded for adults.',
+               'fix_summary': 'Loaded age-specific ranges for every analyte.'},
+              {'id': 2522,
+               'name': 'Glucose 18 times too high in the patient app',
+               'cause': 'Unit conversion',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'The patient app showed a fasting glucose of 1,620 mg/dL instead of 90, because '
+                           'the unit conversion applied the mmol/L to mg/dL factor twice.',
+               'fix_summary': 'Fixed UnitConverter.Convert() in Lab.Common to apply each factor once; every '
+                              'screen and report converts through it.'},
+              {'id': 2525,
+               'name': 'GST added twice on lab bills',
+               'cause': 'Double counting',
+               'language': 'C#',
+               'component': 'billing',
+               'symptoms': 'Lab bills for home collection added GST twice: once on the test and again on the '
+                           'total.',
+               'fix_summary': 'Applied GST once, on the line items.'},
+              {'id': 2529,
+               'name': 'Arabic names reversed on PDF reports',
+               'cause': 'Text direction',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': 'Patient names in Arabic printed with their letters in reverse order on PDF '
+                           'reports.',
+               'fix_summary': 'Set right-to-left text direction for Arabic names.'},
+              {'id': 2532,
+               'name': 'Login codes expire before they arrive',
+               'cause': 'Config',
+               'language': 'C#',
+               'component': 'auth',
+               'symptoms': 'Login codes expired after 60 seconds, but text messages often took 90 seconds to '
+                           'arrive.',
+               'fix_summary': 'Made codes valid for 5 minutes.'},
+              {'id': 2536,
+               'name': "'Collected at' times in UTC on PDF reports",
+               'cause': 'Timezone',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': "'Collected at' times on PDF reports were 5½ hours early, because they were "
+                           'printed in UTC.',
+               'fix_summary': "Printed times in the lab's timezone."},
+              {'id': 2539,
+               'name': 'PDF reports leave out the last test',
+               'cause': 'Off-by-one',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': 'PDF reports with more than 20 tests left out the last test, because the '
+                           'page-break loop stopped one row early.',
+               'fix_summary': 'Included the last row when splitting tests across pages.'},
+              {'id': 2543,
+               'name': 'Pending-results email every minute',
+               'cause': 'Infinite loop',
+               'language': 'C#',
+               'component': 'notifications',
+               'symptoms': "Doctors got the same 'results pending' email every minute, because the reminder "
+                           'job put itself back on the queue.',
+               'fix_summary': 'Scheduled the reminder once per day per doctor.'}],
+  'new_report': {'title': 'Last test missing from long PDF reports',
+                 'description': "Dr. Mehta's patient had a 24-test wellness panel. The PDF report ends at "
+                                "Vitamin D; TSH, test 24, isn't on it, though the portal lists all 24. A "
+                                '12-test report from the same day is complete. The hospital logo also looks '
+                                'blurry on the PDF, which marketing has complained about.',
+                 'language': 'C#',
+                 'component': 'pdf-reports'},
+  'expected': {'verdict': 'regression', 'bug_id': 2539},
+  'siblings': [2529, 2536],
+  'decoy_bug_id': None,
+  'key_clue': "The PDF report ends at Vitamin D; TSH, test 24, isn't on it",
+  'why': 'A long PDF report missing exactly its last test, while short ones are complete, is #2539; its PDF '
+         "siblings #2529 (reversed Arabic names) and #2536 (UTC times) don't drop tests."},
+ {'id': 'zb-17',
+  'tier': 'hard',
+  'type': 'A',
+  'history': [{'id': 2601,
+               'name': 'Invoice numbers skip after a failed save',
+               'cause': 'Transaction',
+               'language': 'Ruby',
+               'component': 'invoices',
+               'symptoms': 'Invoice numbers jumped, for example from INV-0041 to INV-0043, whenever saving '
+                           'an invoice failed validation, because the number was taken before saving.',
+               'fix_summary': 'Took the next number inside the same transaction as the save.'},
+              {'id': 2604,
+               'name': 'Overdue reminders for invoices paid on the due date',
+               'cause': 'Race condition',
+               'language': 'Ruby',
+               'component': 'reminders',
+               'symptoms': "Clients who paid on the due date still got a 'payment overdue' email, because "
+                           'the reminder job read the invoice status before the payment was recorded.',
+               'fix_summary': "Ran overdue reminders an hour after the day's payments are recorded."},
+              {'id': 2608,
+               'name': 'Recurring invoices created twice',
+               'cause': 'Race condition',
+               'language': 'Ruby',
+               'component': 'invoices',
+               'symptoms': 'Some monthly recurring invoices were created twice, because two workers ran the '
+                           'recurring-invoice job at the same time.',
+               'fix_summary': 'Locked each recurring schedule while its invoice is generated.'},
+              {'id': 2611,
+               'name': "USD invoices use the previous day's rate",
+               'cause': 'Timezone',
+               'language': 'Ruby',
+               'component': 'currency',
+               'symptoms': 'USD invoices dated the 1st used the exchange rate of the 31st for users in '
+                           'India, because the rate date was taken in UTC.',
+               'fix_summary': "Took the rate date from the user's timezone."},
+              {'id': 2615,
+               'name': 'Timesheet hours negative across midnight',
+               'cause': 'Date math',
+               'language': 'TypeScript',
+               'component': 'timesheets',
+               'symptoms': 'Timesheet entries from 10 PM to 2 AM counted as -20 hours.',
+               'fix_summary': 'Added a day to the end time when it is before the start time.'},
+              {'id': 2618,
+               'name': 'CSV export splits names with commas',
+               'cause': 'Escaping',
+               'language': 'Ruby',
+               'component': 'exports',
+               'symptoms': "Client names with commas, like 'Rao, Iyer & Co', split into two columns in the "
+                           'CSV export.',
+               'fix_summary': 'Quoted every field in CSV exports.'},
+              {'id': 2622,
+               'name': 'USD invoices show ₹ on the PDF',
+               'cause': 'Localization',
+               'language': 'Ruby',
+               'component': 'pdf',
+               'symptoms': 'Invoices in US dollars showed the ₹ symbol on the PDF, because the symbol came '
+                           "from the freelancer's country.",
+               'fix_summary': "Took the symbol from the invoice's currency."},
+              {'id': 2625,
+               'name': 'GST on invoices to foreign clients',
+               'cause': 'Business rule',
+               'language': 'Ruby',
+               'component': 'tax',
+               'symptoms': 'Invoices to clients outside India showed 18% GST, because the tax rule only '
+                           "checked the freelancer's country.",
+               'fix_summary': 'Applied export rules when the client is outside India.'},
+              {'id': 2629,
+               'name': 'Exports time out for big accounts',
+               'cause': 'Performance',
+               'language': 'Ruby',
+               'component': 'exports',
+               'symptoms': 'Exporting a year of invoices timed out after 30 seconds for accounts with more '
+                           'than 5,000 invoices.',
+               'fix_summary': 'Built big exports in the background and emailed a link.'},
+              {'id': 2632,
+               'name': 'Login links expire immediately',
+               'cause': 'Config',
+               'language': 'Ruby',
+               'component': 'auth',
+               'symptoms': "Magic login links said 'expired' the moment they were opened, because the expiry "
+                           'was set to 0 minutes in production.',
+               'fix_summary': 'Set link expiry to 15 minutes and added a startup check.'},
+              {'id': 2636,
+               'name': 'Invoice total a paisa off with GST',
+               'cause': 'Rounding',
+               'language': 'Ruby',
+               'component': 'tax',
+               'symptoms': 'Invoices with line discounts and GST were a paisa off from the amount the client '
+                           'paid, because each line was rounded separately.',
+               'fix_summary': 'Rounded once, on the invoice total.'},
+              {'id': 2639,
+               'name': 'Client portal crashes on invoices without a logo',
+               'cause': 'Null reference',
+               'language': 'TypeScript',
+               'component': 'clients',
+               'symptoms': "The client portal crashed for invoices from freelancers who hadn't uploaded a "
+                           'logo.',
+               'fix_summary': "Showed the freelancer's name when there is no logo."},
+              {'id': 2643,
+               'name': 'Due date a day early for clients in the US',
+               'cause': 'Timezone',
+               'language': 'TypeScript',
+               'component': 'invoices',
+               'symptoms': "Invoices due on 15 May showed '14 May' to clients in the US, because the client "
+                           'portal read the date as midnight UTC and showed it in local time.',
+               'fix_summary': 'Sent due dates as plain dates and formatted them without timezone conversion '
+                              'in formatDueDate().'},
+              {'id': 2646,
+               'name': 'Reminder emails in the wrong language',
+               'cause': 'Localization',
+               'language': 'Ruby',
+               'component': 'reminders',
+               'symptoms': "Clients got reminder emails in the freelancer's language instead of their own.",
+               'fix_summary': "Used the client's language for reminders."}],
+  'new_report': {'title': 'Recurring invoices duplicated again this month',
+                 'description': 'Four of my monthly retainers produced two identical invoices on 1 October, '
+                                'and two clients paid both. The job log shows `RecurringInvoiceJob start '
+                                'schedule=88 worker=2` and `RecurringInvoiceJob start schedule=88 worker=5` '
+                                'in the same second. Also the dashboard chart takes ages to load, not sure '
+                                "if that's related.",
+                 'language': 'Ruby',
+                 'component': None},
+  'expected': {'verdict': 'regression', 'bug_id': 2608},
+  'siblings': [2601, 2604, 2643],
+  'decoy_bug_id': None,
+  'key_clue': '`RecurringInvoiceJob start schedule=88 worker=2` and `RecurringInvoiceJob start schedule=88 '
+              'worker=5` in the same second',
+  'why': 'Two workers running the recurring job for the same schedule at once is #2608; siblings #2601 '
+         '(skipped numbers), #2604 (reminder race) and #2643 (due date) are different defects.'},
+ {'id': 'zb-18',
+  'tier': 'hard',
+  'type': 'A',
+  'history': [{'id': 2701,
+               'name': 'Heating starts an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'schedules',
+               'symptoms': 'After the clocks went forward, heating schedules started an hour late, because '
+                           "the cloud sent schedules to the thermostat with last week's UTC offset.",
+               'fix_summary': "Sent schedules in local time with the home's DST rules for the thermostat to "
+                              'apply.'},
+              {'id': 2704,
+               'name': 'Pairing fails silently on 5 GHz Wi-Fi',
+               'cause': 'Missing check',
+               'language': 'Swift',
+               'component': 'pairing',
+               'symptoms': 'Pairing failed with no message when the phone was on a 5 GHz network, because '
+                           'the thermostat only supports 2.4 GHz.',
+               'fix_summary': 'Detected 5 GHz networks and explained the problem.'},
+              {'id': 2708,
+               'name': 'Thermostat reads 2°C high',
+               'cause': 'Calibration',
+               'language': 'C',
+               'component': 'sensors',
+               'symptoms': 'Thermostats read about 2°C high after the screen had been on for a while, '
+                           'because heat from the screen reached the temperature sensor.',
+               'fix_summary': 'Subtracted a screen-heat offset based on brightness and how long the screen '
+                              'has been on.'},
+              {'id': 2711,
+               'name': 'Energy report shows a 25-hour day',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'energy-report',
+               'symptoms': 'On the day the clocks went back, the energy report counted the repeated hour '
+                           'twice and showed 25 hours of heating.',
+               'fix_summary': 'Added up energy per UTC hour.'},
+              {'id': 2715,
+               'name': 'Firmware update stuck at 60%',
+               'cause': 'Timeout',
+               'language': 'C',
+               'component': 'firmware-update',
+               'symptoms': 'Firmware updates stopped at 60% on slow Wi-Fi, because the download timed out '
+                           'and never resumed.',
+               'fix_summary': 'Resumed downloads from the last good block.'},
+              {'id': 2718,
+               'name': "App shows 'Offline' for working thermostats",
+               'cause': 'Cache',
+               'language': 'Swift',
+               'component': 'app-sync',
+               'symptoms': "Reopening the app showed thermostats as 'Offline' for up to 5 minutes, because "
+                           'it displayed the last cached state first.',
+               'fix_summary': 'Asked for live status before showing the cached one.'},
+              {'id': 2722,
+               'name': 'Frost alerts all day for Celsius users',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'alerts',
+               'symptoms': 'Thermostats set to Celsius sent frost alerts all day, because the rule compared '
+                           '°C readings with a 41 °F threshold.',
+               'fix_summary': 'Converted readings to one unit before checking alert rules.'},
+              {'id': 2725,
+               'name': 'Schedule changes lost after a power cut',
+               'cause': 'Persistence',
+               'language': 'C',
+               'component': 'schedules',
+               'symptoms': 'Schedule changes made in the app were lost after a power cut, because the '
+                           'thermostat kept them in memory until midnight before saving.',
+               'fix_summary': 'Saved schedule changes to flash immediately.'},
+              {'id': 2729,
+               'name': 'Voice assistant sets °F on Celsius thermostats',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'voice',
+               'symptoms': "Asking the voice assistant for 'twenty-two degrees' set 22 °F on thermostats set "
+                           'to Celsius.',
+               'fix_summary': "Sent the thermostat's own unit with every voice command."},
+              {'id': 2732,
+               'name': 'Room sensors drain their batteries in weeks',
+               'cause': 'Infinite loop',
+               'language': 'C',
+               'component': 'sensors',
+               'symptoms': 'Wireless room sensors drained their batteries in weeks, because they retried '
+                           'sending forever when the thermostat was out of range.',
+               'fix_summary': 'Backed off retries up to once an hour.'},
+              {'id': 2736,
+               'name': 'Weekend schedule runs on Friday and Saturday',
+               'cause': 'Off-by-one',
+               'language': 'C',
+               'component': 'schedules',
+               'symptoms': 'The weekend schedule ran on Friday and Saturday instead of Saturday and Sunday, '
+                           'because the firmware counted days from 0 (Sunday) while the app counted from 1 '
+                           '(Monday).',
+               'fix_summary': 'Used ISO weekday numbers (Monday = 1) in the app and in schedule_apply() on '
+                              'the thermostat.'},
+              {'id': 2739,
+               'name': 'Away mode never turns off',
+               'cause': 'Permissions',
+               'language': 'Swift',
+               'component': 'app-sync',
+               'symptoms': "Away mode stayed on after people came home when the app's location access was "
+                           "set to 'While using'.",
+               'fix_summary': "Asked for 'Always' location access and explained why."},
+              {'id': 2743,
+               'name': 'Thermostat reboots on Wi-Fi passwords with emoji',
+               'cause': 'Encoding',
+               'language': 'C',
+               'component': 'pairing',
+               'symptoms': 'Thermostats rebooted in a loop when the Wi-Fi password contained an emoji, '
+                           'because the firmware read the password as ASCII.',
+               'fix_summary': 'Read Wi-Fi passwords as UTF-8.'}],
+  'new_report': {'title': 'Weekend heating program on the wrong days',
+                 'description': "Since firmware 4.8 my 'Weekend' program (21° from 9 AM) runs on Friday and "
+                                'Saturday, and Sunday morning is cold. The app shows the right days. '
+                                'Thermostat log: `schedule_apply: day=5 profile=weekend`. My wife thinks '
+                                "it's the clock change, but the times are right, only the days are wrong.",
+                 'language': 'C',
+                 'component': 'schedules'},
+  'expected': {'verdict': 'regression', 'bug_id': 2736},
+  'siblings': [2701, 2725],
+  'decoy_bug_id': None,
+  'key_clue': 'runs on Friday and Saturday, and Sunday morning is cold',
+  'why': "The weekend program shifted by a whole day, with the right times, is #2736's weekday-numbering "
+         'bug; siblings #2701 (an hour late after the clock change) and #2725 (changes lost after a power '
+         "cut) don't fit."},
+ {'id': 'zb-19',
+  'tier': 'hard',
+  'type': 'B',
+  'history': [{'id': 2101,
+               'name': 'Prescription photos arrive sideways',
+               'cause': 'Image handling',
+               'language': 'Swift',
+               'component': 'prescriptions',
+               'symptoms': 'Photos of paper prescriptions taken on iPhones arrived rotated 90°, and '
+                           'pharmacists rejected them as unreadable.',
+               'fix_summary': "Applied the photo's orientation tag before uploading."},
+              {'id': 2104,
+               'name': 'Same-day delivery offered after the Sunday cutoff',
+               'cause': 'Off-by-one',
+               'language': 'TypeScript',
+               'component': 'delivery-slots',
+               'symptoms': 'On Sundays, same-day delivery was still offered after the 2 PM cutoff, because '
+                           'the cutoff table was indexed with Sunday as 7 while the date library returns 0.',
+               'fix_summary': "Used the date library's weekday numbers everywhere in isCutoffPassed()."},
+              {'id': 2108,
+               'name': 'Dose reminders an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'After the clocks went back in October, Android dose reminders fired exactly one '
+                           'hour late, because alarms were scheduled with the UTC offset saved when the '
+                           'reminder was created.',
+               'fix_summary': "Scheduled alarms from the user's zone rules in "
+                              'ReminderScheduler.reschedule().'},
+              {'id': 2111,
+               'name': "Search can't find medicines with a hyphen",
+               'cause': 'Regex',
+               'language': 'TypeScript',
+               'component': 'search',
+               'symptoms': "Searching for 'co-amoxiclav' found nothing, because the search box stripped "
+                           'hyphens but the index kept them.',
+               'fix_summary': 'Normalised hyphens the same way in the index and in queries.'},
+              {'id': 2115,
+               'name': 'Card charged twice when the network drops',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'payments',
+               'symptoms': 'If the connection dropped right after tapping Pay, the app retried the payment '
+                           'and the card was charged twice.',
+               'fix_summary': 'Sent one idempotency key per checkout attempt.'},
+              {'id': 2118,
+               'name': 'Dose reminders stop after the phone restarts',
+               'cause': 'Lifecycle',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'After a phone restart, no dose reminders fired until the app was opened again, '
+                           'because Android clears alarms on reboot.',
+               'fix_summary': 'Re-registered all alarms in a boot receiver.'},
+              {'id': 2122,
+               'name': 'Sold-out medicines still orderable',
+               'cause': 'Cache',
+               'language': 'TypeScript',
+               'component': 'inventory',
+               'symptoms': "Medicines that had sold out kept showing 'In stock' for up to 30 minutes, and "
+                           'those orders were cancelled later.',
+               'fix_summary': 'Cleared the stock cache on every stock change.'},
+              {'id': 2125,
+               'name': 'Evening slots shown as full',
+               'cause': 'Missing filter',
+               'language': 'TypeScript',
+               'component': 'delivery-slots',
+               'symptoms': 'Evening delivery slots showed as full while vans were half empty, because '
+                           'cancelled orders still counted toward slot capacity.',
+               'fix_summary': "Counted only active orders toward a slot's capacity."},
+              {'id': 2129,
+               'name': 'Login codes never reach UAE numbers',
+               'cause': 'Validation',
+               'language': 'TypeScript',
+               'component': 'auth',
+               'symptoms': 'Login codes were never sent to +971 numbers, because the phone check only '
+                           'accepted 10-digit Indian numbers.',
+               'fix_summary': 'Validated numbers with a phone-number library for every supported country.'},
+              {'id': 2132,
+               'name': 'Delivery slot times in UTC on iOS',
+               'cause': 'Timezone',
+               'language': 'Swift',
+               'component': 'delivery-slots',
+               'symptoms': "The iOS app showed delivery slots 5½ hours early, like '12:30–2:30 PM' for a 6–8 "
+                           'PM slot, because slot times were shown in UTC.',
+               'fix_summary': "Formatted slot times in the device's timezone."},
+              {'id': 2136,
+               'name': 'Order updates in English for Hindi users',
+               'cause': 'Localization',
+               'language': 'TypeScript',
+               'component': 'notifications',
+               'symptoms': 'People who chose Hindi still got order-status notifications in English, because '
+                           'the template ignored the language setting.',
+               'fix_summary': "Picked the notification template from the user's language."},
+              {'id': 2139,
+               'name': "Crash on prescriptions without a doctor's name",
+               'cause': 'Null reference',
+               'language': 'Swift',
+               'component': 'prescriptions',
+               'symptoms': "The iOS prescription screen crashed for uploads with no doctor's name, because "
+                           'the name was force-unwrapped.',
+               'fix_summary': "Showed 'Doctor not given' when the name is missing."},
+              {'id': 2143,
+               'name': 'Dose reminders fire twice after a restart',
+               'cause': 'Race condition',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'On some phones every dose reminder fired twice after a restart, because the boot '
+                           'receiver and WorkManager both re-created the same alarms.',
+               'fix_summary': 'Gave each alarm a unique work name and kept the existing one if it was '
+                              'already scheduled.'},
+              {'id': 2146,
+               'name': 'Coupon discount a paisa off',
+               'cause': 'Floating point',
+               'language': 'TypeScript',
+               'component': 'checkout',
+               'symptoms': 'Orders with a percentage coupon sometimes showed ₹0.01 more on the bill than the '
+                           'card was charged.',
+               'fix_summary': 'Calculated discounts in whole paise.'}],
+  'new_report': {'title': 'Paid for today, delivered tomorrow',
+                 'description': "Last Sunday at about 4:30 in the afternoon the app let me choose 'Today, "
+                                "6–8 PM' for my father's insulin. I paid, and an hour later an SMS said it "
+                                "would come on Monday morning. On weekdays the app never shows 'Today' after "
+                                'lunch, so why did it on Sunday? Your support person blamed a courier '
+                                'shortage. Also, search is slow when I type medicine names.',
+                 'language': 'TypeScript',
+                 'component': None},
+  'expected': {'verdict': 'regression', 'bug_id': 2104},
+  'siblings': [2125, 2132],
+  'decoy_bug_id': None,
+  'key_clue': "Last Sunday at about 4:30 in the afternoon the app let me choose 'Today, 6–8 PM'",
+  'why': 'Same-day delivery offered on a Sunday afternoon, when weekdays stop offering it after lunch, is '
+         "#2104's Sunday cutoff bug; its siblings #2125 (slots shown as full) and #2132 (slot times in UTC) "
+         "don't match."},
+ {'id': 'zb-20',
+  'tier': 'hard',
+  'type': 'B',
+  'history': [{'id': 2201,
+               'name': 'Gate passes show the wrong hour',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'gate-pass',
+               'symptoms': 'Visitor gate passes showed times 5½ hours early, so guards turned visitors away, '
+                           'because pass times were printed in UTC.',
+               'fix_summary': "Fixed format_local() in common/timefmt.py to convert to the society's "
+                              'timezone; every screen formats times through it.'},
+              {'id': 2204,
+               'name': 'Two maintenance bills on the 1st',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Some flats got two maintenance bills on the 1st of the month, because two '
+                           'scheduler instances generated bills at the same time.',
+               'fix_summary': 'Took a database lock per month before generating bills.'},
+              {'id': 2208,
+               'name': 'Notices crash the app on long PDFs',
+               'cause': 'Memory',
+               'language': 'Dart',
+               'component': 'notices',
+               'symptoms': 'Opening notice PDFs longer than 30 pages crashed the app on older phones.',
+               'fix_summary': 'Rendered PDF pages one at a time as they scroll into view.'},
+              {'id': 2211,
+               'name': 'Complaint photos silently dropped',
+               'cause': 'Timeout',
+               'language': 'Dart',
+               'component': 'complaints',
+               'symptoms': 'Complaints filed with photos on slow networks were saved without the photos, '
+                           'because the upload gave up after 10 seconds without telling anyone.',
+               'fix_summary': 'Retried photo uploads in the background and showed their progress.'},
+              {'id': 2215,
+               'name': 'Late fee on bills paid on the due date',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Residents who paid just before midnight on the due date were charged a late fee, '
+                           'because the late-fee job ran before the payment confirmation was saved.',
+               'fix_summary': "Ran the late-fee job only after the day's payment confirmations are "
+                              'processed.'},
+              {'id': 2218,
+               'name': 'Clubhouse double-booked',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'amenities',
+               'symptoms': 'Two residents booking the clubhouse for the same evening at the same moment both '
+                           'got a confirmation.',
+               'fix_summary': 'Added a unique constraint on amenity and slot.'},
+              {'id': 2222,
+               'name': 'Maintenance bill shows ₹2,499.999',
+               'cause': 'Floating point',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Bills for flats with a parking add-on showed totals like ₹2,499.999, and the '
+                           'payment link rejected the amount.',
+               'fix_summary': 'Calculated every bill line in whole paise in billing/money.py.'},
+              {'id': 2225,
+               'name': 'Resident list shows tenants who moved out',
+               'cause': 'Cache',
+               'language': 'Python',
+               'component': 'accounts',
+               'symptoms': 'The resident list kept showing tenants for up to a day after they moved out, '
+                           'because the list was cached.',
+               'fix_summary': 'Cleared the resident cache whenever a tenant is removed.'},
+              {'id': 2229,
+               'name': 'Gate pass QR fails for Tamil names',
+               'cause': 'Encoding',
+               'language': 'Dart',
+               'component': 'gate-pass',
+               'symptoms': "QR codes on gate passes for visitors with Tamil names couldn't be scanned by the "
+                           "guard app, because the QR text wasn't UTF-8.",
+               'fix_summary': 'Encoded QR payloads as UTF-8.'},
+              {'id': 2232,
+               'name': 'Expense report skips the last flat in each wing',
+               'cause': 'Off-by-one',
+               'language': 'Python',
+               'component': 'reports',
+               'symptoms': 'The monthly expense report left out the last flat of every wing.',
+               'fix_summary': 'Included the last flat in the loop over each wing.'},
+              {'id': 2236,
+               'name': 'OTP login loops back on Android 14',
+               'cause': 'Lifecycle',
+               'language': 'Dart',
+               'component': 'accounts',
+               'symptoms': 'After entering the OTP, Android 14 users were sent back to the login screen, '
+                           'because the login token was saved after the app had already moved on.',
+               'fix_summary': 'Saved the token before navigating.'},
+              {'id': 2239,
+               'name': 'Owners who rent out get every notice twice',
+               'cause': 'Missing deduplication',
+               'language': 'Python',
+               'component': 'notices',
+               'symptoms': 'Owners who also rented out their flat got every notice twice, once as owner and '
+                           'once as resident.',
+               'fix_summary': 'Sent each notice once per person.'},
+              {'id': 2243,
+               'name': '1 April receipts numbered in the old financial year',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'payments',
+               'symptoms': 'Payments made between midnight and 5:30 AM on 1 April got receipt numbers from '
+                           'the old financial year, because the year came from the UTC date.',
+               'fix_summary': "Took the financial year from the society's local date."},
+              {'id': 2246,
+               'name': 'Water bills show 0 litres for new flats',
+               'cause': 'Missing value',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Water bills for newly added flats showed 0 litres, because a missing first meter '
+                           'reading was treated as 0.',
+               'fix_summary': 'Billed new flats from their first real reading and flagged them for the '
+                              'manager.'}],
+  'new_report': {'title': 'Clubhouse booking confirmation shows the wrong time',
+                 'description': "I booked the clubhouse for my son's birthday, 7 to 10 PM on Saturday, and "
+                                'the confirmation says 1:30 PM to 4:30 PM. I tried again and got the same '
+                                'thing. Forwarded by the help desk, from the error log: `common/timefmt.py '
+                                "in format_local: 19:00 IST -> '13:30'`. It started after Tuesday's app "
+                                'update.',
+                 'language': 'Python',
+                 'component': 'amenities'},
+  'expected': {'verdict': 'regression', 'bug_id': 2201},
+  'siblings': [2229, 2243],
+  'decoy_bug_id': None,
+  'key_clue': "`common/timefmt.py in format_local: 19:00 IST -> '13:30'`",
+  'why': 'Same root cause, different screen: times 5½ hours early with format_local() returning UTC is '
+         "#2201's defect, whose fix lived in that shared formatter, so the same code path is broken again, "
+         'now seen on the clubhouse screen instead of gate passes.'},
+ {'id': 'zb-21',
+  'tier': 'hard',
+  'type': 'B',
+  'history': [{'id': 2401,
+               'name': 'Unlock spins forever with Bluetooth off',
+               'cause': 'Missing check',
+               'language': 'Kotlin',
+               'component': 'unlock',
+               'symptoms': 'Tapping Unlock with Bluetooth off showed an endless spinner instead of asking '
+                           'the rider to turn Bluetooth on.',
+               'fix_summary': 'Checked Bluetooth before unlocking and asked the rider to turn it on.'},
+              {'id': 2404,
+               'name': 'Wallet top-up charged twice',
+               'cause': 'Race condition',
+               'language': 'Go',
+               'component': 'wallet',
+               'symptoms': "Double-tapping 'Add ₹200' charged the rider's card twice but added ₹200 once.",
+               'fix_summary': 'Ignored a second top-up request with the same request ID.'},
+              {'id': 2408,
+               'name': 'Map shows bikes that were just taken',
+               'cause': 'Cache',
+               'language': 'Go',
+               'component': 'maps',
+               'symptoms': 'The map kept showing bikes as available for up to 2 minutes after someone '
+                           'unlocked them.',
+               'fix_summary': 'Pushed unlock events to the map instead of caching bike positions.'},
+              {'id': 2411,
+               'name': 'Rides billed in whole hours',
+               'cause': 'Rounding',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'A 61-minute ride was billed as 2 hours, because ride time was rounded up to '
+                           'whole hours instead of 15-minute blocks.',
+               'fix_summary': 'Billed rides in 15-minute blocks.'},
+              {'id': 2415,
+               'name': 'Passes bought on the 31st skip February',
+               'cause': 'Date math',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'Monthly passes bought on 31 January renewed in March, because renewal added a '
+                           "month without clamping to February's last day.",
+               'fix_summary': 'Clamped renewals to the last day of shorter months.'},
+              {'id': 2418,
+               'name': "'Ride ended' notification an hour late",
+               'cause': 'Queue backlog',
+               'language': 'Go',
+               'component': 'notifications',
+               'symptoms': "On busy evenings the 'Ride ended' notification arrived up to an hour after the "
+                           'ride ended, because it waited in the same queue as marketing messages.',
+               'fix_summary': 'Gave ride notifications their own queue.'},
+              {'id': 2422,
+               'name': 'Ride kept running after locking underground',
+               'cause': 'Lost event',
+               'language': 'Kotlin',
+               'component': 'rides',
+               'symptoms': 'Rides ended in underground parking kept running until the next day, because the '
+                           'lock event was dropped when the phone had no signal.',
+               'fix_summary': 'Queued lock events on the phone, sent them once back online, and ended the '
+                              "ride at the lock's own time."},
+              {'id': 2425,
+               'name': 'Ride history crashes for rides ending outside a station',
+               'cause': 'Null reference',
+               'language': 'Kotlin',
+               'component': 'rides',
+               'symptoms': 'The ride history screen crashed for rides that ended outside a station, because '
+                           'the end station was null.',
+               'fix_summary': 'Showed the street address when there is no end station.'},
+              {'id': 2429,
+               'name': 'Support chat in English for Marathi users',
+               'cause': 'Localization',
+               'language': 'Kotlin',
+               'component': 'support',
+               'symptoms': 'Riders who chose Marathi got the support chat bot in English.',
+               'fix_summary': 'Passed the app language to the chat bot.'},
+              {'id': 2432,
+               'name': 'E-bike battery shows 1000%',
+               'cause': 'Unit conversion',
+               'language': 'Kotlin',
+               'component': 'maps',
+               'symptoms': 'E-bike batteries showed as 1000% on the map, because the API sends tenths of a '
+                           'percent.',
+               'fix_summary': 'Divided the battery value by 10 before showing it.'},
+              {'id': 2436,
+               'name': 'Ending a ride fails when the phone clock is wrong',
+               'cause': 'Clock skew',
+               'language': 'Go',
+               'component': 'rides',
+               'symptoms': "Ending a ride failed with 'invalid time' on phones whose clock was more than 5 "
+                           "minutes off, because the server trusted the phone's clock.",
+               'fix_summary': "Checked ride times against the server clock and used the phone's clock only "
+                              'for offline lock events.'},
+              {'id': 2439,
+               'name': 'Fares in euros for riders in India',
+               'cause': 'Config',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'Some riders in India saw fares in euros, because the currency fell back to the '
+                           'default region.',
+               'fix_summary': "Took the currency from the rider's city."},
+              {'id': 2443,
+               'name': 'Ride receipts emailed twice',
+               'cause': 'Missing deduplication',
+               'language': 'Go',
+               'component': 'notifications',
+               'symptoms': 'Riders got every ride receipt email twice after the mail service retried a slow '
+                           'send.',
+               'fix_summary': 'Sent receipts with a message ID the mail service uses to drop duplicates.'}],
+  'new_report': {'title': 'Charged ₹480 for a 13-hour trip I never took',
+                 'description': 'I left the bike in the mall basement at 7:10 PM yesterday. I pushed it '
+                                'shut, it clicked, and the light went red like always. This morning I see '
+                                "₹480 for a 13-hour trip! There's no mobile network down there, if that "
+                                'matters. It used to end fine when I left it there. I think your GPS is '
+                                'broken. Please refund.',
+                 'language': 'Kotlin',
+                 'component': None},
+  'expected': {'verdict': 'regression', 'bug_id': 2422},
+  'siblings': [2425, 2436],
+  'decoy_bug_id': None,
+  'key_clue': "There's no mobile network down there",
+  'why': 'A bike locked in a basement with no network whose trip kept running overnight is #2422 (lock '
+         "events dropped offline); siblings #2425 (history crash) and #2436 (wrong phone clock) don't match, "
+         'and the GPS guess is a red herring.'},
+ {'id': 'zb-22',
+  'tier': 'hard',
+  'type': 'B',
+  'history': [{'id': 2501,
+               'name': "Results stuck on 'Processing' after an analyser restart",
+               'cause': 'Lost event',
+               'language': 'C#',
+               'component': 'sample-tracking',
+               'symptoms': "Samples that were on the analyser when it restarted stayed on 'Processing' "
+                           'forever, because their results message was never re-sent.',
+               'fix_summary': 'Asked the analyser for missed results after every restart.'},
+              {'id': 2504,
+               'name': "'Report ready' text before the doctor signs",
+               'cause': 'Missing check',
+               'language': 'C#',
+               'component': 'sms',
+               'symptoms': "Patients got 'Your report is ready' texts before the doctor had signed the "
+                           'report, and then found nothing to download.',
+               'fix_summary': 'Sent the text only after the report is signed.'},
+              {'id': 2508,
+               'name': "Doctor portal shows the previous patient's results",
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'doctor-portal',
+               'symptoms': "Switching patients quickly showed the previous patient's results for a moment, "
+                           'because the older request finished last.',
+               'fix_summary': 'Cancelled the previous request when switching patients.'},
+              {'id': 2511,
+               'name': 'Haemoglobin 10 times too high from the new analyser',
+               'cause': 'Unit conversion',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'Haemoglobin showed as 135 g/dL instead of 13.5 for samples from the new '
+                           'analyser, because its g/L values were labelled g/dL.',
+               'fix_summary': "Mapped the new analyser's units in AnalyserImport.MapUnits()."},
+              {'id': 2515,
+               'name': 'Appointments booked twice on a double click',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'appointments',
+               'symptoms': "Double-clicking 'Book' created two appointments for the same slot.",
+               'fix_summary': 'Disabled the button while booking and rejected duplicate bookings on the '
+                              'server.'},
+              {'id': 2518,
+               'name': 'No reference ranges for children',
+               'cause': 'Missing data',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'Results for patients under 12 showed no normal range, because ranges were only '
+                           'loaded for adults.',
+               'fix_summary': 'Loaded age-specific ranges for every analyte.'},
+              {'id': 2522,
+               'name': 'Glucose 18 times too high in the patient app',
+               'cause': 'Unit conversion',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'The patient app showed a fasting glucose of 1,620 mg/dL instead of 90, because '
+                           'the unit conversion applied the mmol/L to mg/dL factor twice.',
+               'fix_summary': 'Fixed UnitConverter.Convert() in Lab.Common to apply each factor once; every '
+                              'screen and report converts through it.'},
+              {'id': 2525,
+               'name': 'GST added twice on lab bills',
+               'cause': 'Double counting',
+               'language': 'C#',
+               'component': 'billing',
+               'symptoms': 'Lab bills for home collection added GST twice: once on the test and again on the '
+                           'total.',
+               'fix_summary': 'Applied GST once, on the line items.'},
+              {'id': 2529,
+               'name': 'Arabic names reversed on PDF reports',
+               'cause': 'Text direction',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': 'Patient names in Arabic printed with their letters in reverse order on PDF '
+                           'reports.',
+               'fix_summary': 'Set right-to-left text direction for Arabic names.'},
+              {'id': 2532,
+               'name': 'Login codes expire before they arrive',
+               'cause': 'Config',
+               'language': 'C#',
+               'component': 'auth',
+               'symptoms': 'Login codes expired after 60 seconds, but text messages often took 90 seconds to '
+                           'arrive.',
+               'fix_summary': 'Made codes valid for 5 minutes.'},
+              {'id': 2536,
+               'name': "'Collected at' times in UTC on PDF reports",
+               'cause': 'Timezone',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': "'Collected at' times on PDF reports were 5½ hours early, because they were "
+                           'printed in UTC.',
+               'fix_summary': "Printed times in the lab's timezone."},
+              {'id': 2539,
+               'name': 'PDF reports leave out the last test',
+               'cause': 'Off-by-one',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': 'PDF reports with more than 20 tests left out the last test, because the '
+                           'page-break loop stopped one row early.',
+               'fix_summary': 'Included the last row when splitting tests across pages.'},
+              {'id': 2543,
+               'name': 'Pending-results email every minute',
+               'cause': 'Infinite loop',
+               'language': 'C#',
+               'component': 'notifications',
+               'symptoms': "Doctors got the same 'results pending' email every minute, because the reminder "
+                           'job put itself back on the queue.',
+               'fix_summary': 'Scheduled the reminder once per day per doctor.'}],
+  'new_report': {'title': 'Printed report says sugar 1,717',
+                 'description': "Mr. Rao's printed lab report says his sugar is 1,717 mg/dL. He's walking "
+                                "around fine, so that can't be right; the sheet from the lab machine says "
+                                '5.3. The nurse printed it again and got the same number. IT pointed us to '
+                                "last week's release note: 'Lab.Common: tidied up UnitConverter'.",
+                 'language': 'C#',
+                 'component': 'pdf-reports'},
+  'expected': {'verdict': 'regression', 'bug_id': 2522},
+  'siblings': [2511, 2518],
+  'decoy_bug_id': None,
+  'key_clue': "'Lab.Common: tidied up UnitConverter'",
+  'why': 'Same root cause, different screen: 5.3 mmol/L is about 95 mg/dL and 1,717 is that multiplied by 18 '
+         "again, right after a change to UnitConverter, where #2522's fix lived; #2511 (new analyser, 10×) "
+         'and #2518 (missing ranges) are different defects.'},
+ {'id': 'zb-23',
+  'tier': 'hard',
+  'type': 'B',
+  'history': [{'id': 2601,
+               'name': 'Invoice numbers skip after a failed save',
+               'cause': 'Transaction',
+               'language': 'Ruby',
+               'component': 'invoices',
+               'symptoms': 'Invoice numbers jumped, for example from INV-0041 to INV-0043, whenever saving '
+                           'an invoice failed validation, because the number was taken before saving.',
+               'fix_summary': 'Took the next number inside the same transaction as the save.'},
+              {'id': 2604,
+               'name': 'Overdue reminders for invoices paid on the due date',
+               'cause': 'Race condition',
+               'language': 'Ruby',
+               'component': 'reminders',
+               'symptoms': "Clients who paid on the due date still got a 'payment overdue' email, because "
+                           'the reminder job read the invoice status before the payment was recorded.',
+               'fix_summary': "Ran overdue reminders an hour after the day's payments are recorded."},
+              {'id': 2608,
+               'name': 'Recurring invoices created twice',
+               'cause': 'Race condition',
+               'language': 'Ruby',
+               'component': 'invoices',
+               'symptoms': 'Some monthly recurring invoices were created twice, because two workers ran the '
+                           'recurring-invoice job at the same time.',
+               'fix_summary': 'Locked each recurring schedule while its invoice is generated.'},
+              {'id': 2611,
+               'name': "USD invoices use the previous day's rate",
+               'cause': 'Timezone',
+               'language': 'Ruby',
+               'component': 'currency',
+               'symptoms': 'USD invoices dated the 1st used the exchange rate of the 31st for users in '
+                           'India, because the rate date was taken in UTC.',
+               'fix_summary': "Took the rate date from the user's timezone."},
+              {'id': 2615,
+               'name': 'Timesheet hours negative across midnight',
+               'cause': 'Date math',
+               'language': 'TypeScript',
+               'component': 'timesheets',
+               'symptoms': 'Timesheet entries from 10 PM to 2 AM counted as -20 hours.',
+               'fix_summary': 'Added a day to the end time when it is before the start time.'},
+              {'id': 2618,
+               'name': 'CSV export splits names with commas',
+               'cause': 'Escaping',
+               'language': 'Ruby',
+               'component': 'exports',
+               'symptoms': "Client names with commas, like 'Rao, Iyer & Co', split into two columns in the "
+                           'CSV export.',
+               'fix_summary': 'Quoted every field in CSV exports.'},
+              {'id': 2622,
+               'name': 'USD invoices show ₹ on the PDF',
+               'cause': 'Localization',
+               'language': 'Ruby',
+               'component': 'pdf',
+               'symptoms': 'Invoices in US dollars showed the ₹ symbol on the PDF, because the symbol came '
+                           "from the freelancer's country.",
+               'fix_summary': "Took the symbol from the invoice's currency."},
+              {'id': 2625,
+               'name': 'GST on invoices to foreign clients',
+               'cause': 'Business rule',
+               'language': 'Ruby',
+               'component': 'tax',
+               'symptoms': 'Invoices to clients outside India showed 18% GST, because the tax rule only '
+                           "checked the freelancer's country.",
+               'fix_summary': 'Applied export rules when the client is outside India.'},
+              {'id': 2629,
+               'name': 'Exports time out for big accounts',
+               'cause': 'Performance',
+               'language': 'Ruby',
+               'component': 'exports',
+               'symptoms': 'Exporting a year of invoices timed out after 30 seconds for accounts with more '
+                           'than 5,000 invoices.',
+               'fix_summary': 'Built big exports in the background and emailed a link.'},
+              {'id': 2632,
+               'name': 'Login links expire immediately',
+               'cause': 'Config',
+               'language': 'Ruby',
+               'component': 'auth',
+               'symptoms': "Magic login links said 'expired' the moment they were opened, because the expiry "
+                           'was set to 0 minutes in production.',
+               'fix_summary': 'Set link expiry to 15 minutes and added a startup check.'},
+              {'id': 2636,
+               'name': 'Invoice total a paisa off with GST',
+               'cause': 'Rounding',
+               'language': 'Ruby',
+               'component': 'tax',
+               'symptoms': 'Invoices with line discounts and GST were a paisa off from the amount the client '
+                           'paid, because each line was rounded separately.',
+               'fix_summary': 'Rounded once, on the invoice total.'},
+              {'id': 2639,
+               'name': 'Client portal crashes on invoices without a logo',
+               'cause': 'Null reference',
+               'language': 'TypeScript',
+               'component': 'clients',
+               'symptoms': "The client portal crashed for invoices from freelancers who hadn't uploaded a "
+                           'logo.',
+               'fix_summary': "Showed the freelancer's name when there is no logo."},
+              {'id': 2643,
+               'name': 'Due date a day early for clients in the US',
+               'cause': 'Timezone',
+               'language': 'TypeScript',
+               'component': 'invoices',
+               'symptoms': "Invoices due on 15 May showed '14 May' to clients in the US, because the client "
+                           'portal read the date as midnight UTC and showed it in local time.',
+               'fix_summary': 'Sent due dates as plain dates and formatted them without timezone conversion '
+                              'in formatDueDate().'},
+              {'id': 2646,
+               'name': 'Reminder emails in the wrong language',
+               'cause': 'Localization',
+               'language': 'Ruby',
+               'component': 'reminders',
+               'symptoms': "Clients got reminder emails in the freelancer's language instead of their own.",
+               'fix_summary': "Used the client's language for reminders."}],
+  'new_report': {'title': 'Marked overdue before the deadline',
+                 'description': "Hi, I'm the accountant at a studio in Denver. Your website says our bill "
+                                'from Meera Design had to be paid by Tuesday the 14th and marks it overdue, '
+                                'but the PDF you emailed says the 15th, and we always pay when the PDF says. '
+                                'This keeps putting us on the late list. Can someone look?',
+                 'language': 'TypeScript',
+                 'component': None},
+  'expected': {'verdict': 'regression', 'bug_id': 2643},
+  'siblings': [2601, 2608, 2611],
+  'decoy_bug_id': None,
+  'key_clue': 'the PDF you emailed says the 15th',
+  'why': 'A client in the US seeing the portal show the date a day earlier than the PDF is #2643 (the portal '
+         'reading dates as midnight UTC); its siblings #2611 (exchange-rate date), #2601 and #2608 are other '
+         'defects.'},
+ {'id': 'zb-24',
+  'tier': 'hard',
+  'type': 'B',
+  'history': [{'id': 2801,
+               'name': "Top-up says success but the balance doesn't change",
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'top-up',
+               'symptoms': "After a card top-up, the app said 'Success' but showed the old balance, because "
+                           'it read the balance before the top-up was committed.',
+               'fix_summary': 'Showed the balance returned by the top-up itself.'},
+              {'id': 2804,
+               'name': 'Validator charges twice when the card is held',
+               'cause': 'Missing debounce',
+               'language': 'C++',
+               'component': 'tap-validator',
+               'symptoms': 'Holding a card on the validator for more than a second charged the fare twice, '
+                           'about half a second apart, because the validator only ignored repeat reads for '
+                           '500 ms.',
+               'fix_summary': 'Ignored repeat reads of the same card for 10 seconds.'},
+              {'id': 2808,
+               'name': 'Journey history hides the last leg',
+               'cause': 'Off-by-one',
+               'language': 'Kotlin',
+               'component': 'journey-history',
+               'symptoms': 'Trips with a transfer showed every leg except the last one in journey history.',
+               'fix_summary': 'Included the last leg when listing a trip.'},
+              {'id': 2811,
+               'name': 'Passes stop working on their last day',
+               'cause': 'Off-by-one',
+               'language': 'Java',
+               'component': 'passes',
+               'symptoms': 'Monthly passes stopped working on their last valid day, because the check used < '
+                           'instead of <= on the end date.',
+               'fix_summary': 'Included the end date in the validity check.'},
+              {'id': 2815,
+               'name': 'Refunds go to the wrong card for phone-wallet users',
+               'cause': 'Wrong reference',
+               'language': 'Java',
+               'component': 'refunds',
+               'symptoms': "Refunds for fares paid with a phone wallet went to the card in the wallet's "
+                           'first slot instead of the one that paid.',
+               'fix_summary': "Refunded to the payment's own card token."},
+              {'id': 2818,
+               'name': 'Low-balance alerts after every trip',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'notifications',
+               'symptoms': 'Every rider got a low-balance alert after each trip, because the ₹50 threshold '
+                           'was stored as 5000 paise and read as ₹5,000.',
+               'fix_summary': 'Stored and compared balances in paise everywhere.'},
+              {'id': 2822,
+               'name': 'Daily fare cap ignores rides after midnight',
+               'cause': 'Date math',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': 'Riders who took a bus after midnight were charged beyond the daily cap, because '
+                           'the cap reset at midnight instead of at the end of the service day at 4 AM.',
+               'fix_summary': 'Counted the cap per service day in FareCalculator.serviceDay().'},
+              {'id': 2825,
+               'name': 'Pass expiry shown a day early',
+               'cause': 'Timezone',
+               'language': 'Kotlin',
+               'component': 'passes',
+               'symptoms': "Passes valid until 31 July showed 'Expires 30 July' in the app, because the "
+                           'expiry time was shown in UTC.',
+               'fix_summary': "Showed expiry dates in India's timezone."},
+              {'id': 2829,
+               'name': 'Card blocked when a family shares it',
+               'cause': 'Business rule',
+               'language': 'Java',
+               'component': 'tap-validator',
+               'symptoms': 'Cards were blocked as suspicious when a family tapped one card for three people, '
+                           'because the fraud rule counted taps per minute.',
+               'fix_summary': 'Allowed up to five taps per minute at the same validator.'},
+              {'id': 2832,
+               'name': 'Top-up screen crashes when the UPI app returns early',
+               'cause': 'Null reference',
+               'language': 'Kotlin',
+               'component': 'top-up',
+               'symptoms': 'The top-up screen crashed when the UPI app returned without a transaction ID.',
+               'fix_summary': 'Treated a missing transaction ID as a cancelled payment.'},
+              {'id': 2836,
+               'name': 'Monthly statements only in English',
+               'cause': 'Localization',
+               'language': 'Python',
+               'component': 'accounts',
+               'symptoms': 'Monthly statements were always in English, even for riders who chose Kannada.',
+               'fix_summary': "Generated statements in the rider's language."},
+              {'id': 2839,
+               'name': "Refunds stuck on 'Processing'",
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'refunds',
+               'symptoms': "Refunds stayed on 'Processing' forever when the bank's confirmation arrived "
+                           'before the refund record was saved.',
+               'fix_summary': 'Saved the refund before calling the bank.'},
+              {'id': 2843,
+               'name': 'Peak fares on public holidays',
+               'cause': 'Config',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': "Public holidays were charged at peak fares in January, because the new year's "
+                           "holiday list hadn't been loaded.",
+               'fix_summary': 'Loaded holiday lists a year ahead and alerted when one is missing.'},
+              {'id': 2846,
+               'name': 'No transfer discount at exactly 60 minutes',
+               'cause': 'Off-by-one',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': "Transfers made exactly 60 minutes after the first tap didn't get the transfer "
+                           'discount, because the check used < 60 instead of <= 60.',
+               'fix_summary': 'Included the 60th minute in the transfer window.'}],
+  'new_report': {'title': 'Paid more than the maximum',
+                 'description': "Went to a concert on Saturday and caught the 12:40 AM bus home. I'd already "
+                                "paid ₹120 by then, which is the most you're supposed to take, but the app "
+                                'shows another ₹35 for that bus. The conductor said his machine was fine. My '
+                                'friend who left at 11:30 PM paid nothing extra. I think the machine on that '
+                                'bus is broken.',
+                 'language': 'Java',
+                 'component': 'journey-history'},
+  'expected': {'verdict': 'regression', 'bug_id': 2822},
+  'siblings': [2843, 2846],
+  'decoy_bug_id': None,
+  'key_clue': 'caught the 12:40 AM bus home',
+  'why': 'An extra fare for a bus after midnight on a day that had already hit the ₹120 cap is #2822 (the '
+         'cap resetting at midnight instead of 4 AM); its fares siblings #2843 (holiday peak fares) and '
+         "#2846 (transfer window) don't match."},
+ {'id': 'zb-25',
+  'tier': 'hard',
+  'type': 'C',
+  'history': [{'id': 2101,
+               'name': 'Prescription photos arrive sideways',
+               'cause': 'Image handling',
+               'language': 'Swift',
+               'component': 'prescriptions',
+               'symptoms': 'Photos of paper prescriptions taken on iPhones arrived rotated 90°, and '
+                           'pharmacists rejected them as unreadable.',
+               'fix_summary': "Applied the photo's orientation tag before uploading."},
+              {'id': 2104,
+               'name': 'Same-day delivery offered after the Sunday cutoff',
+               'cause': 'Off-by-one',
+               'language': 'TypeScript',
+               'component': 'delivery-slots',
+               'symptoms': 'On Sundays, same-day delivery was still offered after the 2 PM cutoff, because '
+                           'the cutoff table was indexed with Sunday as 7 while the date library returns 0.',
+               'fix_summary': "Used the date library's weekday numbers everywhere in isCutoffPassed()."},
+              {'id': 2108,
+               'name': 'Dose reminders an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'After the clocks went back in October, Android dose reminders fired exactly one '
+                           'hour late, because alarms were scheduled with the UTC offset saved when the '
+                           'reminder was created.',
+               'fix_summary': "Scheduled alarms from the user's zone rules in "
+                              'ReminderScheduler.reschedule().'},
+              {'id': 2111,
+               'name': "Search can't find medicines with a hyphen",
+               'cause': 'Regex',
+               'language': 'TypeScript',
+               'component': 'search',
+               'symptoms': "Searching for 'co-amoxiclav' found nothing, because the search box stripped "
+                           'hyphens but the index kept them.',
+               'fix_summary': 'Normalised hyphens the same way in the index and in queries.'},
+              {'id': 2115,
+               'name': 'Card charged twice when the network drops',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'payments',
+               'symptoms': 'If the connection dropped right after tapping Pay, the app retried the payment '
+                           'and the card was charged twice.',
+               'fix_summary': 'Sent one idempotency key per checkout attempt.'},
+              {'id': 2118,
+               'name': 'Dose reminders stop after the phone restarts',
+               'cause': 'Lifecycle',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'After a phone restart, no dose reminders fired until the app was opened again, '
+                           'because Android clears alarms on reboot.',
+               'fix_summary': 'Re-registered all alarms in a boot receiver.'},
+              {'id': 2122,
+               'name': 'Sold-out medicines still orderable',
+               'cause': 'Cache',
+               'language': 'TypeScript',
+               'component': 'inventory',
+               'symptoms': "Medicines that had sold out kept showing 'In stock' for up to 30 minutes, and "
+                           'those orders were cancelled later.',
+               'fix_summary': 'Cleared the stock cache on every stock change.'},
+              {'id': 2125,
+               'name': 'Evening slots shown as full',
+               'cause': 'Missing filter',
+               'language': 'TypeScript',
+               'component': 'delivery-slots',
+               'symptoms': 'Evening delivery slots showed as full while vans were half empty, because '
+                           'cancelled orders still counted toward slot capacity.',
+               'fix_summary': "Counted only active orders toward a slot's capacity."},
+              {'id': 2129,
+               'name': 'Login codes never reach UAE numbers',
+               'cause': 'Validation',
+               'language': 'TypeScript',
+               'component': 'auth',
+               'symptoms': 'Login codes were never sent to +971 numbers, because the phone check only '
+                           'accepted 10-digit Indian numbers.',
+               'fix_summary': 'Validated numbers with a phone-number library for every supported country.'},
+              {'id': 2132,
+               'name': 'Delivery slot times in UTC on iOS',
+               'cause': 'Timezone',
+               'language': 'Swift',
+               'component': 'delivery-slots',
+               'symptoms': "The iOS app showed delivery slots 5½ hours early, like '12:30–2:30 PM' for a 6–8 "
+                           'PM slot, because slot times were shown in UTC.',
+               'fix_summary': "Formatted slot times in the device's timezone."},
+              {'id': 2136,
+               'name': 'Order updates in English for Hindi users',
+               'cause': 'Localization',
+               'language': 'TypeScript',
+               'component': 'notifications',
+               'symptoms': 'People who chose Hindi still got order-status notifications in English, because '
+                           'the template ignored the language setting.',
+               'fix_summary': "Picked the notification template from the user's language."},
+              {'id': 2139,
+               'name': "Crash on prescriptions without a doctor's name",
+               'cause': 'Null reference',
+               'language': 'Swift',
+               'component': 'prescriptions',
+               'symptoms': "The iOS prescription screen crashed for uploads with no doctor's name, because "
+                           'the name was force-unwrapped.',
+               'fix_summary': "Showed 'Doctor not given' when the name is missing."},
+              {'id': 2143,
+               'name': 'Dose reminders fire twice after a restart',
+               'cause': 'Race condition',
+               'language': 'Kotlin',
+               'component': 'reminders',
+               'symptoms': 'On some phones every dose reminder fired twice after a restart, because the boot '
+                           'receiver and WorkManager both re-created the same alarms.',
+               'fix_summary': 'Gave each alarm a unique work name and kept the existing one if it was '
+                              'already scheduled.'},
+              {'id': 2146,
+               'name': 'Coupon discount a paisa off',
+               'cause': 'Floating point',
+               'language': 'TypeScript',
+               'component': 'checkout',
+               'symptoms': 'Orders with a percentage coupon sometimes showed ₹0.01 more on the bill than the '
+                           'card was charged.',
+               'fix_summary': 'Calculated discounts in whole paise.'}],
+  'new_report': {'title': 'Dose reminders an hour late after the clock change',
+                 'description': "My mother's 8 AM blood-pressure tablet reminder has been late ever since "
+                                "the clocks changed last weekend, so I assume it's the clock-change bug "
+                                "again. It isn't the same delay every day, though: 20 minutes on Monday, 47 "
+                                'minutes on Tuesday, 58 minutes today. Android 15 on a Samsung A54. Please '
+                                'fix this, she relies on it.',
+                 'language': 'Kotlin',
+                 'component': 'reminders'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 2108,
+  'key_clue': '20 minutes on Monday, 47 minutes on Tuesday, 58 minutes today',
+  'why': 'Same component and almost the same words as #2108, but a timezone offset bug makes reminders '
+         'exactly one hour late every day; delays of 20, 47 and 58 minutes mean a different cause.'},
+ {'id': 'zb-26',
+  'tier': 'hard',
+  'type': 'C',
+  'history': [{'id': 2301,
+               'name': 'Exams open an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Java',
+               'component': 'exam-timer',
+               'symptoms': 'After daylight saving started, scheduled exams opened an hour late for students '
+                           'in London, because start times were stored with a fixed UTC offset.',
+               'fix_summary': "Stored start times in UTC and converted them with the exam centre's zone "
+                              'rules.'},
+              {'id': 2304,
+               'name': 'Last answer lost when time runs out',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': 'When the timer hit zero, the answer typed in the last few seconds was lost, '
+                           'because auto-submit fired before the pending autosave request finished.',
+               'fix_summary': 'Made submitExam() wait for the pending autosave before submitting.'},
+              {'id': 2308,
+               'name': 'Webcam check shows a black box on Safari',
+               'cause': 'Browser compatibility',
+               'language': 'TypeScript',
+               'component': 'proctoring',
+               'symptoms': 'The webcam check before the exam showed a black box on Safari, so students '
+                           "couldn't start.",
+               'fix_summary': 'Added the playsinline attribute to the video element.'},
+              {'id': 2311,
+               'name': 'Percentages rounded down',
+               'cause': 'Rounding',
+               'language': 'Java',
+               'component': 'grading',
+               'symptoms': 'Percentages like 89.5 were shown as 89%, because the percentage was cast to an '
+                           'integer.',
+               'fix_summary': 'Rounded half up to one decimal place.'},
+              {'id': 2315,
+               'name': "'Saved' shown when autosave failed",
+               'cause': 'Error handling',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': "Students whose login expired mid-exam saw 'Saved' after every answer, but "
+                           'nothing was saved, because a 401 response was treated as success.',
+               'fix_summary': "Showed 'Not saved: log in again' on any failed autosave."},
+              {'id': 2318,
+               'name': 'Question diagrams missing on small phones',
+               'cause': 'CSS',
+               'language': 'TypeScript',
+               'component': 'question-bank',
+               'symptoms': "Diagrams in questions didn't show on phones narrower than 380 px.",
+               'fix_summary': 'Let diagrams shrink to the screen width.'},
+              {'id': 2322,
+               'name': 'Skipped questions get negative marks',
+               'cause': 'Business rule',
+               'language': 'Java',
+               'component': 'grading',
+               'symptoms': "Skipped questions lost 0.25 marks as if they were wrong, because 'no answer' and "
+                           "'wrong answer' shared a status.",
+               'fix_summary': 'Gave skipped questions their own status worth 0 marks.'},
+              {'id': 2325,
+               'name': 'Two students get the same seat number',
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'seating',
+               'symptoms': 'Students who registered at the same moment were given the same exam-centre seat '
+                           'number.',
+               'fix_summary': 'Assigned seat numbers from a database sequence.'},
+              {'id': 2329,
+               'name': 'Long names cut off on certificates',
+               'cause': 'Data truncation',
+               'language': 'Java',
+               'component': 'certificates',
+               'symptoms': 'Names longer than 30 characters were cut off on certificates.',
+               'fix_summary': 'Shrank the font for long names instead of cutting them.'},
+              {'id': 2332,
+               'name': 'Results emailed before moderation',
+               'cause': 'Missing check',
+               'language': 'Java',
+               'component': 'results',
+               'symptoms': 'Students got their results by email before the moderators had approved them.',
+               'fix_summary': 'Sent results emails only after moderation is approved.'},
+              {'id': 2336,
+               'name': 'Autosave floods the server',
+               'cause': 'Missing debounce',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': 'Autosave sent a request on every keystroke, and the server slowed down during '
+                           'big exams.',
+               'fix_summary': 'Debounced autosave to once every 3 seconds.'},
+              {'id': 2339,
+               'name': 'Timer keeps running during an approved break',
+               'cause': 'State handling',
+               'language': 'TypeScript',
+               'component': 'exam-timer',
+               'symptoms': 'For students with an approved toilet break, the exam timer kept counting down '
+                           'during the break.',
+               'fix_summary': 'Paused the timer while a break is active.'},
+              {'id': 2343,
+               'name': 'Login fails for emails with a plus sign',
+               'cause': 'Validation',
+               'language': 'Java',
+               'component': 'auth',
+               'symptoms': "Students with a '+' in their email address couldn't log in, because the plus was "
+                           'turned into a space.',
+               'fix_summary': 'Encoded email addresses properly in the login request.'},
+              {'id': 2346,
+               'name': 'Exam fee shown in USD to Indian students',
+               'cause': 'Config',
+               'language': 'TypeScript',
+               'component': 'payments',
+               'symptoms': 'The exam fee page showed the price in USD to students in India, because the '
+                           "currency defaulted to the company's account.",
+               'fix_summary': "Took the currency from the student's country."}],
+  'new_report': {'title': 'Percentages rounded down again?',
+                 'description': 'Parents of several students say the percentage on the results page looks '
+                                "too low. Example: Aarav Shah, Physics mock 3, shows 'Marks 88/98, "
+                                "Percentage 88%'. Question 17 was cancelled after the exam, so the paper is "
+                                'now out of 98. Looks like the rounding problem from last term again.',
+                 'language': 'Java',
+                 'component': 'results'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 2311,
+  'key_clue': "'Marks 88/98, Percentage 88%'",
+  'why': 'Looks like #2311, but 88 out of 98 is 89.8%: rounding down would show 89%, so 88% means the '
+         'percentage is still divided by 100 after question 17 was cancelled, a different defect.'},
+ {'id': 'zb-27',
+  'tier': 'hard',
+  'type': 'C',
+  'history': [{'id': 2401,
+               'name': 'Unlock spins forever with Bluetooth off',
+               'cause': 'Missing check',
+               'language': 'Kotlin',
+               'component': 'unlock',
+               'symptoms': 'Tapping Unlock with Bluetooth off showed an endless spinner instead of asking '
+                           'the rider to turn Bluetooth on.',
+               'fix_summary': 'Checked Bluetooth before unlocking and asked the rider to turn it on.'},
+              {'id': 2404,
+               'name': 'Wallet top-up charged twice',
+               'cause': 'Race condition',
+               'language': 'Go',
+               'component': 'wallet',
+               'symptoms': "Double-tapping 'Add ₹200' charged the rider's card twice but added ₹200 once.",
+               'fix_summary': 'Ignored a second top-up request with the same request ID.'},
+              {'id': 2408,
+               'name': 'Map shows bikes that were just taken',
+               'cause': 'Cache',
+               'language': 'Go',
+               'component': 'maps',
+               'symptoms': 'The map kept showing bikes as available for up to 2 minutes after someone '
+                           'unlocked them.',
+               'fix_summary': 'Pushed unlock events to the map instead of caching bike positions.'},
+              {'id': 2411,
+               'name': 'Rides billed in whole hours',
+               'cause': 'Rounding',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'A 61-minute ride was billed as 2 hours, because ride time was rounded up to '
+                           'whole hours instead of 15-minute blocks.',
+               'fix_summary': 'Billed rides in 15-minute blocks.'},
+              {'id': 2415,
+               'name': 'Passes bought on the 31st skip February',
+               'cause': 'Date math',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'Monthly passes bought on 31 January renewed in March, because renewal added a '
+                           "month without clamping to February's last day.",
+               'fix_summary': 'Clamped renewals to the last day of shorter months.'},
+              {'id': 2418,
+               'name': "'Ride ended' notification an hour late",
+               'cause': 'Queue backlog',
+               'language': 'Go',
+               'component': 'notifications',
+               'symptoms': "On busy evenings the 'Ride ended' notification arrived up to an hour after the "
+                           'ride ended, because it waited in the same queue as marketing messages.',
+               'fix_summary': 'Gave ride notifications their own queue.'},
+              {'id': 2422,
+               'name': 'Ride kept running after locking underground',
+               'cause': 'Lost event',
+               'language': 'Kotlin',
+               'component': 'rides',
+               'symptoms': 'Rides ended in underground parking kept running until the next day, because the '
+                           'lock event was dropped when the phone had no signal.',
+               'fix_summary': 'Queued lock events on the phone, sent them once back online, and ended the '
+                              "ride at the lock's own time."},
+              {'id': 2425,
+               'name': 'Ride history crashes for rides ending outside a station',
+               'cause': 'Null reference',
+               'language': 'Kotlin',
+               'component': 'rides',
+               'symptoms': 'The ride history screen crashed for rides that ended outside a station, because '
+                           'the end station was null.',
+               'fix_summary': 'Showed the street address when there is no end station.'},
+              {'id': 2429,
+               'name': 'Support chat in English for Marathi users',
+               'cause': 'Localization',
+               'language': 'Kotlin',
+               'component': 'support',
+               'symptoms': 'Riders who chose Marathi got the support chat bot in English.',
+               'fix_summary': 'Passed the app language to the chat bot.'},
+              {'id': 2432,
+               'name': 'E-bike battery shows 1000%',
+               'cause': 'Unit conversion',
+               'language': 'Kotlin',
+               'component': 'maps',
+               'symptoms': 'E-bike batteries showed as 1000% on the map, because the API sends tenths of a '
+                           'percent.',
+               'fix_summary': 'Divided the battery value by 10 before showing it.'},
+              {'id': 2436,
+               'name': 'Ending a ride fails when the phone clock is wrong',
+               'cause': 'Clock skew',
+               'language': 'Go',
+               'component': 'rides',
+               'symptoms': "Ending a ride failed with 'invalid time' on phones whose clock was more than 5 "
+                           "minutes off, because the server trusted the phone's clock.",
+               'fix_summary': "Checked ride times against the server clock and used the phone's clock only "
+                              'for offline lock events.'},
+              {'id': 2439,
+               'name': 'Fares in euros for riders in India',
+               'cause': 'Config',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'Some riders in India saw fares in euros, because the currency fell back to the '
+                           'default region.',
+               'fix_summary': "Took the currency from the rider's city."},
+              {'id': 2443,
+               'name': 'Ride receipts emailed twice',
+               'cause': 'Missing deduplication',
+               'language': 'Go',
+               'component': 'notifications',
+               'symptoms': 'Riders got every ride receipt email twice after the mail service retried a slow '
+                           'send.',
+               'fix_summary': 'Sent receipts with a message ID the mail service uses to drop duplicates.'}],
+  'new_report': {'title': 'Unlock spins forever',
+                 'description': 'Riders at the new Kothrud stations tap Unlock and get the endless spinner, '
+                                'like that old Bluetooth bug. Bluetooth is on: the app shows the bike as '
+                                "'Nearby'. The same riders unlock bikes at other stations fine. All the "
+                                'Kothrud bikes have the new v3 locks. Two riders gave up and took an auto.',
+                 'language': 'Kotlin',
+                 'component': 'unlock'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 2401,
+  'key_clue': "Bluetooth is on: the app shows the bike as 'Nearby'",
+  'why': 'Same spinner and component as #2401, but Bluetooth is on and only bikes with the new v3 locks '
+         "fail, so the missing Bluetooth check can't be the cause; it's a new problem with the v3 locks."},
+ {'id': 'zb-28',
+  'tier': 'hard',
+  'type': 'C',
+  'history': [{'id': 2501,
+               'name': "Results stuck on 'Processing' after an analyser restart",
+               'cause': 'Lost event',
+               'language': 'C#',
+               'component': 'sample-tracking',
+               'symptoms': "Samples that were on the analyser when it restarted stayed on 'Processing' "
+                           'forever, because their results message was never re-sent.',
+               'fix_summary': 'Asked the analyser for missed results after every restart.'},
+              {'id': 2504,
+               'name': "'Report ready' text before the doctor signs",
+               'cause': 'Missing check',
+               'language': 'C#',
+               'component': 'sms',
+               'symptoms': "Patients got 'Your report is ready' texts before the doctor had signed the "
+                           'report, and then found nothing to download.',
+               'fix_summary': 'Sent the text only after the report is signed.'},
+              {'id': 2508,
+               'name': "Doctor portal shows the previous patient's results",
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'doctor-portal',
+               'symptoms': "Switching patients quickly showed the previous patient's results for a moment, "
+                           'because the older request finished last.',
+               'fix_summary': 'Cancelled the previous request when switching patients.'},
+              {'id': 2511,
+               'name': 'Haemoglobin 10 times too high from the new analyser',
+               'cause': 'Unit conversion',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'Haemoglobin showed as 135 g/dL instead of 13.5 for samples from the new '
+                           'analyser, because its g/L values were labelled g/dL.',
+               'fix_summary': "Mapped the new analyser's units in AnalyserImport.MapUnits()."},
+              {'id': 2515,
+               'name': 'Appointments booked twice on a double click',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'appointments',
+               'symptoms': "Double-clicking 'Book' created two appointments for the same slot.",
+               'fix_summary': 'Disabled the button while booking and rejected duplicate bookings on the '
+                              'server.'},
+              {'id': 2518,
+               'name': 'No reference ranges for children',
+               'cause': 'Missing data',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'Results for patients under 12 showed no normal range, because ranges were only '
+                           'loaded for adults.',
+               'fix_summary': 'Loaded age-specific ranges for every analyte.'},
+              {'id': 2522,
+               'name': 'Glucose 18 times too high in the patient app',
+               'cause': 'Unit conversion',
+               'language': 'C#',
+               'component': 'lab-results',
+               'symptoms': 'The patient app showed a fasting glucose of 1,620 mg/dL instead of 90, because '
+                           'the unit conversion applied the mmol/L to mg/dL factor twice.',
+               'fix_summary': 'Fixed UnitConverter.Convert() in Lab.Common to apply each factor once; every '
+                              'screen and report converts through it.'},
+              {'id': 2525,
+               'name': 'GST added twice on lab bills',
+               'cause': 'Double counting',
+               'language': 'C#',
+               'component': 'billing',
+               'symptoms': 'Lab bills for home collection added GST twice: once on the test and again on the '
+                           'total.',
+               'fix_summary': 'Applied GST once, on the line items.'},
+              {'id': 2529,
+               'name': 'Arabic names reversed on PDF reports',
+               'cause': 'Text direction',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': 'Patient names in Arabic printed with their letters in reverse order on PDF '
+                           'reports.',
+               'fix_summary': 'Set right-to-left text direction for Arabic names.'},
+              {'id': 2532,
+               'name': 'Login codes expire before they arrive',
+               'cause': 'Config',
+               'language': 'C#',
+               'component': 'auth',
+               'symptoms': 'Login codes expired after 60 seconds, but text messages often took 90 seconds to '
+                           'arrive.',
+               'fix_summary': 'Made codes valid for 5 minutes.'},
+              {'id': 2536,
+               'name': "'Collected at' times in UTC on PDF reports",
+               'cause': 'Timezone',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': "'Collected at' times on PDF reports were 5½ hours early, because they were "
+                           'printed in UTC.',
+               'fix_summary': "Printed times in the lab's timezone."},
+              {'id': 2539,
+               'name': 'PDF reports leave out the last test',
+               'cause': 'Off-by-one',
+               'language': 'C#',
+               'component': 'pdf-reports',
+               'symptoms': 'PDF reports with more than 20 tests left out the last test, because the '
+                           'page-break loop stopped one row early.',
+               'fix_summary': 'Included the last row when splitting tests across pages.'},
+              {'id': 2543,
+               'name': 'Pending-results email every minute',
+               'cause': 'Infinite loop',
+               'language': 'C#',
+               'component': 'notifications',
+               'symptoms': "Doctors got the same 'results pending' email every minute, because the reminder "
+                           'job put itself back on the queue.',
+               'fix_summary': 'Scheduled the reminder once per day per doctor.'}],
+  'new_report': {'title': 'Haemoglobin 10 times too high on some results',
+                 'description': 'Several results this week show haemoglobin as 128 g/dL instead of 12.8. '
+                                'Looks like the analyser units problem from last year. Every one of them was '
+                                "typed in by hand at the Wakad collection centre, which doesn't have the new "
+                                'analyser. Wakad also says their printer keeps jamming.',
+                 'language': 'C#',
+                 'component': 'lab-results'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 2511,
+  'key_clue': "Every one of them was typed in by hand at the Wakad collection centre, which doesn't have the "
+              'new analyser',
+  'why': 'Same symptom, wording and component as #2511, but these values never came through the new '
+         "analyser's import, so its unit mapping can't be the cause; something in manual entry is losing the "
+         'decimal point.'},
+ {'id': 'zb-29',
+  'tier': 'hard',
+  'type': 'C',
+  'history': [{'id': 2701,
+               'name': 'Heating starts an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'schedules',
+               'symptoms': 'After the clocks went forward, heating schedules started an hour late, because '
+                           "the cloud sent schedules to the thermostat with last week's UTC offset.",
+               'fix_summary': "Sent schedules in local time with the home's DST rules for the thermostat to "
+                              'apply.'},
+              {'id': 2704,
+               'name': 'Pairing fails silently on 5 GHz Wi-Fi',
+               'cause': 'Missing check',
+               'language': 'Swift',
+               'component': 'pairing',
+               'symptoms': 'Pairing failed with no message when the phone was on a 5 GHz network, because '
+                           'the thermostat only supports 2.4 GHz.',
+               'fix_summary': 'Detected 5 GHz networks and explained the problem.'},
+              {'id': 2708,
+               'name': 'Thermostat reads 2°C high',
+               'cause': 'Calibration',
+               'language': 'C',
+               'component': 'sensors',
+               'symptoms': 'Thermostats read about 2°C high after the screen had been on for a while, '
+                           'because heat from the screen reached the temperature sensor.',
+               'fix_summary': 'Subtracted a screen-heat offset based on brightness and how long the screen '
+                              'has been on.'},
+              {'id': 2711,
+               'name': 'Energy report shows a 25-hour day',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'energy-report',
+               'symptoms': 'On the day the clocks went back, the energy report counted the repeated hour '
+                           'twice and showed 25 hours of heating.',
+               'fix_summary': 'Added up energy per UTC hour.'},
+              {'id': 2715,
+               'name': 'Firmware update stuck at 60%',
+               'cause': 'Timeout',
+               'language': 'C',
+               'component': 'firmware-update',
+               'symptoms': 'Firmware updates stopped at 60% on slow Wi-Fi, because the download timed out '
+                           'and never resumed.',
+               'fix_summary': 'Resumed downloads from the last good block.'},
+              {'id': 2718,
+               'name': "App shows 'Offline' for working thermostats",
+               'cause': 'Cache',
+               'language': 'Swift',
+               'component': 'app-sync',
+               'symptoms': "Reopening the app showed thermostats as 'Offline' for up to 5 minutes, because "
+                           'it displayed the last cached state first.',
+               'fix_summary': 'Asked for live status before showing the cached one.'},
+              {'id': 2722,
+               'name': 'Frost alerts all day for Celsius users',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'alerts',
+               'symptoms': 'Thermostats set to Celsius sent frost alerts all day, because the rule compared '
+                           '°C readings with a 41 °F threshold.',
+               'fix_summary': 'Converted readings to one unit before checking alert rules.'},
+              {'id': 2725,
+               'name': 'Schedule changes lost after a power cut',
+               'cause': 'Persistence',
+               'language': 'C',
+               'component': 'schedules',
+               'symptoms': 'Schedule changes made in the app were lost after a power cut, because the '
+                           'thermostat kept them in memory until midnight before saving.',
+               'fix_summary': 'Saved schedule changes to flash immediately.'},
+              {'id': 2729,
+               'name': 'Voice assistant sets °F on Celsius thermostats',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'voice',
+               'symptoms': "Asking the voice assistant for 'twenty-two degrees' set 22 °F on thermostats set "
+                           'to Celsius.',
+               'fix_summary': "Sent the thermostat's own unit with every voice command."},
+              {'id': 2732,
+               'name': 'Room sensors drain their batteries in weeks',
+               'cause': 'Infinite loop',
+               'language': 'C',
+               'component': 'sensors',
+               'symptoms': 'Wireless room sensors drained their batteries in weeks, because they retried '
+                           'sending forever when the thermostat was out of range.',
+               'fix_summary': 'Backed off retries up to once an hour.'},
+              {'id': 2736,
+               'name': 'Weekend schedule runs on Friday and Saturday',
+               'cause': 'Off-by-one',
+               'language': 'C',
+               'component': 'schedules',
+               'symptoms': 'The weekend schedule ran on Friday and Saturday instead of Saturday and Sunday, '
+                           'because the firmware counted days from 0 (Sunday) while the app counted from 1 '
+                           '(Monday).',
+               'fix_summary': 'Used ISO weekday numbers (Monday = 1) in the app and in schedule_apply() on '
+                              'the thermostat.'},
+              {'id': 2739,
+               'name': 'Away mode never turns off',
+               'cause': 'Permissions',
+               'language': 'Swift',
+               'component': 'app-sync',
+               'symptoms': "Away mode stayed on after people came home when the app's location access was "
+                           "set to 'While using'.",
+               'fix_summary': "Asked for 'Always' location access and explained why."},
+              {'id': 2743,
+               'name': 'Thermostat reboots on Wi-Fi passwords with emoji',
+               'cause': 'Encoding',
+               'language': 'C',
+               'component': 'pairing',
+               'symptoms': 'Thermostats rebooted in a loop when the Wi-Fi password contained an emoji, '
+                           'because the firmware read the password as ASCII.',
+               'fix_summary': 'Read Wi-Fi passwords as UTF-8.'}],
+  'new_report': {'title': 'Thermostat reads about 2°C high',
+                 'description': 'Our living-room thermostat says 23° when two room thermometers say 21°, so '
+                                'the heating switches off too early. I know you fixed the screen-heat issue, '
+                                "but our screen has been set to 'Always off' since March. It used to match "
+                                'the thermometers until the 4.9 update. The hallway unit is fine.',
+                 'language': 'C',
+                 'component': None},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 2708,
+  'key_clue': "our screen has been set to 'Always off' since March",
+  'why': "Same symptom and wording as #2708, but with the screen always off there's no screen heat to blame; "
+         'the reading went high for another reason after update 4.9.'},
+ {'id': 'zb-30',
+  'tier': 'hard',
+  'type': 'C',
+  'history': [{'id': 2801,
+               'name': "Top-up says success but the balance doesn't change",
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'top-up',
+               'symptoms': "After a card top-up, the app said 'Success' but showed the old balance, because "
+                           'it read the balance before the top-up was committed.',
+               'fix_summary': 'Showed the balance returned by the top-up itself.'},
+              {'id': 2804,
+               'name': 'Validator charges twice when the card is held',
+               'cause': 'Missing debounce',
+               'language': 'C++',
+               'component': 'tap-validator',
+               'symptoms': 'Holding a card on the validator for more than a second charged the fare twice, '
+                           'about half a second apart, because the validator only ignored repeat reads for '
+                           '500 ms.',
+               'fix_summary': 'Ignored repeat reads of the same card for 10 seconds.'},
+              {'id': 2808,
+               'name': 'Journey history hides the last leg',
+               'cause': 'Off-by-one',
+               'language': 'Kotlin',
+               'component': 'journey-history',
+               'symptoms': 'Trips with a transfer showed every leg except the last one in journey history.',
+               'fix_summary': 'Included the last leg when listing a trip.'},
+              {'id': 2811,
+               'name': 'Passes stop working on their last day',
+               'cause': 'Off-by-one',
+               'language': 'Java',
+               'component': 'passes',
+               'symptoms': 'Monthly passes stopped working on their last valid day, because the check used < '
+                           'instead of <= on the end date.',
+               'fix_summary': 'Included the end date in the validity check.'},
+              {'id': 2815,
+               'name': 'Refunds go to the wrong card for phone-wallet users',
+               'cause': 'Wrong reference',
+               'language': 'Java',
+               'component': 'refunds',
+               'symptoms': "Refunds for fares paid with a phone wallet went to the card in the wallet's "
+                           'first slot instead of the one that paid.',
+               'fix_summary': "Refunded to the payment's own card token."},
+              {'id': 2818,
+               'name': 'Low-balance alerts after every trip',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'notifications',
+               'symptoms': 'Every rider got a low-balance alert after each trip, because the ₹50 threshold '
+                           'was stored as 5000 paise and read as ₹5,000.',
+               'fix_summary': 'Stored and compared balances in paise everywhere.'},
+              {'id': 2822,
+               'name': 'Daily fare cap ignores rides after midnight',
+               'cause': 'Date math',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': 'Riders who took a bus after midnight were charged beyond the daily cap, because '
+                           'the cap reset at midnight instead of at the end of the service day at 4 AM.',
+               'fix_summary': 'Counted the cap per service day in FareCalculator.serviceDay().'},
+              {'id': 2825,
+               'name': 'Pass expiry shown a day early',
+               'cause': 'Timezone',
+               'language': 'Kotlin',
+               'component': 'passes',
+               'symptoms': "Passes valid until 31 July showed 'Expires 30 July' in the app, because the "
+                           'expiry time was shown in UTC.',
+               'fix_summary': "Showed expiry dates in India's timezone."},
+              {'id': 2829,
+               'name': 'Card blocked when a family shares it',
+               'cause': 'Business rule',
+               'language': 'Java',
+               'component': 'tap-validator',
+               'symptoms': 'Cards were blocked as suspicious when a family tapped one card for three people, '
+                           'because the fraud rule counted taps per minute.',
+               'fix_summary': 'Allowed up to five taps per minute at the same validator.'},
+              {'id': 2832,
+               'name': 'Top-up screen crashes when the UPI app returns early',
+               'cause': 'Null reference',
+               'language': 'Kotlin',
+               'component': 'top-up',
+               'symptoms': 'The top-up screen crashed when the UPI app returned without a transaction ID.',
+               'fix_summary': 'Treated a missing transaction ID as a cancelled payment.'},
+              {'id': 2836,
+               'name': 'Monthly statements only in English',
+               'cause': 'Localization',
+               'language': 'Python',
+               'component': 'accounts',
+               'symptoms': 'Monthly statements were always in English, even for riders who chose Kannada.',
+               'fix_summary': "Generated statements in the rider's language."},
+              {'id': 2839,
+               'name': "Refunds stuck on 'Processing'",
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'refunds',
+               'symptoms': "Refunds stayed on 'Processing' forever when the bank's confirmation arrived "
+                           'before the refund record was saved.',
+               'fix_summary': 'Saved the refund before calling the bank.'},
+              {'id': 2843,
+               'name': 'Peak fares on public holidays',
+               'cause': 'Config',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': "Public holidays were charged at peak fares in January, because the new year's "
+                           "holiday list hadn't been loaded.",
+               'fix_summary': 'Loaded holiday lists a year ahead and alerted when one is missing.'},
+              {'id': 2846,
+               'name': 'No transfer discount at exactly 60 minutes',
+               'cause': 'Off-by-one',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': "Transfers made exactly 60 minutes after the first tap didn't get the transfer "
+                           'discount, because the check used < 60 instead of <= 60.',
+               'fix_summary': 'Included the 60th minute in the transfer window.'}],
+  'new_report': {'title': 'Validator charged twice for one tap',
+                 'description': 'Rider says the validator on Route 12 charged the fare twice when she tapped '
+                                "in at 8:05 on Monday. She's sure she didn't hold the card there; she tapped "
+                                'and walked on. Support checked: the validator logged a single card read, '
+                                'tap ID 7F3A-0912, yet two charges carry that tap ID. The bus was very '
+                                'crowded.',
+                 'language': 'C++',
+                 'component': 'tap-validator'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': 2804,
+  'key_clue': 'the validator logged a single card read, tap ID 7F3A-0912, yet two charges carry that tap ID',
+  'why': 'Reads like #2804, but the validator logged a single card read, so there was no repeated read for a '
+         'debounce to miss; one read charged twice means the tap was recorded twice further along, a '
+         'different defect.'},
+ {'id': 'zb-31',
+  'tier': 'hard',
+  'type': 'D',
+  'history': [{'id': 2201,
+               'name': 'Gate passes show the wrong hour',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'gate-pass',
+               'symptoms': 'Visitor gate passes showed times 5½ hours early, so guards turned visitors away, '
+                           'because pass times were printed in UTC.',
+               'fix_summary': "Fixed format_local() in common/timefmt.py to convert to the society's "
+                              'timezone; every screen formats times through it.'},
+              {'id': 2204,
+               'name': 'Two maintenance bills on the 1st',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Some flats got two maintenance bills on the 1st of the month, because two '
+                           'scheduler instances generated bills at the same time.',
+               'fix_summary': 'Took a database lock per month before generating bills.'},
+              {'id': 2208,
+               'name': 'Notices crash the app on long PDFs',
+               'cause': 'Memory',
+               'language': 'Dart',
+               'component': 'notices',
+               'symptoms': 'Opening notice PDFs longer than 30 pages crashed the app on older phones.',
+               'fix_summary': 'Rendered PDF pages one at a time as they scroll into view.'},
+              {'id': 2211,
+               'name': 'Complaint photos silently dropped',
+               'cause': 'Timeout',
+               'language': 'Dart',
+               'component': 'complaints',
+               'symptoms': 'Complaints filed with photos on slow networks were saved without the photos, '
+                           'because the upload gave up after 10 seconds without telling anyone.',
+               'fix_summary': 'Retried photo uploads in the background and showed their progress.'},
+              {'id': 2215,
+               'name': 'Late fee on bills paid on the due date',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Residents who paid just before midnight on the due date were charged a late fee, '
+                           'because the late-fee job ran before the payment confirmation was saved.',
+               'fix_summary': "Ran the late-fee job only after the day's payment confirmations are "
+                              'processed.'},
+              {'id': 2218,
+               'name': 'Clubhouse double-booked',
+               'cause': 'Race condition',
+               'language': 'Python',
+               'component': 'amenities',
+               'symptoms': 'Two residents booking the clubhouse for the same evening at the same moment both '
+                           'got a confirmation.',
+               'fix_summary': 'Added a unique constraint on amenity and slot.'},
+              {'id': 2222,
+               'name': 'Maintenance bill shows ₹2,499.999',
+               'cause': 'Floating point',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Bills for flats with a parking add-on showed totals like ₹2,499.999, and the '
+                           'payment link rejected the amount.',
+               'fix_summary': 'Calculated every bill line in whole paise in billing/money.py.'},
+              {'id': 2225,
+               'name': 'Resident list shows tenants who moved out',
+               'cause': 'Cache',
+               'language': 'Python',
+               'component': 'accounts',
+               'symptoms': 'The resident list kept showing tenants for up to a day after they moved out, '
+                           'because the list was cached.',
+               'fix_summary': 'Cleared the resident cache whenever a tenant is removed.'},
+              {'id': 2229,
+               'name': 'Gate pass QR fails for Tamil names',
+               'cause': 'Encoding',
+               'language': 'Dart',
+               'component': 'gate-pass',
+               'symptoms': "QR codes on gate passes for visitors with Tamil names couldn't be scanned by the "
+                           "guard app, because the QR text wasn't UTF-8.",
+               'fix_summary': 'Encoded QR payloads as UTF-8.'},
+              {'id': 2232,
+               'name': 'Expense report skips the last flat in each wing',
+               'cause': 'Off-by-one',
+               'language': 'Python',
+               'component': 'reports',
+               'symptoms': 'The monthly expense report left out the last flat of every wing.',
+               'fix_summary': 'Included the last flat in the loop over each wing.'},
+              {'id': 2236,
+               'name': 'OTP login loops back on Android 14',
+               'cause': 'Lifecycle',
+               'language': 'Dart',
+               'component': 'accounts',
+               'symptoms': 'After entering the OTP, Android 14 users were sent back to the login screen, '
+                           'because the login token was saved after the app had already moved on.',
+               'fix_summary': 'Saved the token before navigating.'},
+              {'id': 2239,
+               'name': 'Owners who rent out get every notice twice',
+               'cause': 'Missing deduplication',
+               'language': 'Python',
+               'component': 'notices',
+               'symptoms': 'Owners who also rented out their flat got every notice twice, once as owner and '
+                           'once as resident.',
+               'fix_summary': 'Sent each notice once per person.'},
+              {'id': 2243,
+               'name': '1 April receipts numbered in the old financial year',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'payments',
+               'symptoms': 'Payments made between midnight and 5:30 AM on 1 April got receipt numbers from '
+                           'the old financial year, because the year came from the UTC date.',
+               'fix_summary': "Took the financial year from the society's local date."},
+              {'id': 2246,
+               'name': 'Water bills show 0 litres for new flats',
+               'cause': 'Missing value',
+               'language': 'Python',
+               'component': 'billing',
+               'symptoms': 'Water bills for newly added flats showed 0 litres, because a missing first meter '
+                           'reading was treated as 0.',
+               'fix_summary': 'Billed new flats from their first real reading and flagged them for the '
+                              'manager.'}],
+  'new_report': {'title': 'Bills still going to the previous owner',
+                 'description': 'Flat C-304 was sold in June. The resident list and the flat page show the '
+                                'new owner, Mr. Iyer, but the maintenance bill PDF and the bill email still '
+                                'go to Mrs. Kapoor, three months later. Probably the same caching problem '
+                                'you had with the resident list. Mr. Iyer has had to pay through the '
+                                'secretary.',
+                 'language': 'Python',
+                 'component': 'billing'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'The resident list and the flat page show the new owner, Mr. Iyer',
+  'why': 'Bills addressed to the old owner months after a sale, while the resident list is already right, '
+         "isn't #2225's day-long resident-list cache or any other history bug; it's a new defect in how "
+         'bills pick their owner.'},
+ {'id': 'zb-32',
+  'tier': 'hard',
+  'type': 'D',
+  'history': [{'id': 2301,
+               'name': 'Exams open an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Java',
+               'component': 'exam-timer',
+               'symptoms': 'After daylight saving started, scheduled exams opened an hour late for students '
+                           'in London, because start times were stored with a fixed UTC offset.',
+               'fix_summary': "Stored start times in UTC and converted them with the exam centre's zone "
+                              'rules.'},
+              {'id': 2304,
+               'name': 'Last answer lost when time runs out',
+               'cause': 'Race condition',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': 'When the timer hit zero, the answer typed in the last few seconds was lost, '
+                           'because auto-submit fired before the pending autosave request finished.',
+               'fix_summary': 'Made submitExam() wait for the pending autosave before submitting.'},
+              {'id': 2308,
+               'name': 'Webcam check shows a black box on Safari',
+               'cause': 'Browser compatibility',
+               'language': 'TypeScript',
+               'component': 'proctoring',
+               'symptoms': 'The webcam check before the exam showed a black box on Safari, so students '
+                           "couldn't start.",
+               'fix_summary': 'Added the playsinline attribute to the video element.'},
+              {'id': 2311,
+               'name': 'Percentages rounded down',
+               'cause': 'Rounding',
+               'language': 'Java',
+               'component': 'grading',
+               'symptoms': 'Percentages like 89.5 were shown as 89%, because the percentage was cast to an '
+                           'integer.',
+               'fix_summary': 'Rounded half up to one decimal place.'},
+              {'id': 2315,
+               'name': "'Saved' shown when autosave failed",
+               'cause': 'Error handling',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': "Students whose login expired mid-exam saw 'Saved' after every answer, but "
+                           'nothing was saved, because a 401 response was treated as success.',
+               'fix_summary': "Showed 'Not saved: log in again' on any failed autosave."},
+              {'id': 2318,
+               'name': 'Question diagrams missing on small phones',
+               'cause': 'CSS',
+               'language': 'TypeScript',
+               'component': 'question-bank',
+               'symptoms': "Diagrams in questions didn't show on phones narrower than 380 px.",
+               'fix_summary': 'Let diagrams shrink to the screen width.'},
+              {'id': 2322,
+               'name': 'Skipped questions get negative marks',
+               'cause': 'Business rule',
+               'language': 'Java',
+               'component': 'grading',
+               'symptoms': "Skipped questions lost 0.25 marks as if they were wrong, because 'no answer' and "
+                           "'wrong answer' shared a status.",
+               'fix_summary': 'Gave skipped questions their own status worth 0 marks.'},
+              {'id': 2325,
+               'name': 'Two students get the same seat number',
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'seating',
+               'symptoms': 'Students who registered at the same moment were given the same exam-centre seat '
+                           'number.',
+               'fix_summary': 'Assigned seat numbers from a database sequence.'},
+              {'id': 2329,
+               'name': 'Long names cut off on certificates',
+               'cause': 'Data truncation',
+               'language': 'Java',
+               'component': 'certificates',
+               'symptoms': 'Names longer than 30 characters were cut off on certificates.',
+               'fix_summary': 'Shrank the font for long names instead of cutting them.'},
+              {'id': 2332,
+               'name': 'Results emailed before moderation',
+               'cause': 'Missing check',
+               'language': 'Java',
+               'component': 'results',
+               'symptoms': 'Students got their results by email before the moderators had approved them.',
+               'fix_summary': 'Sent results emails only after moderation is approved.'},
+              {'id': 2336,
+               'name': 'Autosave floods the server',
+               'cause': 'Missing debounce',
+               'language': 'TypeScript',
+               'component': 'autosave',
+               'symptoms': 'Autosave sent a request on every keystroke, and the server slowed down during '
+                           'big exams.',
+               'fix_summary': 'Debounced autosave to once every 3 seconds.'},
+              {'id': 2339,
+               'name': 'Timer keeps running during an approved break',
+               'cause': 'State handling',
+               'language': 'TypeScript',
+               'component': 'exam-timer',
+               'symptoms': 'For students with an approved toilet break, the exam timer kept counting down '
+                           'during the break.',
+               'fix_summary': 'Paused the timer while a break is active.'},
+              {'id': 2343,
+               'name': 'Login fails for emails with a plus sign',
+               'cause': 'Validation',
+               'language': 'Java',
+               'component': 'auth',
+               'symptoms': "Students with a '+' in their email address couldn't log in, because the plus was "
+                           'turned into a space.',
+               'fix_summary': 'Encoded email addresses properly in the login request.'},
+              {'id': 2346,
+               'name': 'Exam fee shown in USD to Indian students',
+               'cause': 'Config',
+               'language': 'TypeScript',
+               'component': 'payments',
+               'symptoms': 'The exam fee page showed the price in USD to students in India, because the '
+                           "currency defaulted to the company's account.",
+               'fix_summary': "Took the currency from the student's country."}],
+  'new_report': {'title': 'Certificate dated the day after the exam',
+                 'description': 'Students at our Chicago centre who sat the 7 PM exam on 12 March received '
+                                'certificates dated 13 March. Students who sat the 10 AM exam the same day '
+                                'got 12 March, which is right. The evening exam opened and closed on time, '
+                                'and the results page says 12 March for everyone; only the certificate PDF '
+                                "has the wrong date. I think it's the timezone thing again. Can you reissue "
+                                'them? The new certificate fonts look great, by the way.',
+                 'language': 'Java',
+                 'component': 'certificates'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'The evening exam opened and closed on time, and the results page says 12 March for everyone; '
+              'only the certificate PDF has the wrong date',
+  'why': 'Rules out the time bugs: #2301 made exams open an hour late, but this exam opened on time; #2339 '
+         'and #2304 are about the countdown timer, not dates; and only the certificate PDF is wrong while '
+         "the results page is right, so it's a new UTC-date defect in certificate generation (#2329, the "
+         'other certificates bug, cuts off names).'},
+ {'id': 'zb-33',
+  'tier': 'hard',
+  'type': 'D',
+  'history': [{'id': 2401,
+               'name': 'Unlock spins forever with Bluetooth off',
+               'cause': 'Missing check',
+               'language': 'Kotlin',
+               'component': 'unlock',
+               'symptoms': 'Tapping Unlock with Bluetooth off showed an endless spinner instead of asking '
+                           'the rider to turn Bluetooth on.',
+               'fix_summary': 'Checked Bluetooth before unlocking and asked the rider to turn it on.'},
+              {'id': 2404,
+               'name': 'Wallet top-up charged twice',
+               'cause': 'Race condition',
+               'language': 'Go',
+               'component': 'wallet',
+               'symptoms': "Double-tapping 'Add ₹200' charged the rider's card twice but added ₹200 once.",
+               'fix_summary': 'Ignored a second top-up request with the same request ID.'},
+              {'id': 2408,
+               'name': 'Map shows bikes that were just taken',
+               'cause': 'Cache',
+               'language': 'Go',
+               'component': 'maps',
+               'symptoms': 'The map kept showing bikes as available for up to 2 minutes after someone '
+                           'unlocked them.',
+               'fix_summary': 'Pushed unlock events to the map instead of caching bike positions.'},
+              {'id': 2411,
+               'name': 'Rides billed in whole hours',
+               'cause': 'Rounding',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'A 61-minute ride was billed as 2 hours, because ride time was rounded up to '
+                           'whole hours instead of 15-minute blocks.',
+               'fix_summary': 'Billed rides in 15-minute blocks.'},
+              {'id': 2415,
+               'name': 'Passes bought on the 31st skip February',
+               'cause': 'Date math',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'Monthly passes bought on 31 January renewed in March, because renewal added a '
+                           "month without clamping to February's last day.",
+               'fix_summary': 'Clamped renewals to the last day of shorter months.'},
+              {'id': 2418,
+               'name': "'Ride ended' notification an hour late",
+               'cause': 'Queue backlog',
+               'language': 'Go',
+               'component': 'notifications',
+               'symptoms': "On busy evenings the 'Ride ended' notification arrived up to an hour after the "
+                           'ride ended, because it waited in the same queue as marketing messages.',
+               'fix_summary': 'Gave ride notifications their own queue.'},
+              {'id': 2422,
+               'name': 'Ride kept running after locking underground',
+               'cause': 'Lost event',
+               'language': 'Kotlin',
+               'component': 'rides',
+               'symptoms': 'Rides ended in underground parking kept running until the next day, because the '
+                           'lock event was dropped when the phone had no signal.',
+               'fix_summary': 'Queued lock events on the phone, sent them once back online, and ended the '
+                              "ride at the lock's own time."},
+              {'id': 2425,
+               'name': 'Ride history crashes for rides ending outside a station',
+               'cause': 'Null reference',
+               'language': 'Kotlin',
+               'component': 'rides',
+               'symptoms': 'The ride history screen crashed for rides that ended outside a station, because '
+                           'the end station was null.',
+               'fix_summary': 'Showed the street address when there is no end station.'},
+              {'id': 2429,
+               'name': 'Support chat in English for Marathi users',
+               'cause': 'Localization',
+               'language': 'Kotlin',
+               'component': 'support',
+               'symptoms': 'Riders who chose Marathi got the support chat bot in English.',
+               'fix_summary': 'Passed the app language to the chat bot.'},
+              {'id': 2432,
+               'name': 'E-bike battery shows 1000%',
+               'cause': 'Unit conversion',
+               'language': 'Kotlin',
+               'component': 'maps',
+               'symptoms': 'E-bike batteries showed as 1000% on the map, because the API sends tenths of a '
+                           'percent.',
+               'fix_summary': 'Divided the battery value by 10 before showing it.'},
+              {'id': 2436,
+               'name': 'Ending a ride fails when the phone clock is wrong',
+               'cause': 'Clock skew',
+               'language': 'Go',
+               'component': 'rides',
+               'symptoms': "Ending a ride failed with 'invalid time' on phones whose clock was more than 5 "
+                           "minutes off, because the server trusted the phone's clock.",
+               'fix_summary': "Checked ride times against the server clock and used the phone's clock only "
+                              'for offline lock events.'},
+              {'id': 2439,
+               'name': 'Fares in euros for riders in India',
+               'cause': 'Config',
+               'language': 'Go',
+               'component': 'billing',
+               'symptoms': 'Some riders in India saw fares in euros, because the currency fell back to the '
+                           'default region.',
+               'fix_summary': "Took the currency from the rider's city."},
+              {'id': 2443,
+               'name': 'Ride receipts emailed twice',
+               'cause': 'Missing deduplication',
+               'language': 'Go',
+               'component': 'notifications',
+               'symptoms': 'Riders got every ride receipt email twice after the mail service retried a slow '
+                           'send.',
+               'fix_summary': 'Sent receipts with a message ID the mail service uses to drop duplicates.'}],
+  'new_report': {'title': "Someone else's trips in my history",
+                 'description': 'Since this morning my ride history shows three trips in Baner that I never '
+                                "took, with someone else's first name on the receipts. My friend sees "
+                                "strangers' trips too. Did someone hack my account? We both opened the "
+                                "history after your 'faster app' update. From the app's debug log: `GET "
+                                '/v2/rides/history 200 (cache: HIT, age 312s)`.',
+                 'language': 'Go',
+                 'component': None},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': '`GET /v2/rides/history 200 (cache: HIT, age 312s)`',
+  'why': "Other riders' trips served from a shared cache is a new defect (the ride history response is "
+         'cached without being tied to the rider); #2408 only kept bike positions stale on the map.'},
+ {'id': 'zb-34',
+  'tier': 'hard',
+  'type': 'D',
+  'history': [{'id': 2601,
+               'name': 'Invoice numbers skip after a failed save',
+               'cause': 'Transaction',
+               'language': 'Ruby',
+               'component': 'invoices',
+               'symptoms': 'Invoice numbers jumped, for example from INV-0041 to INV-0043, whenever saving '
+                           'an invoice failed validation, because the number was taken before saving.',
+               'fix_summary': 'Took the next number inside the same transaction as the save.'},
+              {'id': 2604,
+               'name': 'Overdue reminders for invoices paid on the due date',
+               'cause': 'Race condition',
+               'language': 'Ruby',
+               'component': 'reminders',
+               'symptoms': "Clients who paid on the due date still got a 'payment overdue' email, because "
+                           'the reminder job read the invoice status before the payment was recorded.',
+               'fix_summary': "Ran overdue reminders an hour after the day's payments are recorded."},
+              {'id': 2608,
+               'name': 'Recurring invoices created twice',
+               'cause': 'Race condition',
+               'language': 'Ruby',
+               'component': 'invoices',
+               'symptoms': 'Some monthly recurring invoices were created twice, because two workers ran the '
+                           'recurring-invoice job at the same time.',
+               'fix_summary': 'Locked each recurring schedule while its invoice is generated.'},
+              {'id': 2611,
+               'name': "USD invoices use the previous day's rate",
+               'cause': 'Timezone',
+               'language': 'Ruby',
+               'component': 'currency',
+               'symptoms': 'USD invoices dated the 1st used the exchange rate of the 31st for users in '
+                           'India, because the rate date was taken in UTC.',
+               'fix_summary': "Took the rate date from the user's timezone."},
+              {'id': 2615,
+               'name': 'Timesheet hours negative across midnight',
+               'cause': 'Date math',
+               'language': 'TypeScript',
+               'component': 'timesheets',
+               'symptoms': 'Timesheet entries from 10 PM to 2 AM counted as -20 hours.',
+               'fix_summary': 'Added a day to the end time when it is before the start time.'},
+              {'id': 2618,
+               'name': 'CSV export splits names with commas',
+               'cause': 'Escaping',
+               'language': 'Ruby',
+               'component': 'exports',
+               'symptoms': "Client names with commas, like 'Rao, Iyer & Co', split into two columns in the "
+                           'CSV export.',
+               'fix_summary': 'Quoted every field in CSV exports.'},
+              {'id': 2622,
+               'name': 'USD invoices show ₹ on the PDF',
+               'cause': 'Localization',
+               'language': 'Ruby',
+               'component': 'pdf',
+               'symptoms': 'Invoices in US dollars showed the ₹ symbol on the PDF, because the symbol came '
+                           "from the freelancer's country.",
+               'fix_summary': "Took the symbol from the invoice's currency."},
+              {'id': 2625,
+               'name': 'GST on invoices to foreign clients',
+               'cause': 'Business rule',
+               'language': 'Ruby',
+               'component': 'tax',
+               'symptoms': 'Invoices to clients outside India showed 18% GST, because the tax rule only '
+                           "checked the freelancer's country.",
+               'fix_summary': 'Applied export rules when the client is outside India.'},
+              {'id': 2629,
+               'name': 'Exports time out for big accounts',
+               'cause': 'Performance',
+               'language': 'Ruby',
+               'component': 'exports',
+               'symptoms': 'Exporting a year of invoices timed out after 30 seconds for accounts with more '
+                           'than 5,000 invoices.',
+               'fix_summary': 'Built big exports in the background and emailed a link.'},
+              {'id': 2632,
+               'name': 'Login links expire immediately',
+               'cause': 'Config',
+               'language': 'Ruby',
+               'component': 'auth',
+               'symptoms': "Magic login links said 'expired' the moment they were opened, because the expiry "
+                           'was set to 0 minutes in production.',
+               'fix_summary': 'Set link expiry to 15 minutes and added a startup check.'},
+              {'id': 2636,
+               'name': 'Invoice total a paisa off with GST',
+               'cause': 'Rounding',
+               'language': 'Ruby',
+               'component': 'tax',
+               'symptoms': 'Invoices with line discounts and GST were a paisa off from the amount the client '
+                           'paid, because each line was rounded separately.',
+               'fix_summary': 'Rounded once, on the invoice total.'},
+              {'id': 2639,
+               'name': 'Client portal crashes on invoices without a logo',
+               'cause': 'Null reference',
+               'language': 'TypeScript',
+               'component': 'clients',
+               'symptoms': "The client portal crashed for invoices from freelancers who hadn't uploaded a "
+                           'logo.',
+               'fix_summary': "Showed the freelancer's name when there is no logo."},
+              {'id': 2643,
+               'name': 'Due date a day early for clients in the US',
+               'cause': 'Timezone',
+               'language': 'TypeScript',
+               'component': 'invoices',
+               'symptoms': "Invoices due on 15 May showed '14 May' to clients in the US, because the client "
+                           'portal read the date as midnight UTC and showed it in local time.',
+               'fix_summary': 'Sent due dates as plain dates and formatted them without timezone conversion '
+                              'in formatDueDate().'},
+              {'id': 2646,
+               'name': 'Reminder emails in the wrong language',
+               'cause': 'Localization',
+               'language': 'Ruby',
+               'component': 'reminders',
+               'symptoms': "Clients got reminder emails in the freelancer's language instead of their own.",
+               'fix_summary': "Used the client's language for reminders."}],
+  'new_report': {'title': 'Monthly export missing invoices from the 31st',
+                 'description': 'My accountant says the August CSV export is short by ₹42,000. Every missing '
+                                'invoice is dated 31 August; everything from the 1st to the 30th is there. '
+                                "The export finishes in about 3 seconds and says 'Done'. Maybe it's the "
+                                'timeout problem? I only have about 300 invoices.',
+                 'language': 'Ruby',
+                 'component': 'exports'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'Every missing invoice is dated 31 August; everything from the 1st to the 30th is there',
+  'why': 'An export that finishes quickly but drops only the last day of the month is a new date-range bug, '
+         'not #2629 (big exports timing out) or #2618 (commas splitting columns).'},
+ {'id': 'zb-35',
+  'tier': 'hard',
+  'type': 'D',
+  'history': [{'id': 2701,
+               'name': 'Heating starts an hour late after the clock change',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'schedules',
+               'symptoms': 'After the clocks went forward, heating schedules started an hour late, because '
+                           "the cloud sent schedules to the thermostat with last week's UTC offset.",
+               'fix_summary': "Sent schedules in local time with the home's DST rules for the thermostat to "
+                              'apply.'},
+              {'id': 2704,
+               'name': 'Pairing fails silently on 5 GHz Wi-Fi',
+               'cause': 'Missing check',
+               'language': 'Swift',
+               'component': 'pairing',
+               'symptoms': 'Pairing failed with no message when the phone was on a 5 GHz network, because '
+                           'the thermostat only supports 2.4 GHz.',
+               'fix_summary': 'Detected 5 GHz networks and explained the problem.'},
+              {'id': 2708,
+               'name': 'Thermostat reads 2°C high',
+               'cause': 'Calibration',
+               'language': 'C',
+               'component': 'sensors',
+               'symptoms': 'Thermostats read about 2°C high after the screen had been on for a while, '
+                           'because heat from the screen reached the temperature sensor.',
+               'fix_summary': 'Subtracted a screen-heat offset based on brightness and how long the screen '
+                              'has been on.'},
+              {'id': 2711,
+               'name': 'Energy report shows a 25-hour day',
+               'cause': 'Timezone',
+               'language': 'Python',
+               'component': 'energy-report',
+               'symptoms': 'On the day the clocks went back, the energy report counted the repeated hour '
+                           'twice and showed 25 hours of heating.',
+               'fix_summary': 'Added up energy per UTC hour.'},
+              {'id': 2715,
+               'name': 'Firmware update stuck at 60%',
+               'cause': 'Timeout',
+               'language': 'C',
+               'component': 'firmware-update',
+               'symptoms': 'Firmware updates stopped at 60% on slow Wi-Fi, because the download timed out '
+                           'and never resumed.',
+               'fix_summary': 'Resumed downloads from the last good block.'},
+              {'id': 2718,
+               'name': "App shows 'Offline' for working thermostats",
+               'cause': 'Cache',
+               'language': 'Swift',
+               'component': 'app-sync',
+               'symptoms': "Reopening the app showed thermostats as 'Offline' for up to 5 minutes, because "
+                           'it displayed the last cached state first.',
+               'fix_summary': 'Asked for live status before showing the cached one.'},
+              {'id': 2722,
+               'name': 'Frost alerts all day for Celsius users',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'alerts',
+               'symptoms': 'Thermostats set to Celsius sent frost alerts all day, because the rule compared '
+                           '°C readings with a 41 °F threshold.',
+               'fix_summary': 'Converted readings to one unit before checking alert rules.'},
+              {'id': 2725,
+               'name': 'Schedule changes lost after a power cut',
+               'cause': 'Persistence',
+               'language': 'C',
+               'component': 'schedules',
+               'symptoms': 'Schedule changes made in the app were lost after a power cut, because the '
+                           'thermostat kept them in memory until midnight before saving.',
+               'fix_summary': 'Saved schedule changes to flash immediately.'},
+              {'id': 2729,
+               'name': 'Voice assistant sets °F on Celsius thermostats',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'voice',
+               'symptoms': "Asking the voice assistant for 'twenty-two degrees' set 22 °F on thermostats set "
+                           'to Celsius.',
+               'fix_summary': "Sent the thermostat's own unit with every voice command."},
+              {'id': 2732,
+               'name': 'Room sensors drain their batteries in weeks',
+               'cause': 'Infinite loop',
+               'language': 'C',
+               'component': 'sensors',
+               'symptoms': 'Wireless room sensors drained their batteries in weeks, because they retried '
+                           'sending forever when the thermostat was out of range.',
+               'fix_summary': 'Backed off retries up to once an hour.'},
+              {'id': 2736,
+               'name': 'Weekend schedule runs on Friday and Saturday',
+               'cause': 'Off-by-one',
+               'language': 'C',
+               'component': 'schedules',
+               'symptoms': 'The weekend schedule ran on Friday and Saturday instead of Saturday and Sunday, '
+                           'because the firmware counted days from 0 (Sunday) while the app counted from 1 '
+                           '(Monday).',
+               'fix_summary': 'Used ISO weekday numbers (Monday = 1) in the app and in schedule_apply() on '
+                              'the thermostat.'},
+              {'id': 2739,
+               'name': 'Away mode never turns off',
+               'cause': 'Permissions',
+               'language': 'Swift',
+               'component': 'app-sync',
+               'symptoms': "Away mode stayed on after people came home when the app's location access was "
+                           "set to 'While using'.",
+               'fix_summary': "Asked for 'Always' location access and explained why."},
+              {'id': 2743,
+               'name': 'Thermostat reboots on Wi-Fi passwords with emoji',
+               'cause': 'Encoding',
+               'language': 'C',
+               'component': 'pairing',
+               'symptoms': 'Thermostats rebooted in a loop when the Wi-Fi password contained an emoji, '
+                           'because the firmware read the password as ASCII.',
+               'fix_summary': 'Read Wi-Fi passwords as UTF-8.'}],
+  'new_report': {'title': 'Heating stuck at 12° after holiday mode ended',
+                 'description': 'We set holiday mode from 17 to 25 October and came home on the 25th to a '
+                                "freezing house: the thermostat still says 'Holiday: 12°' and ignores the "
+                                "schedule. Three days later it's stuck at 12° every day; the normal schedule "
+                                'never resumes, not even an hour late. The 25th was the night the clocks '
+                                "went back, so I think it's the DST bug again. My neighbour's holiday ended "
+                                'on 1 November, a week after the clock change, and hers is stuck too.',
+                 'language': 'C',
+                 'component': None},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': "My neighbour's holiday ended on 1 November, a week after the clock change, and hers is stuck "
+              'too',
+  'why': 'Rules out the clock bugs: #2701 started schedules an hour late and #2736 ran the weekend program '
+         'on the wrong days, but here the schedule never resumes on any day, and a holiday ending a week '
+         'after the clock change sticks the same way; #2711 only miscounted the energy report. No history '
+         "bug is about holiday mode, so it's new."},
+ {'id': 'zb-36',
+  'tier': 'hard',
+  'type': 'D',
+  'history': [{'id': 2801,
+               'name': "Top-up says success but the balance doesn't change",
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'top-up',
+               'symptoms': "After a card top-up, the app said 'Success' but showed the old balance, because "
+                           'it read the balance before the top-up was committed.',
+               'fix_summary': 'Showed the balance returned by the top-up itself.'},
+              {'id': 2804,
+               'name': 'Validator charges twice when the card is held',
+               'cause': 'Missing debounce',
+               'language': 'C++',
+               'component': 'tap-validator',
+               'symptoms': 'Holding a card on the validator for more than a second charged the fare twice, '
+                           'about half a second apart, because the validator only ignored repeat reads for '
+                           '500 ms.',
+               'fix_summary': 'Ignored repeat reads of the same card for 10 seconds.'},
+              {'id': 2808,
+               'name': 'Journey history hides the last leg',
+               'cause': 'Off-by-one',
+               'language': 'Kotlin',
+               'component': 'journey-history',
+               'symptoms': 'Trips with a transfer showed every leg except the last one in journey history.',
+               'fix_summary': 'Included the last leg when listing a trip.'},
+              {'id': 2811,
+               'name': 'Passes stop working on their last day',
+               'cause': 'Off-by-one',
+               'language': 'Java',
+               'component': 'passes',
+               'symptoms': 'Monthly passes stopped working on their last valid day, because the check used < '
+                           'instead of <= on the end date.',
+               'fix_summary': 'Included the end date in the validity check.'},
+              {'id': 2815,
+               'name': 'Refunds go to the wrong card for phone-wallet users',
+               'cause': 'Wrong reference',
+               'language': 'Java',
+               'component': 'refunds',
+               'symptoms': "Refunds for fares paid with a phone wallet went to the card in the wallet's "
+                           'first slot instead of the one that paid.',
+               'fix_summary': "Refunded to the payment's own card token."},
+              {'id': 2818,
+               'name': 'Low-balance alerts after every trip',
+               'cause': 'Unit conversion',
+               'language': 'Python',
+               'component': 'notifications',
+               'symptoms': 'Every rider got a low-balance alert after each trip, because the ₹50 threshold '
+                           'was stored as 5000 paise and read as ₹5,000.',
+               'fix_summary': 'Stored and compared balances in paise everywhere.'},
+              {'id': 2822,
+               'name': 'Daily fare cap ignores rides after midnight',
+               'cause': 'Date math',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': 'Riders who took a bus after midnight were charged beyond the daily cap, because '
+                           'the cap reset at midnight instead of at the end of the service day at 4 AM.',
+               'fix_summary': 'Counted the cap per service day in FareCalculator.serviceDay().'},
+              {'id': 2825,
+               'name': 'Pass expiry shown a day early',
+               'cause': 'Timezone',
+               'language': 'Kotlin',
+               'component': 'passes',
+               'symptoms': "Passes valid until 31 July showed 'Expires 30 July' in the app, because the "
+                           'expiry time was shown in UTC.',
+               'fix_summary': "Showed expiry dates in India's timezone."},
+              {'id': 2829,
+               'name': 'Card blocked when a family shares it',
+               'cause': 'Business rule',
+               'language': 'Java',
+               'component': 'tap-validator',
+               'symptoms': 'Cards were blocked as suspicious when a family tapped one card for three people, '
+                           'because the fraud rule counted taps per minute.',
+               'fix_summary': 'Allowed up to five taps per minute at the same validator.'},
+              {'id': 2832,
+               'name': 'Top-up screen crashes when the UPI app returns early',
+               'cause': 'Null reference',
+               'language': 'Kotlin',
+               'component': 'top-up',
+               'symptoms': 'The top-up screen crashed when the UPI app returned without a transaction ID.',
+               'fix_summary': 'Treated a missing transaction ID as a cancelled payment.'},
+              {'id': 2836,
+               'name': 'Monthly statements only in English',
+               'cause': 'Localization',
+               'language': 'Python',
+               'component': 'accounts',
+               'symptoms': 'Monthly statements were always in English, even for riders who chose Kannada.',
+               'fix_summary': "Generated statements in the rider's language."},
+              {'id': 2839,
+               'name': "Refunds stuck on 'Processing'",
+               'cause': 'Race condition',
+               'language': 'Java',
+               'component': 'refunds',
+               'symptoms': "Refunds stayed on 'Processing' forever when the bank's confirmation arrived "
+                           'before the refund record was saved.',
+               'fix_summary': 'Saved the refund before calling the bank.'},
+              {'id': 2843,
+               'name': 'Peak fares on public holidays',
+               'cause': 'Config',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': "Public holidays were charged at peak fares in January, because the new year's "
+                           "holiday list hadn't been loaded.",
+               'fix_summary': 'Loaded holiday lists a year ahead and alerted when one is missing.'},
+              {'id': 2846,
+               'name': 'No transfer discount at exactly 60 minutes',
+               'cause': 'Off-by-one',
+               'language': 'Java',
+               'component': 'fares',
+               'symptoms': "Transfers made exactly 60 minutes after the first tap didn't get the transfer "
+                           'discount, because the check used < 60 instead of <= 60.',
+               'fix_summary': 'Included the 60th minute in the transfer window.'}],
+  'new_report': {'title': 'Trips from last December filed under December 2026',
+                 'description': "Scrolling my journey history, there's a 'December 2026' section, which "
+                                "hasn't happened yet, holding three trips from 29, 30 and 31 December last "
+                                "year. The rest of last December is under 'December 2025' where it belongs. "
+                                'Maybe a timezone problem? Not urgent, just weird.',
+                 'language': 'Kotlin',
+                 'component': 'journey-history'},
+  'expected': {'verdict': 'new', 'bug_id': None},
+  'siblings': [],
+  'decoy_bug_id': None,
+  'key_clue': 'three trips from 29, 30 and 31 December last year',
+  'why': 'Only the last three days of December filed under the next year is a week-based-year date format '
+         "bug, which is new; it isn't #2808 (last leg hidden) or #2825 (expiry shown in UTC)."}]
 # --- end CASES ---
 
 VERDICTS = ("regression", "new")
+# Seconds to wait before each retry of a 429, 5xx, timeout or dropped connection
+RETRY_WAITS = [5, 10, 20, 40, 60, 60]
+PAUSE_BETWEEN_CASES = 1.5
+# More errored cases than this share makes a run invalid
+MAX_ERROR_SHARE = 0.10
 
 
 def build_prompt(case):
@@ -883,54 +4001,169 @@ def parse_answer(reply):
     return verdict.strip().lower(), bug_id, reason if isinstance(reason, str) else ""
 
 
+class CallFailed(Exception):
+    """The model call still failed after every retry, or failed in a way a retry won't fix."""
+
+
+def status_of(error):
+    """The HTTP status of a failed call, if the error says."""
+    for holder in (error, getattr(error, "response", None)):
+        code = getattr(holder, "status_code", None) or getattr(holder, "code", None)
+        if isinstance(code, int) and not isinstance(code, bool):
+            return code
+    match = re.search(r"\b(429|5\d\d)\b", str(error))
+    return int(match.group(1)) if match else None
+
+
+def is_retryable(error):
+    """429 (rate limit or heavy load), 5xx, timeouts and dropped connections are worth retrying."""
+    status = status_of(error)
+    if status is not None:
+        return status == 429 or status >= 500
+    if isinstance(error, (TimeoutError, ConnectionError)):
+        return True
+    text = str(error).lower()
+    return any(words in text for words in ("rate limit", "heavy load", "overloaded", "timed out", "timeout", "connection"))
+
+
 def ask(llm, case):
-    """The model's reply, in a fresh chat so no case sees another. None if the call fails twice."""
+    """The model's reply, in a fresh chat so no case sees another.
+
+    A retryable failure is tried again after each wait in RETRY_WAITS. Raises CallFailed
+    when the call still fails, so the case is reported as ERROR instead of as wrong.
+    """
     prompt = build_prompt(case)
-    for attempt in (1, 2):
+    for attempt, wait in enumerate([*RETRY_WAITS, None], 1):
         with kbench.chats.new(case["id"]):
             try:
                 return llm.prompt(prompt)
-            except Exception as error:  # a failed call scores 0 for its case instead of stopping the run
-                print(f"{case['id']}: model call {attempt} of 2 failed: {error}")
-    return None
+            except Exception as error:
+                if wait is None or not is_retryable(error):
+                    raise CallFailed(f"{type(error).__name__}: {str(error)[:200]}") from error
+                print(f"{case['id']}: try {attempt} failed ({status_of(error) or type(error).__name__}), "
+                      f"retrying in {wait}s")
+        time.sleep(wait)
+
+
+def judge(case, reply):
+    """One case's result from the model's reply: status "pass" or "fail", and any problem with the answer."""
+    expected = case["expected"]
+    result = {"id": case["id"], "tier": case["tier"], "type": case["type"], "status": "fail",
+              "problem": None, "verdict": None, "bug_id": None, "reason": ""}
+    answer = parse_answer(reply)
+    if answer is None:
+        result.update(problem="unreadable", reason=repr(str(reply)[:200]))
+        return result
+    verdict, bug_id, reason = answer
+    result.update(verdict=verdict, bug_id=bug_id, reason=reason)
+    if verdict == "regression" and bug_id is None:
+        result["problem"] = "missing id"
+    elif verdict == "regression" and bug_id not in {bug["id"] for bug in case["history"]}:
+        result["problem"] = "hallucinated id"
+    if (verdict, bug_id) == (expected["verdict"], expected["bug_id"]):
+        result["status"] = "pass"
+    return result
 
 
 def describe(verdict, bug_id):
-    return f"regression #{bug_id}" if verdict == "regression" else verdict
+    if verdict == "regression":
+        return "regression (no id)" if bug_id is None else f"regression #{bug_id}"
+    return verdict
+
+
+def results_path(model):
+    return "zombiebench_results_" + re.sub(r"[^\w.-]+", "_", model) + ".json"
+
+
+def load_results(path):
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)["results"]
+    except (OSError, ValueError, KeyError):
+        return {}
+
+
+def save_results(path, model, results):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"model": model, "results": results}, f, indent=1)
+
+
+def print_case(case, result):
+    expected = case["expected"]
+    if result["status"] == "error":
+        got, mark = "-", "ERROR"
+    else:
+        got = "unreadable" if result["problem"] == "unreadable" else describe(result["verdict"], result["bug_id"])
+        mark = "✓" if result["status"] == "pass" else "✗"
+        if result["problem"] in ("missing id", "hallucinated id"):
+            mark += f" ({result['problem']})"
+    print(f"{case['id']:<7}{case['tier']:<6}{case['type']:<6}"
+          f"{describe(expected['verdict'], expected['bug_id']):<20}{got:<20}{mark}")
+    if result["status"] != "pass":
+        print(f"{'':19}{'error' if result['status'] == 'error' else 'reason'}: {result['reason']}")
+
+
+def print_summary(results):
+    """Passed/answered per tier and type, with errors counted apart and the answer problems listed."""
+    tiers = [t for t in ("easy", "hard") if any(r["tier"] == t for r in results)]
+    print(f"{'':<6}" + "".join(f"{t:>7}" for t in "ABCD") + f"{'answered':>17}{'errors':>9}")
+    for tier in tiers + ["all"]:
+        rows = [r for r in results if tier in ("all", r["tier"])]
+        answered = [r for r in rows if r["status"] != "error"]
+        cells = []
+        for case_type in "ABCD":
+            done = [r for r in answered if r["type"] == case_type]
+            cells.append(f"{sum(r['status'] == 'pass' for r in done)}/{len(done)}" if done else "-")
+        passed = sum(r["status"] == "pass" for r in answered)
+        share = f"{passed / len(answered):.0%}" if answered else "-"
+        print(f"{tier:<6}" + "".join(f"{c:>7}" for c in cells)
+              + f"{passed:>7}/{len(answered)} = {share:>4}{len(rows) - len(answered):>9}")
+
+    errors = [r for r in results if r["status"] == "error"]
+    passed = sum(r["status"] == "pass" for r in results)
+    answered = len(results) - len(errors)
+    print()
+    print(f"errors: {len(errors)}" + (f" ({', '.join(r['id'] for r in errors)})" if errors else ""))
+    if answered:
+        print(f"Accuracy over answered cases: {passed}/{answered} = {passed / answered:.0%}")
+    print(f"Accuracy over all cases (errors count as wrong): {passed}/{len(results)} = {passed / len(results):.0%}")
+    for problem in ("unreadable", "missing id", "hallucinated id"):
+        ids = [r["id"] for r in results if r["problem"] == problem]
+        print(f"{problem}: {len(ids)}" + (f" ({', '.join(ids)})" if ids else ""))
+    if len(errors) > MAX_ERROR_SHARE * len(results):
+        print("RESULT INVALID: rerun (only the errored cases: zombiebench.run(llm=..., rerun_errors=True))")
 
 
 @kbench.task(
     name="zombiebench",
     description="Given fixed bugs and a new report, say which old bug came back, or that it's new.",
 )
-def zombiebench(llm) -> float:
-    results = {}
-    failed_calls = 0
-    print(f"{'case':<7}{'type':<6}{'expected':<17}{'answer':<17}ok")
-    for case in CASES:
-        reply = ask(llm, case)
-        failed_calls += reply is None
-        answer = parse_answer(reply)
-        expected = case["expected"]
-        passed = answer is not None and answer[:2] == (expected["verdict"], expected["bug_id"])
-        results.setdefault(case["type"], []).append(passed)
+def zombiebench(llm, rerun_errors: bool = False) -> float:
+    model = getattr(llm, "model", None) or getattr(llm, "name", None) or "model"
+    path = results_path(model)
+    results = load_results(path) if rerun_errors else {}
+    to_ask = [case for case in CASES if results.get(case["id"], {}).get("status") in (None, "error")]
+    if rerun_errors:
+        print(f"{model}: rerunning {len(to_ask)} of {len(CASES)} cases (errored or missing in {path})")
 
-        got = "unreadable" if answer is None else describe(*answer[:2])
-        print(f"{case['id']:<7}{case['type']:<6}{describe(expected['verdict'], expected['bug_id']):<17}"
-              f"{got:<17}{'✓' if passed else '✗'}")
-        if not passed:
-            said = answer[2] if answer else "no reply" if reply is None else repr(str(reply)[:200])
-            print(f"{'':13}reason: {said}")
+    print(f"{'case':<7}{'tier':<6}{'type':<6}{'expected':<20}{'answer':<20}ok")
+    for i, case in enumerate(to_ask):
+        if i:
+            time.sleep(PAUSE_BETWEEN_CASES)
+        try:
+            result = judge(case, ask(llm, case))
+        except CallFailed as error:
+            result = {"id": case["id"], "tier": case["tier"], "type": case["type"], "status": "error",
+                      "problem": None, "verdict": None, "bug_id": None, "reason": str(error)}
+        results[case["id"]] = result
+        save_results(path, model, results)  # after every case, so a crash keeps what's done
+        print_case(case, result)
 
-    all_results = [ok for oks in results.values() for ok in oks]
     print()
-    for case_type in sorted(results):
-        oks = results[case_type]
-        print(f"Type {case_type}: {sum(oks)}/{len(oks)} = {sum(oks) / len(oks):.0%}")
-    print(f"Overall: {sum(all_results)}/{len(all_results)} = {sum(all_results) / len(all_results):.0%}")
-    if failed_calls:
-        print(f"Warning: {failed_calls} model call(s) failed and scored 0.")
-    return sum(all_results) / len(all_results)
+    merged = [results[case["id"]] for case in CASES]
+    print_summary(merged)
+    answered = [r for r in merged if r["status"] != "error"]
+    return sum(r["status"] == "pass" for r in answered) / len(answered) if answered else 0.0
 
 
 if __name__ == "__main__":

@@ -15,6 +15,12 @@ keyword formula?
 | C | Keyword decoy: shares words with an old bug, but the cause is different | new |
 | D | Clearly new bug | new |
 
+There are two tiers:
+
+- **Easy:** 12 cases, 3 per type, with 5–8 fixed bugs each.
+- **Hard:** 24 cases, 6 per type, with 12–15 fixed bugs each. Every right answer has 2–3
+  "sibling" bugs in the same component or with the same cause, and the reports are messy.
+
 All cases are invented for this benchmark.
 
 ## Files
@@ -24,6 +30,7 @@ All cases are invented for this benchmark.
 - `kaggle_task.py`: the Kaggle Benchmarks task (one file, cases embedded)
 - `embed_cases.py`: copies `cases.json` into `kaggle_task.py`
 - `validate.py`: checks the cases, including that cue words like "again" don't give the answer away
+- `results/`: saved model runs
 - `NOTES.md`: build log
 
 ## Run
@@ -35,8 +42,16 @@ python embed_cases.py       # after editing cases.json
 ```
 
 On Kaggle, paste `kaggle_task.py` into a Benchmarks notebook cell, then run
-`%choose zombiebench` in the last cell.
+`%choose zombiebench` in the last cell. If the summary reports errors, run
+`zombiebench.run(llm=kbench.llms["<model>"], rerun_errors=True)` to retry only those cases.
 
 ## Results
 
-Baseline (12 cases): A 3/3, B 0/3, C 1/3, D 3/3, overall 7/12 = 58%. Model results to come.
+| | Easy | Hard (A / B / C / D) | All |
+|---|---|---|---|
+| openai/gpt-5.4-nano-2026-03-17 | 11/12 | 13/24 (5/6, 1/6, 2/6, 5/6) | 24/36 |
+| Baseline formula | 7/12 | 5/24 (2/6, 0/6, 1/6, 2/6) | 12/36 |
+| Always answering "new" | 6/12 | 12/24 | 18/36 |
+
+google/gemini-3.8-flash's run is invalid (every call failed with 429 "heavy load") and is being
+rerun. Saved runs are in `results/`.

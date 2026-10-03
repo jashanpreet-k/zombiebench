@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-03",
+  "what": "First Kaggle Benchmarks test run: the 12 easy cases (zb-01 to zb-12) on 2 models",
+  "cases_commit": "15ce866",
+  "source": "Summary I pasted from the Kaggle notebook output; the full output (with each model's reasons) was not saved",
+  "runs": [
+    {
+      "model": "google/gemini-3.8-flash",
+      "passed": 12,
+      "total": 12,
+      "by_type": {"A": "3/3", "B": "3/3", "C": "3/3", "D": "3/3"},
+      "misses": []
+    },
+    {
+      "model": "openai/gpt-5.4-nano-2026-03-17",
+      "passed": 10,
+      "total": 12,
+      "by_type": {"A": "3/3", "B": "2/3", "C": "2/3", "D": "3/3"},
+      "misses": [
+        {"case": "zb-06", "type": "B", "expected": "regression #713", "answer": "new"},
+        {"case": "zb-07", "type": "C", "expected": "new", "answer": "regression #823",
+         "note": "fell for the decoy, citing the ₹1/day bug #823"}
+      ]
+    },
+    {
+      "model": "baseline.py (Bug Graveyard formula)",
+      "passed": 7,
+      "total": 12,
+      "by_type": {"A": "3/3", "B": "0/3", "C": "1/3", "D": "3/3"},
+      "misses": [
+        {"case": "zb-04", "type": "B", "expected": "regression #509", "answer": "new"},
+        {"case": "zb-05", "type": "B", "expected": "regression #618", "answer": "new"},
+        {"case": "zb-06", "type": "B", "expected": "regression #713", "answer": "new"},
+        {"case": "zb-07", "type": "C", "expected": "new", "answer": "regression #823"},
+        {"case": "zb-08", "type": "C", "expected": "new", "answer": "regression #911"}
+      ]
+    }
+  ]
+}

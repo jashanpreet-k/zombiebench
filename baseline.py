@@ -112,35 +112,46 @@ def describe(answer):
     return f"regression #{answer['bug_id']}" if answer["verdict"] == "regression" else "new"
 
 
+def print_summary(results):
+    """results: (tier, type, passed) per case. One row per tier, then all tiers together."""
+    tiers = [t for t in ("easy", "hard") if any(r[0] == t for r in results)]
+    print(f"{'':<6}" + "".join(f"{t:>7}" for t in "ABCD") + f"{'all':>14}")
+    for tier in tiers + ["all"]:
+        rows = [r for r in results if tier in ("all", r[0])]
+        cells = []
+        for case_type in "ABCD":
+            oks = [ok for _, t, ok in rows if t == case_type]
+            cells.append(f"{sum(oks)}/{len(oks)}" if oks else "-")
+        passed = sum(ok for _, _, ok in rows)
+        print(f"{tier:<6}" + "".join(f"{c:>7}" for c in cells)
+              + f"{passed:>6}/{len(rows)} = {passed / len(rows):.0%}")
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     verbose = "--verbose" in sys.argv
     with open(args[0] if args else "cases.json", encoding="utf-8") as f:
         cases = json.load(f)
 
-    per_type = {}
-    print(f"{'case':<7}{'type':<6}{'expected':<17}{'baseline':<17}{'best match':<12}{'score':>5}  ok")
+    results = []
+    print(f"{'case':<7}{'tier':<6}{'type':<6}{'expected':<18}{'baseline':<18}{'best match':<12}{'score':>5}  ok")
     for case in cases:
         prediction, best = predict(case)
         ok = is_correct(prediction, case["expected"])
-        per_type.setdefault(case["type"], []).append(ok)
+        results.append((case["tier"], case["type"], ok))
         print(
-            f"{case['id']:<7}{case['type']:<6}{describe(case['expected']):<17}{describe(prediction):<17}"
+            f"{case['id']:<7}{case['tier']:<6}{case['type']:<6}{describe(case['expected']):<18}{describe(prediction):<18}"
             f"#{best['bug']['id']:<11}{best['score']:>5}  {'✓' if ok else '✗'}"
         )
         if verbose:
             p = best["points"]
             print(
-                f"{'':13}cause {p['cause']}, language {p['language']}, component {p['component']}, "
+                f"{'':19}cause {p['cause']}, language {p['language']}, component {p['component']}, "
                 f"keywords {p['keywords']} ({', '.join(best['shared']) or 'none'})"
             )
 
-    total = [ok for oks in per_type.values() for ok in oks]
     print()
-    for case_type in sorted(per_type):
-        oks = per_type[case_type]
-        print(f"Type {case_type}: {sum(oks)}/{len(oks)} = {sum(oks) / len(oks):.0%}")
-    print(f"Overall: {sum(total)}/{len(total)} = {sum(total) / len(total):.0%}")
+    print_summary(results)
 
 
 if __name__ == "__main__":
