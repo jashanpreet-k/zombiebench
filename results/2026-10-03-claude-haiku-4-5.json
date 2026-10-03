@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-03",
+  "what": "Kaggle Benchmarks run of all 36 cases (12 easy, 24 hard) on Claude Haiku 4.5",
+  "code": "kaggle_paste.py loaded from GitHub main at commit 6275685, run with run_models()",
+  "source": "Full notebook output pasted by me; every case passed except the 3 listed in misses",
+  "notes": "Kaggle printed 'Could not get source code for task zombiebench' because the code was loaded with exec(); the run itself was unaffected",
+  "runs": [
+    {
+      "model": "anthropic/claude-haiku-4-5@20251001",
+      "valid": true,
+      "passed": 33,
+      "answered": 36,
+      "errors": 0,
+      "total": 36,
+      "by_tier": {
+        "easy": {"passed": 12, "answered": 12, "by_type": {"A": "3/3", "B": "3/3", "C": "3/3", "D": "3/3"}},
+        "hard": {"passed": 21, "answered": 24, "by_type": {"A": "6/6", "B": "6/6", "C": "6/6", "D": "3/6"}}
+      },
+      "answer_problems": {"unreadable": 0, "missing_id": 0, "hallucinated_id": 0},
+      "misses": [
+        {"case": "zb-32", "type": "D", "expected": "new", "answer": "regression #2301",
+         "shared_with_answer": "cause category Timezone (#2301: exams open an hour late after the clock change)",
+         "reason": "Certificate dates are being stored or converted with a fixed UTC offset instead of the exam centre's timezone rules, causing the same timezone handling issue that was fixed in the exam-timer component."},
+        {"case": "zb-33", "type": "D", "expected": "new", "answer": "regression #2408",
+         "shared_with_answer": "cause category Cache (#2408: map shows bikes that were just taken)",
+         "reason": "The cached ride history showing stale data from other users is analogous to the map cache bug where old data persisted; the cache hit with 312s age suggests cached responses are not being invalidated properly between users or sessions."},
+        {"case": "zb-36", "type": "D", "expected": "new", "answer": "regression #2825",
+         "shared_with_answer": "a date shown wrong at a boundary; the model took the report's guess and called it Timezone (#2825: pass expiry shown a day early in UTC)",
+         "reason": "The end-of-year dates are displayed in UTC timezone instead of India's timezone, causing December 29-31 to appear in the next year, which is the same root cause as passes showing expiry a day early."}
+      ]
+    }
+  ]
+}

@@ -289,3 +289,77 @@ fresh event.
   flagged as invalid.
 - **#2618 wasn't a hallucination.** The new check compares every id with the case's own
   history, so a wrong-but-real pick like that is counted as plain wrong.
+
+## Phase 5: Loading the code from GitHub, and Claude Haiku 4.5's run (2026-10-03)
+
+### What I asked for
+- Copying the 4,000-line block into Kaggle kept failing, so load the code from GitHub instead:
+  - a `kaggle_paste.py` that only defines things, plus `run_models(models)`
+  - commit it, and push to a new public repo, jashanpreet-k/zombiebench
+  - no secrets in the repo
+- No AI attribution on GitHub: rewrite the existing commits to drop every "Co-Authored-By:"
+  line before the first push, and never add one again in this repo.
+- Save Claude Haiku 4.5's run of all 36 cases, and note the pattern in its misses.
+
+### What was built
+- `kaggle_paste.py`: generated from `kaggle_task.py` by `embed_cases.py`. It's
+  `kaggle_task.py` without the last two lines, so loading it calls no model.
+- `run_models(models, rerun_errors=False)` in `kaggle_task.py`: checks every model name first,
+  then runs each one with the retries and error reporting from Phase 4.
+- `validate.py` fails if `kaggle_paste.py` is out of date.
+- Repo: https://github.com/jashanpreet-k/zombiebench. On Kaggle:
+  ```python
+  import urllib.request
+  exec(urllib.request.urlopen("https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/kaggle_paste.py").read().decode())
+  run_models(["google/gemini-3.8-flash"])
+  ```
+- The 4 commits before the push were rewritten without their Co-Authored-By lines. Authors,
+  committers, dates and file contents didn't change, but the hashes did, so the first test's
+  results now point at `e3c278a` instead of `15ce866`.
+- `results/2026-10-03-claude-haiku-4-5.json`.
+
+### Claude Haiku 4.5 (anthropic/claude-haiku-4-5@20251001), all 36 cases, 0 errors
+| | A | B | C | D | All |
+|---|---|---|---|---|---|
+| easy | 3/3 | 3/3 | 3/3 | 3/3 | 12/12 |
+| hard | 6/6 | 6/6 | 6/6 | 3/6 | 21/24 |
+| all | 9/9 | 9/9 | 9/9 | 6/9 | **33/36 (92%)** |
+
+No unreadable replies, missing ids or hallucinated ids.
+
+**The pattern: all 3 misses are hard D cases.** In each, the new bug shares a cause *category*
+with a history bug, and the model called it that bug coming back. Its reasons say "same" or
+"analogous":
+- **zb-32 → #2301 (timezone):** "…causing the same timezone handling issue that was fixed in the
+  exam-timer component." The report says the exam opened on time and only the certificate PDF
+  is wrong.
+- **zb-33 → #2408 (cache):** "…is analogous to the map cache bug where old data persisted…"
+  #2408 kept bike positions stale on the map; this serves one rider's history to another.
+- **zb-36 → #2825 (a year-end date):** "…the same root cause as passes showing expiry a day
+  early." Here the model followed the report's own wrong guess ("Maybe a timezone problem?").
+  But in India, showing a time in UTC moves it *earlier*, so UTC can never push 29–31 December
+  into the next year. The real cause is a week-based-year date format.
+
+So the model treats "the same kind of bug" as "the same bug". That's the opposite of the
+audit's "new code repeating an old mistake" lesson, seen from the model's side. Hard D cases
+are where that confusion shows.
+
+### What went wrong and how we fixed it
+- **I couldn't create the repo from here:** `gh` isn't installed, and I didn't want to pull a
+  token out of the keychain. I created the empty repo on github.com myself, then pushed.
+- **The commit rewrite left 2 stale hashes** (in NOTES and the first test's results). Both now
+  point at the rewritten commit.
+- **Loading with `exec()` hides the task's source from Kaggle.** It printed "Could not get
+  source code for task 'zombiebench'", because `inspect.getsource` can't read code that came
+  from a string. That doesn't affect results, but a leaderboard task saved this way would carry
+  no source code. For the final run, save the downloaded file to disk and import it (or paste
+  it into a cell), and load it from a URL pinned to a commit instead of `main`.
+
+### Notes for the write-up
+- Results so far:
+  - Claude Haiku 4.5: 33/36
+  - gpt-5.4-nano: 24/36
+  - always answering "new": 18/36
+  - the Bug Graveyard formula: 12/36
+- Haiku's only weakness is "same cause category, different defect". A strong model gets every
+  A, B and C case, so the separation lives in hard D.

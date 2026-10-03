@@ -59,6 +59,7 @@ the last cell.
 
 | | Easy | Hard (A / B / C / D) | All |
 |---|---|---|---|
+| anthropic/claude-haiku-4-5@20251001 | 12/12 | 21/24 (6/6, 6/6, 6/6, 3/6) | 33/36 |
 | openai/gpt-5.4-nano-2026-03-17 | 11/12 | 13/24 (5/6, 1/6, 2/6, 5/6) | 24/36 |
 | Baseline formula | 7/12 | 5/24 (2/6, 0/6, 1/6, 2/6) | 12/36 |
 | Always answering "new" | 6/12 | 12/24 | 18/36 |
