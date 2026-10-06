@@ -6,27 +6,83 @@
   "source": "Scores I copied from the Kaggle leaderboard",
   "note": "This is a separate run from my own notebook runs in 2026-10-06-kaggle-48-cases.json, which have the per-tier scores and every miss. Scores differed by up to 7 cases between the two (Gemini 2.5 Flash: 42/48 in my run, 0.73 here, about 35/48).",
   "leaderboard": [
-    {"model": "GPT-6.1 Sol", "score": 1.00},
-    {"model": "GPT-5.5", "score": 1.00},
-    {"model": "Claude Opus 5.5", "score": 1.00},
-    {"model": "Gemini 3.1 Pro Preview", "score": 1.00},
-    {"model": "Gemini 3.8 Flash", "score": null,
-     "note": "Missing: the table I pasted showed 'X.XX' instead of a number"},
-    {"model": "Gemini 3.7 Flash", "score": 1.00},
-    {"model": "Gemini 3.5 Flash", "score": 1.00},
-    {"model": "Gemma 4 31B", "score": 1.00},
-    {"model": "GLM-5", "score": 0.98},
-    {"model": "Claude Opus 4.5", "score": 0.97},
-    {"model": "GPT-5.4 mini", "score": 0.88},
-    {"model": "Claude Sonnet 4.5", "score": 0.88},
-    {"model": "gpt-oss-20b", "score": 0.88},
-    {"model": "Gemini 3.1 Flash-Lite Preview", "score": 0.85},
-    {"model": "Claude Haiku 4.5", "score": 0.81},
-    {"model": "Qwen 3 235B A22B Instruct", "score": 0.73},
-    {"model": "Gemini 2.5 Flash", "score": 0.73},
-    {"model": "GPT-5.4 nano", "score": 0.55}
+    {
+      "model": "GPT-6.1 Sol",
+      "score": 1.0
+    },
+    {
+      "model": "GPT-5.5",
+      "score": 1.0
+    },
+    {
+      "model": "Claude Opus 5.5",
+      "score": 1.0
+    },
+    {
+      "model": "Gemini 3.1 Pro Preview",
+      "score": 1.0
+    },
+    {
+      "model": "Gemini 3.7 Flash",
+      "score": 1.0
+    },
+    {
+      "model": "Gemini 3.5 Flash",
+      "score": 1.0
+    },
+    {
+      "model": "Gemma 4 31B",
+      "score": 1.0
+    },
+    {
+      "model": "GLM-5",
+      "score": 0.98
+    },
+    {
+      "model": "Claude Opus 4.5",
+      "score": 0.97
+    },
+    {
+      "model": "GPT-5.4 mini",
+      "score": 0.88
+    },
+    {
+      "model": "Claude Sonnet 4.5",
+      "score": 0.88
+    },
+    {
+      "model": "gpt-oss-20b",
+      "score": 0.88
+    },
+    {
+      "model": "Gemini 3.1 Flash-Lite Preview",
+      "score": 0.85
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "score": 0.81
+    },
+    {
+      "model": "Qwen 3 235B A22B Instruct",
+      "score": 0.73
+    },
+    {
+      "model": "Gemini 2.5 Flash",
+      "score": 0.73
+    },
+    {
+      "model": "GPT-5.4 nano",
+      "score": 0.55
+    }
   ],
-  "left_out": [
-    {"model": "gpt-oss-120b", "reason": "Stuck running for hours; left off this list"}
+  "not_finished": [
+    {
+      "model": "Gemini 3.8 Flash",
+      "reason": "Its official Kaggle run was still running when I published, so it has no official score"
+    },
+    {
+      "model": "gpt-oss-120b",
+      "reason": "Still running on Kaggle (stuck for hours) when I published, so it has no official score"
+    }
   ]
 }

@@ -557,8 +557,9 @@ just zb-40 blind: regression #3139, **no doubt**.
   - GLM-5 0.98 · Claude Opus 4.5 0.97 · GPT-5.4 mini 0.88 · Claude Sonnet 4.5 0.88 ·
     gpt-oss-20b 0.88 · Gemini 3.1 Flash-Lite Preview 0.85 · Claude Haiku 4.5 0.81 ·
     Qwen 3 235B A22B Instruct 0.73 · Gemini 2.5 Flash 0.73 · GPT-5.4 nano 0.55
-  - Gemini 3.8 Flash's score is missing: my copy of the table showed "X.XX".
-  - I left gpt-oss-120b out because it was stuck running for hours.
+  - Gemini 3.8 Flash and gpt-oss-120b didn't finish on Kaggle: both were still running when I
+    published, so they have no official score. My first copy of the table showed "X.XX" for
+    Gemini 3.8 Flash; that was its unfinished run, not a score. That leaves 17 models.
 - **The two runs differ by up to 7 cases.** Gemini 2.5 Flash scored 42/48 in my run and 0.73
   (about 35/48) on Kaggle. Gemma 4 31B scored 47/48 in my run and 1.00 on Kaggle. So small gaps
   between models aren't meaningful.
