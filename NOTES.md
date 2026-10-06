@@ -448,3 +448,100 @@ I fixed zb-40's wording. The guest's first confirmation email now lists "Baby co
 requests, and "The new confirmation email has no requests at all" (the new key clue). That
 shows the request was saved and then lost on the date change. A second fresh agent re-audited
 just zb-40 blind: regression #3139, **no doubt**.
+
+
+## Phase 7: The 48-case leaderboard (2026-10-06)
+
+### What I asked for
+- Save the 48-case Kaggle results (commit `5897756`, run on 2026-10-06), with grok-4.6 marked
+  unavailable and deepseek-r1 marked not completed.
+- Write up five findings, after checking every count against the results file.
+- Update the README with the full leaderboard, then commit and push.
+
+### Leaderboard: 48 cases, 14 models
+| Model | Easy (12) | Hard (24) | Expert (12) | Expert A / B / C / D | All (48) |
+|---|---|---|---|---|---|
+| openai/gpt-6.1-sol | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| anthropic/claude-opus-5-5@default | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| google/gemini-3.1-pro-preview | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| openai/gpt-5.5-2026-04-23 | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| google/gemini-3.8-flash | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| google/gemma-4-31b | 12/12 | 23/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **47/48** |
+| google/gemini-2.5-flash | 12/12 | 22/24 | 8/12 | 2/3 / 2/3 / 3/3 / 1/3 | **42/48** |
+| anthropic/claude-sonnet-4-5@20250929 | 12/12 | 22/24 | 7/12 | 2/3 / 3/3 / 2/3 / 0/3 | **41/48** |
+| openai/gpt-5.4-mini-2026-03-17 | 12/12 | 21/24 | 8/12 | 2/3 / 1/3 / 3/3 / 2/3 | **41/48** |
+| google/gemini-3.1-flash-lite-preview | 12/12 | 21/24 | 8/12 | 2/3 / 3/3 / 3/3 / 0/3 | **41/48** |
+| openai/gpt-oss-20b | 12/12 | 19/24 | 9/12 | 3/3 / 2/3 / 3/3 / 1/3 | **40/48** |
+| anthropic/claude-haiku-4-5@20251001 | 12/12 | 21/24 | 6/12 | 1/3 / 3/3 / 2/3 / 0/3 | **39/48** |
+| qwen/qwen3-235b-a22b-instruct-2507 | 11/12 | 17/24 | 7/12 | 2/3 / 2/3 / 3/3 / 0/3 | **35/48** (1 unreadable) |
+| openai/gpt-5.4-nano-2026-03-17 | 9/12 | 13/24 | 4/12 | 1/3 / 0/3 / 1/3 / 2/3 | **26/48** (1 hallucinated id) |
+| Always answering "new" | 6/12 | 12/24 | 6/12 | 0/3 / 0/3 / 3/3 / 3/3 | 24/48 |
+| Bug Graveyard formula (`baseline.py`) | 7/12 | 5/24 | 3/12 | 0/3 / 0/3 / 0/3 / 3/3 | 15/48 |
+
+- **Not completed:**
+  - xai/grok-4.6 was listed in `kbench.llms`, but every call returned "404 - model not found"
+    (stopped after 31 cases).
+  - deepseek-ai/deepseek-r1-0528 was very slow; I stopped it by hand after 3 cases (all 3
+    correct).
+- **Errors:** none on any completed model.
+- **Saved:** `results/2026-10-06-kaggle-48-cases.json` has every model's per-tier and
+  per-type scores and all 80 misses with the model's reason.
+- **Checked:** every model's table matches its own list of misses, and every miss's expected
+  answer matches `cases.json`.
+
+### Findings (each count checked against the results file)
+1. **Expert D ("same mistake, different code") is the hardest category.**
+   - zb-46 was missed by 6 models, zb-47 by 5 and zb-48 by 7.
+   - That's 18 of 42 tries (43%). The next hardest categories are hard C and expert A, at 21%
+     each.
+   - 16 of the 18 expert D misses name the history bug with the same *kind* of mistake:
+     #3129 (UTC day cut), #3336 or #3308 (rounding), #3571 (catalog cache).
+   - The two exceptions: Haiku on zb-48 picked #3574 (renewed downloads), and gpt-5.4-nano on
+     zb-46 named #3110, which isn't in the history.
+2. **Planted wrong diagnoses.** In zb-41 a support comment wrongly says "#3325 is back".
+   - 5 models followed it: gpt-5.4-nano, gpt-5.4-mini, gemini-2.5-flash, gpt-oss-20b and
+     qwen3-235b.
+   - gpt-5.4-nano followed all 5 planted wrong diagnoses: zb-37 (→ #3108), zb-39 (→ #3539),
+     zb-41 (→ #3325), zb-44 (→ #3318) and zb-45 (→ #3518).
+   - No other model followed any planted diagnosis except zb-41's.
+3. **zb-37: right rejection, wrong answer.**
+   - 6 models rejected the developer's wrong #3108 but answered "new" instead of #3174:
+     gemini-2.5-flash, Sonnet 4.5, gpt-5.4-mini, gemini-3.1-flash-lite, Haiku 4.5 and qwen3.
+   - Three of those reasons name #3174 itself: Sonnet 4.5 ("matching bug #3174"),
+     gemini-3.1-flash-lite ("aligning it with the logic addressed in #3174") and
+     gemini-2.5-flash.
+   - gemini-2.5-flash says outright that the report's language and component (TypeScript,
+     booking-engine) are why it answered "new". See the limit below.
+4. **An open 31B model nearly matches the frontier.** google/gemma-4-31b scored 47/48. Its only
+   miss was zb-26 (hard C), where it called 88/98 shown as 88% "identical" to the rounding bug
+   #2311.
+5. **The benchmark doesn't separate the top tier.** Five models scored 48/48: gpt-6.1-sol,
+   claude-opus-5-5, gemini-3.1-pro-preview, gpt-5.5 and gemini-3.8-flash.
+
+### Other observations
+- **qwen3-235b's one unreadable reply** (zb-25) wrote the key as `"bug\n_id"`, with a newline
+  inside it. The verdict it started ("new") would have been correct.
+- **gpt-5.4-nano varies between runs.** On the same first 36 cases it scored 24/36 on
+  2026-10-03 and 22/36 now (easy 11/12, then 9/12). Haiku 4.5 was stable: 33/36 both times,
+  with the same three hard D misses.
+- **The most-missed single cases** are zb-37 and zb-48 (7 models each), then zb-46 and zb-25
+  (6 each).
+
+### Limits
+- **zb-37's report has a misfiled component and language** (booking-engine, TypeScript, though
+  the answer is in invoices, Python). That pushes models toward "new", and gemini-2.5-flash
+  says so explicitly. It was meant to be a realistic misfiling, but it makes this case partly a
+  test of ignoring metadata, not only of reading the evidence.
+- **The top tier is saturated:** five models are at 48/48, and an open 31B model is one case
+  behind.
+- **Each model ran once**, and gpt-5.4-nano moved by 2 cases between runs, so differences of a
+  case or two between models aren't meaningful.
+- **Expert has 3 cases per type**, so expert per-type scores move in steps of 33%.
+
+### What went wrong and how we fixed it
+- I'd said "13 models"; the file has **14 completed models** (16 attempted). The README and this
+  log list all 14.
+- I credited only Sonnet 4.5 with naming #3174 on zb-37; gemini-2.5-flash and
+  gemini-3.1-flash-lite name it too.
+- I made the results summary file by hand and deleted it after saving the results JSON. It
+  isn't committed.

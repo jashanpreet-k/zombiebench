@@ -60,16 +60,30 @@ the last cell.
 
 ## Results
 
-Easy and hard tiers (36 cases):
+All 48 cases on Kaggle Benchmarks (commit `5897756`, run on 2026-10-06), 14 models:
 
-| | Easy | Hard (A / B / C / D) | All 36 |
-|---|---|---|---|
-| gpt-5.5 | 12/12 | 24/24 | 36/36 |
-| claude-opus-5 | | | 35/36 (the miss was an empty proxy response) |
-| anthropic/claude-haiku-4-5@20251001 | 12/12 | 21/24 (6/6, 6/6, 6/6, 3/6) | 33/36 |
-| openai/gpt-5.4-nano-2026-03-17 | 11/12 | 13/24 (5/6, 1/6, 2/6, 5/6) | 24/36 |
-| Always answering "new" | 6/12 | 12/24 | 18/36 |
-| Baseline formula | 7/12 | 5/24 (2/6, 0/6, 1/6, 2/6) | 12/36 |
+| Model | Easy (12) | Hard (24) | Expert (12) | Expert A / B / C / D | All (48) |
+|---|---|---|---|---|---|
+| openai/gpt-6.1-sol | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| anthropic/claude-opus-5-5@default | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| google/gemini-3.1-pro-preview | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| openai/gpt-5.5-2026-04-23 | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| google/gemini-3.8-flash | 12/12 | 24/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **48/48** |
+| google/gemma-4-31b | 12/12 | 23/24 | 12/12 | 3/3 / 3/3 / 3/3 / 3/3 | **47/48** |
+| google/gemini-2.5-flash | 12/12 | 22/24 | 8/12 | 2/3 / 2/3 / 3/3 / 1/3 | **42/48** |
+| anthropic/claude-sonnet-4-5@20250929 | 12/12 | 22/24 | 7/12 | 2/3 / 3/3 / 2/3 / 0/3 | **41/48** |
+| openai/gpt-5.4-mini-2026-03-17 | 12/12 | 21/24 | 8/12 | 2/3 / 1/3 / 3/3 / 2/3 | **41/48** |
+| google/gemini-3.1-flash-lite-preview | 12/12 | 21/24 | 8/12 | 2/3 / 3/3 / 3/3 / 0/3 | **41/48** |
+| openai/gpt-oss-20b | 12/12 | 19/24 | 9/12 | 3/3 / 2/3 / 3/3 / 1/3 | **40/48** |
+| anthropic/claude-haiku-4-5@20251001 | 12/12 | 21/24 | 6/12 | 1/3 / 3/3 / 2/3 / 0/3 | **39/48** |
+| qwen/qwen3-235b-a22b-instruct-2507 | 11/12 | 17/24 | 7/12 | 2/3 / 2/3 / 3/3 / 0/3 | **35/48** (1 unreadable) |
+| openai/gpt-5.4-nano-2026-03-17 | 9/12 | 13/24 | 4/12 | 1/3 / 0/3 / 1/3 / 2/3 | **26/48** (1 hallucinated id) |
+| Always answering "new" | 6/12 | 12/24 | 6/12 | 0/3 / 0/3 / 3/3 / 3/3 | 24/48 |
+| Bug Graveyard formula (`baseline.py`) | 7/12 | 5/24 | 3/12 | 0/3 / 0/3 / 0/3 / 3/3 | 15/48 |
 
-Expert tier (12 cases, added after these runs): baseline 3/12, always "new" 6/12. Model runs to
-come. Saved runs are in `results/`.
+xai/grok-4.6 was unavailable (every call returned 404), and deepseek-ai/deepseek-r1-0528 was
+stopped after 3 cases, so neither has a score. Every miss, with the model's reason, is in
+`results/2026-10-06-kaggle-48-cases.json`; earlier runs are in `results/` too.
+
+Five models score 48/48, so the benchmark doesn't separate the top tier. The hardest category is
+expert D, the same kind of mistake made again in different code: 18 of 42 tries missed.

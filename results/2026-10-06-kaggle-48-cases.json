@@ -1,0 +1,1177 @@
+{
+  "date": "2026-10-06",
+  "what": "Kaggle Benchmarks runs of all 48 cases (12 easy, 24 hard, 12 expert)",
+  "code_commit": "5897756",
+  "source": "My notes of the Kaggle notebook output; every model's per-tier table matches its list of misses",
+  "references": {
+    "always_new": "24/48",
+    "bug_graveyard_formula": "15/48"
+  },
+  "runs": [
+    {
+      "model": "openai/gpt-6.1-sol",
+      "status": "completed",
+      "passed": 48,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "6/6",
+          "D": "6/6",
+          "total": "24/24"
+        },
+        "expert": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        }
+      },
+      "misses": []
+    },
+    {
+      "model": "anthropic/claude-opus-5-5@default",
+      "status": "completed",
+      "passed": 48,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "6/6",
+          "D": "6/6",
+          "total": "24/24"
+        },
+        "expert": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        }
+      },
+      "misses": []
+    },
+    {
+      "model": "google/gemini-3.1-pro-preview",
+      "status": "completed",
+      "passed": 48,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "6/6",
+          "D": "6/6",
+          "total": "24/24"
+        },
+        "expert": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        }
+      },
+      "misses": []
+    },
+    {
+      "model": "openai/gpt-5.5-2026-04-23",
+      "status": "completed",
+      "passed": 48,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "6/6",
+          "D": "6/6",
+          "total": "24/24"
+        },
+        "expert": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        }
+      },
+      "misses": []
+    },
+    {
+      "model": "google/gemini-3.8-flash",
+      "status": "completed",
+      "passed": 48,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "6/6",
+          "D": "6/6",
+          "total": "24/24"
+        },
+        "expert": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        }
+      },
+      "misses": []
+    },
+    {
+      "model": "google/gemma-4-31b",
+      "status": "completed",
+      "passed": 47,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "5/6",
+          "D": "6/6",
+          "total": "23/24"
+        },
+        "expert": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-26",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2311",
+          "reason": "The report describes percentages being rounded down (88/98 displayed as 88%), which is identical to the defect in bug #2311."
+        }
+      ]
+    },
+    {
+      "model": "google/gemini-2.5-flash",
+      "status": "completed",
+      "passed": 42,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "4/6",
+          "D": "6/6",
+          "total": "22/24"
+        },
+        "expert": {
+          "A": "2/3",
+          "B": "2/3",
+          "C": "3/3",
+          "D": "1/3",
+          "total": "8/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-25",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2108",
+          "reason": "The new report describes dose reminders being late after a clock change, matching the symptoms and cause of bug #2108, 'Dose reminders an hour late after the clock change', which was also in Kotlin and affected the 'reminders' component."
+        },
+        {
+          "case": "zb-29",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2708",
+          "reason": "The new bug describes the identical symptom of the thermostat reading about 2°C high, which was previously reported and fixed as bug #2708, indicating a re-emergence of the underlying calibration issue despite the user's specific detail about the screen being off."
+        },
+        {
+          "case": "zb-37",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3174",
+          "answer": "new",
+          "reason": "Although the new bug shares symptoms and a similar underlying cause (rounding GST line by line on invoices) with fixed bug #3174, it is reported in a different language (TypeScript vs Python) and component (booking-engine vs invoices), indicating it's a new defect and not a regression of the previously fixed one."
+        },
+        {
+          "case": "zb-41",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3374",
+          "answer": "regression #3325",
+          "reason": "The new bug describes incorrect average price calculation after a bonus issue, which was fixed in #3374, but the support note explicitly states that 'the split bug, #3325, is back' and that splits and bonus issues go through the same code, indicating a regression in the shared corporate action processing logic related to #3325."
+        },
+        {
+          "case": "zb-47",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3336",
+          "reason": "The new bug describes capital gains in a tax report being rounded to whole rupees, causing a discrepancy, which is a re-occurrence of the rounding problem (#3336) where financial values in statements were rounded incorrectly."
+        },
+        {
+          "case": "zb-48",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3571",
+          "reason": "The new bug describes downloaded episodes retaining old names due to caching, which is the same core issue of renamed episodes not updating that was addressed in #3571, suggesting the previous fix was incomplete or has regressed for downloaded content."
+        }
+      ]
+    },
+    {
+      "model": "anthropic/claude-sonnet-4-5@20250929",
+      "status": "completed",
+      "passed": 41,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "6/6",
+          "D": "4/6",
+          "total": "22/24"
+        },
+        "expert": {
+          "A": "2/3",
+          "B": "3/3",
+          "C": "2/3",
+          "D": "0/3",
+          "total": "7/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-33",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2408",
+          "reason": "The cache is serving stale ride history data from other users, just as bug #2408 cached stale bike positions, both caused by improper cache invalidation."
+        },
+        {
+          "case": "zb-36",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2825",
+          "reason": "Timezone issue causing dates to display in wrong year/month, same root cause as pass expiry showing wrong date due to UTC vs local timezone handling."
+        },
+        {
+          "case": "zb-37",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3174",
+          "answer": "new",
+          "reason": "This is a rounding issue in checkout invoices (component: invoices) matching bug #3174, not a regression of #3108 which was about booking confirmation page totals in the booking-engine component."
+        },
+        {
+          "case": "zb-43",
+          "tier": "expert",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #3164",
+          "reason": "The bug has the same underlying cause (rounding each item separately instead of rounding the total once) in the same language and component type, just affecting agency commission calculations instead of refunds."
+        },
+        {
+          "case": "zb-46",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3129",
+          "reason": "Both bugs incorrectly use midnight UTC instead of the property's local midnight to determine which business day an event belongs to, causing events between midnight and 5:30 AM local time to be assigned to the wrong day."
+        },
+        {
+          "case": "zb-47",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3308",
+          "reason": "Both bugs involve incorrect rounding in tax/financial reports where per-item values are rounded before summing, causing the total to differ from precise calculations by small amounts."
+        },
+        {
+          "case": "zb-48",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3571",
+          "reason": "Both bugs involve renamed episodes showing old titles due to cached catalog entries not being updated, though this occurs specifically in the downloads list on iOS rather than the main app catalog."
+        }
+      ]
+    },
+    {
+      "model": "openai/gpt-5.4-mini-2026-03-17",
+      "status": "completed",
+      "passed": 41,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "5/6",
+          "C": "4/6",
+          "D": "6/6",
+          "total": "21/24"
+        },
+        "expert": {
+          "A": "2/3",
+          "B": "1/3",
+          "C": "3/3",
+          "D": "2/3",
+          "total": "8/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-24",
+          "tier": "hard",
+          "type": "B",
+          "expected": "regression #2822",
+          "answer": "new",
+          "reason": "This report is about fare cap behavior on a bus after midnight, which matches a fare-calculation issue rather than any of the fixed journey-history bugs."
+        },
+        {
+          "case": "zb-25",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2108",
+          "reason": "This is the same reminders clock-change timing defect as #2108, affecting Kotlin reminder scheduling after the DST transition, even though the lateness varies rather than being exactly one hour."
+        },
+        {
+          "case": "zb-30",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2804",
+          "reason": "This matches the tap-validator duplicate-charge defect from missing debounce, where a single card read could result in two charges on the same tap."
+        },
+        {
+          "case": "zb-37",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3174",
+          "answer": "new",
+          "reason": "The confirmation-page rounding bug #3108 is not happening here because booking and card charge match; the issue is on the checkout invoice with line-by-line GST rounding, which matches a different rounding defect."
+        },
+        {
+          "case": "zb-41",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3374",
+          "answer": "regression #3325",
+          "reason": "This matches the same corporate-action quantity/price adjustment defect as #3325, and the support note confirms splits and bonus issues share the same code path."
+        },
+        {
+          "case": "zb-42",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3543",
+          "answer": "new",
+          "reason": "This is a TV playback-auth/time-skew issue causing signed video addresses to expire on the device clock, which matches no fixed player-android-tv bug and is distinct from the Android TV preview-sound or subtitle issues."
+        },
+        {
+          "case": "zb-48",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3571",
+          "reason": "Downloaded episodes retaining old names after a rename matches the fixed catalog caching bug where renamed titles were still shown from cached catalog entries."
+        }
+      ]
+    },
+    {
+      "model": "google/gemini-3.1-flash-lite-preview",
+      "status": "completed",
+      "passed": 41,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "4/6",
+          "D": "5/6",
+          "total": "21/24"
+        },
+        "expert": {
+          "A": "2/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "0/3",
+          "total": "8/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-25",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2108",
+          "reason": "The symptoms describe the same clock-change behavior as bug #2108, indicating the underlying timezone handling issue persists."
+        },
+        {
+          "case": "zb-26",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2311",
+          "reason": "The report describes a recurrence of the percentage rounding issue previously addressed in bug #2311, specifically noting that the calculation is still truncating or incorrectly rounding values."
+        },
+        {
+          "case": "zb-32",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2301",
+          "reason": "The report indicates the issue is caused by timezone handling, which is the same underlying cause as the fixed bug #2301."
+        },
+        {
+          "case": "zb-37",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3174",
+          "answer": "new",
+          "reason": "While it involves a one-rupee rounding discrepancy, the underlying cause is the invoice tax calculation in the invoices component rather than the booking engine confirmation page fix #3108, aligning it with the logic addressed in #3174."
+        },
+        {
+          "case": "zb-46",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3129",
+          "reason": "The issue involves the same underlying cause (report day cut at midnight UTC versus property local time) as the previously fixed bug #3129."
+        },
+        {
+          "case": "zb-47",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3336",
+          "reason": "The report is incorrectly rounding values to whole rupees, a regression of the rounding logic previously corrected in #3336 to ensure precision in financial statements."
+        },
+        {
+          "case": "zb-48",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3571",
+          "reason": "This is a regression of bug #3571, as the underlying cause of failing to update cached episode metadata has reappeared specifically within the local download cache."
+        }
+      ]
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "status": "completed",
+      "passed": 40,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "3/6",
+          "D": "4/6",
+          "total": "19/24"
+        },
+        "expert": {
+          "A": "3/3",
+          "B": "2/3",
+          "C": "3/3",
+          "D": "1/3",
+          "total": "9/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-25",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2108",
+          "reason": "The reminder scheduling still uses a stale UTC offset after the DST change, causing delayed dose alerts."
+        },
+        {
+          "case": "zb-26",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2311",
+          "reason": "Same rounding issue reappears in the results component, displaying percentages that are too low."
+        },
+        {
+          "case": "zb-29",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2708",
+          "reason": "The thermostat reads ~2°C high, matching the previously fixed screen-heat issue (#2708) that returned after the 4.9 update."
+        },
+        {
+          "case": "zb-31",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2225",
+          "reason": "The same caching issue that caused the resident list to show ex-tenants is now causing billing emails to go to the previous owner."
+        },
+        {
+          "case": "zb-35",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2701",
+          "reason": "Same DST handling bug that misapplied holiday mode times during the clock change caused the thermostat to keep staying in 12°C mode"
+        },
+        {
+          "case": "zb-41",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3374",
+          "answer": "regression #3325",
+          "reason": "Average buy price wrongly adjusted for bonus issue due to split code bug"
+        },
+        {
+          "case": "zb-46",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3129",
+          "reason": "Timezone mis-calculation caused early check-ins to be posted to the previous day in night audit, the same defect fixed in #3129."
+        },
+        {
+          "case": "zb-48",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3571",
+          "reason": "The issue of renamed episodes still showing old titles after a rename was fixed in bug 3571 by purging the catalog cache; this report describes the same caching problem reappearing for downloaded episodes."
+        }
+      ]
+    },
+    {
+      "model": "anthropic/claude-haiku-4-5@20251001",
+      "status": "completed",
+      "passed": 39,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "3/3",
+          "D": "3/3",
+          "total": "12/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "6/6",
+          "D": "3/6",
+          "total": "21/24"
+        },
+        "expert": {
+          "A": "1/3",
+          "B": "3/3",
+          "C": "2/3",
+          "D": "0/3",
+          "total": "6/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-32",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2301",
+          "reason": "Certificate dates are being generated with a fixed UTC offset instead of converting to the exam centre's timezone, similar to the exam timer bug where Chicago's timezone offset caused a date shift for evening exams."
+        },
+        {
+          "case": "zb-33",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2408",
+          "reason": "The cached ride history is showing stale data from other riders, similar to how the maps component was caching and displaying outdated bike positions instead of using event-driven updates."
+        },
+        {
+          "case": "zb-36",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2825",
+          "reason": "Year-end dates are being displayed in UTC timezone instead of India's timezone, causing December 31st trips to appear under the next year."
+        },
+        {
+          "case": "zb-37",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3174",
+          "answer": "new",
+          "reason": "This is a rounding issue in the checkout invoice (GST rounded line-by-line) in the invoices component, distinct from #3108 which was a confirmation page rounding issue in the booking-engine pricing logic."
+        },
+        {
+          "case": "zb-39",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3508",
+          "answer": "new",
+          "reason": "This is a frame rate issue affecting both Android TV and web players on 25 fps content without pausing, which differs from the pause-specific state handling bug #3539 and the frame rate bug #3508 that was already fixed in the subtitle converter."
+        },
+        {
+          "case": "zb-43",
+          "tier": "expert",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #3174",
+          "reason": "Both involve invoices with ₹1 rounding errors from calculating totals by summing separately-rounded line items instead of rounding once; this instance affects agency commissions rather than GST."
+        },
+        {
+          "case": "zb-46",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3129",
+          "reason": "Same root cause (timezone): night audit cuts business days at UTC midnight instead of property's local midnight, causing early morning check-ins to post to the previous day."
+        },
+        {
+          "case": "zb-47",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3336",
+          "reason": "The capital gains report is rounding prices/gains to the rupee instead of showing paise, similar to how monthly statements previously rounded sell prices down."
+        },
+        {
+          "case": "zb-48",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3574",
+          "reason": "Downloaded content is not updating metadata when the source changes, similar to how renewed downloads weren't updating their expiry date."
+        }
+      ]
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-instruct-2507",
+      "status": "completed",
+      "passed": 35,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 1,
+        "missing_id": 0,
+        "hallucinated_id": 0
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "3/3",
+          "C": "2/3",
+          "D": "3/3",
+          "total": "11/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "6/6",
+          "C": "2/6",
+          "D": "3/6",
+          "total": "17/24"
+        },
+        "expert": {
+          "A": "2/3",
+          "B": "2/3",
+          "C": "3/3",
+          "D": "0/3",
+          "total": "7/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-08",
+          "tier": "easy",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #911",
+          "reason": "The new bug involves incorrect flight times in itinerary emails, which matches the symptoms and component of fixed bug #911 related to flight time display issues."
+        },
+        {
+          "case": "zb-25",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "unreadable",
+          "problem": "unreadable",
+          "reason": "Broken JSON: the key was written as \"bug\\n_id\" (a newline inside the key). The text it started was {\"verdict\": \"new\", ...}, which would have been correct."
+        },
+        {
+          "case": "zb-26",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2311",
+          "reason": "The issue of percentages being rounded down instead of rounding half up matches the symptoms and cause of the previously fixed bug #2311, despite the component being slightly different (results vs grading), as the underlying rounding logic is likely shared or duplicated."
+        },
+        {
+          "case": "zb-29",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2708",
+          "reason": "The symptom of the thermostat reading 2°C high matches the previously fixed screen-heat calibration issue, and the user confirms the screen is off, suggesting the fix may have been undone or bypassed in the 4.9 update."
+        },
+        {
+          "case": "zb-30",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2804",
+          "reason": "The validator charged twice for a single tap due to a missing debounce, which is the same root cause as the previously fixed bug #2804."
+        },
+        {
+          "case": "zb-32",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2301",
+          "reason": "The certificate date is incorrect for evening exam takers in Chicago due to timezone handling, similar to the previous bug where time was mishandled after daylight saving, indicating a recurrence of timezone-related date miscalculation."
+        },
+        {
+          "case": "zb-33",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2408",
+          "reason": "The issue of seeing incorrect ride data is likely due to a caching problem similar to the fixed bug where stale data was shown on the map, now affecting ride history."
+        },
+        {
+          "case": "zb-35",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2701",
+          "reason": "The issue occurs after the clocks went back, similar to bug #2701 where DST timezone handling caused schedule timing problems, and the heating schedule fails to resume from holiday mode as expected."
+        },
+        {
+          "case": "zb-37",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3174",
+          "answer": "new",
+          "reason": "The issue is with the checkout invoice's line-by-line GST rounding, not the booking confirmation page, indicating a different component and cause than #3108."
+        },
+        {
+          "case": "zb-41",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3374",
+          "answer": "regression #3325",
+          "reason": "The bug report describes incorrect average price calculation after a corporate action (bonus issue), which matches the symptoms and cause of fixed bug #3325 where the split logic failed to adjust quantity and price correctly."
+        },
+        {
+          "case": "zb-46",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3129",
+          "reason": "The defect involves incorrect day assignment for early check-ins due to UTC time handling, which is the same underlying timezone cause as in bug #3129, now reoccurring in the night audit due to the scheduler change."
+        },
+        {
+          "case": "zb-47",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3336",
+          "reason": "The issue is a recurrence of rounding down prices in tax reports, similar to the fixed bug where sell prices were rounded down instead of preserving paise."
+        },
+        {
+          "case": "zb-48",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3571",
+          "reason": "The issue is a caching problem where downloaded episodes retain old titles after a rename, which matches the fixed bug #3571 that addressed stale catalog cache for renamed episodes."
+        }
+      ]
+    },
+    {
+      "model": "openai/gpt-5.4-nano-2026-03-17",
+      "status": "completed",
+      "passed": 26,
+      "total": 48,
+      "errors": 0,
+      "answer_problems": {
+        "unreadable": 0,
+        "missing_id": 0,
+        "hallucinated_id": 1
+      },
+      "by_tier": {
+        "easy": {
+          "A": "3/3",
+          "B": "2/3",
+          "C": "1/3",
+          "D": "3/3",
+          "total": "9/12"
+        },
+        "hard": {
+          "A": "6/6",
+          "B": "1/6",
+          "C": "2/6",
+          "D": "4/6",
+          "total": "13/24"
+        },
+        "expert": {
+          "A": "1/3",
+          "B": "0/3",
+          "C": "1/3",
+          "D": "2/3",
+          "total": "4/12"
+        }
+      },
+      "misses": [
+        {
+          "case": "zb-06",
+          "tier": "easy",
+          "type": "B",
+          "expected": "regression #713",
+          "answer": "new",
+          "reason": "The report describes duplicate seat assignment at the venue (same row/seat numbers sold to different families), which does not match the specific previously fixed causes in a way that clearly indicates the same defect has returned."
+        },
+        {
+          "case": "zb-07",
+          "tier": "easy",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #823",
+          "reason": "The net salary mismatch by exactly one day and the payslip working-days count being off mirrors the prior rounding/net calculation defect in payroll (fixed by using BigDecimal and rounding once), indicating the same issue has returned."
+        },
+        {
+          "case": "zb-08",
+          "tier": "easy",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #911",
+          "reason": "The issue is in the itinerary email flight time formatting and the symptom matches the prior timezone/leg-handling problem fixed in #911, suggesting the underlying defect reappeared in the email template after the Monday release."
+        },
+        {
+          "case": "zb-19",
+          "tier": "hard",
+          "type": "B",
+          "expected": "regression #2104",
+          "answer": "new",
+          "reason": "The issue is about Sunday cutoff logic allowing 'Today' slots after the lunch-time on weekdays rule, which does not match any of the fixed bugs' specific causes or behaviors."
+        },
+        {
+          "case": "zb-20",
+          "tier": "hard",
+          "type": "B",
+          "expected": "regression #2201",
+          "answer": "new",
+          "reason": "The clubhouse booking time is incorrect after a Tuesday update, but none of the previously fixed issues for amenities cover wrong display times in confirmations, so this is a new defect."
+        },
+        {
+          "case": "zb-21",
+          "tier": "hard",
+          "type": "B",
+          "expected": "regression #2422",
+          "answer": "new",
+          "reason": "The report describes an extremely long, unauthorized trip being billed after leaving the bike in a basement with no network, which doesn't match any of the previously fixed issues."
+        },
+        {
+          "case": "zb-23",
+          "tier": "hard",
+          "type": "B",
+          "expected": "regression #2643",
+          "answer": "new",
+          "reason": "The report describes an invoice due date being treated as overdue while the emailed PDF shows a different (later) date, which does not match any of the previously fixed issues verbatim."
+        },
+        {
+          "case": "zb-24",
+          "tier": "hard",
+          "type": "B",
+          "expected": "regression #2822",
+          "answer": "new",
+          "reason": "This describes an incorrect maximum fare/cap calculation for rides after 12:40 AM on Saturday, which does not match any of the previously fixed journey-history or cap/reset issues."
+        },
+        {
+          "case": "zb-25",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2108",
+          "reason": "This appears to be the same underlying timezone/clock-change scheduling issue for Android dose reminders firing about an hour late."
+        },
+        {
+          "case": "zb-26",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2311",
+          "reason": "The symptom matches the previously fixed rounding issue where percentages were incorrectly rounded down due to integer casting."
+        },
+        {
+          "case": "zb-27",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2401",
+          "reason": "The same endless spinner on tapping Unlock occurs when Bluetooth is effectively required but not handled, matching the previously fixed missing Bluetooth check."
+        },
+        {
+          "case": "zb-28",
+          "tier": "hard",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #2511",
+          "reason": "The haemoglobin values are off by a factor of 10 in g/dL vs g/L, matching the same unit-conversion issue fixed for the new analyser."
+        },
+        {
+          "case": "zb-32",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2301",
+          "reason": "The certificate date appears to be off by one day for the evening exam, indicating a timezone/DST-style offset similar to the earlier exam start-time timezone regression."
+        },
+        {
+          "case": "zb-35",
+          "tier": "hard",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #2711",
+          "reason": "The report's timing around the DST clock change strongly suggests the same timezone/DST logic defect that previously caused miscounting around the repeated hour."
+        },
+        {
+          "case": "zb-37",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3174",
+          "answer": "regression #3108",
+          "reason": "Checkout/invoice totals are again ₹1 higher due to GST being rounded per line at checkout, matching the same underlying rounding regression described in #3108."
+        },
+        {
+          "case": "zb-39",
+          "tier": "expert",
+          "type": "A",
+          "expected": "regression #3508",
+          "answer": "regression #3539",
+          "reason": "Subtitles are drifting behind on Android TV again, matching the previously fixed pause-related subtitle clock handling."
+        },
+        {
+          "case": "zb-40",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3139",
+          "answer": "new",
+          "reason": "The specific failure and cause are not confirmed to be the same underlying defect as any single previously fixed item."
+        },
+        {
+          "case": "zb-41",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3374",
+          "answer": "regression #3325",
+          "reason": "The ticket indicates the same split/bonus handling defect is back, specifically implying the #3325 corporate action split logic is being misapplied to free shares."
+        },
+        {
+          "case": "zb-42",
+          "tier": "expert",
+          "type": "B",
+          "expected": "regression #3543",
+          "answer": "new",
+          "reason": "This Android TV playback failure doesn't match any of the previously fixed issues."
+        },
+        {
+          "case": "zb-44",
+          "tier": "expert",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #3318",
+          "reason": "The developer comment and matching symptom indicate the same queue/batch processing issue from #3318 has reappeared on iOS."
+        },
+        {
+          "case": "zb-45",
+          "tier": "expert",
+          "type": "C",
+          "expected": "new",
+          "answer": "regression #3518",
+          "reason": "The symptom matches #3518 where kids profiles incorrectly ignore the rating limit, indicating that the rating filter regressed even though search/browse currently hides it."
+        },
+        {
+          "case": "zb-46",
+          "tier": "expert",
+          "type": "D",
+          "expected": "new",
+          "answer": "regression #3110",
+          "problem": "hallucinated id",
+          "reason": "Night-audit misclassification of early-morning walk-ins aligns with the previously fixed timezone cutoff issue."
+        }
+      ]
+    },
+    {
+      "model": "xai/grok-4.6",
+      "status": "unavailable",
+      "note": "Listed in kbench.llms, but every call returned '404 - The requested model \"xai/grok-4.6\" was not found.' Stopped after 31 cases; no score."
+    },
+    {
+      "model": "deepseek-ai/deepseek-r1-0528",
+      "status": "not completed",
+      "note": "Very slow; stopped by hand after 3 cases (all 3 correct); no score."
+    }
+  ]
+}
