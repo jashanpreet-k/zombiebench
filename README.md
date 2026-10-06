@@ -1,6 +1,6 @@
 # ZombieBench
 
-*Work in progress for the DEV Kaggle Benchmarking Challenge.*
+*Submitted to the DEV Kaggle Benchmarking Challenge. Write-up: https://dev.to/jashanpreet_kaur_917e774f/same-kind-of-bug-isnt-the-same-bug-where-ai-models-get-fooled-21dd*
 
 Given a short history of fixed bugs and one new bug report, can an AI model tell
 "this is bug #N coming back" from "this is a new bug"? And does it beat a simple
