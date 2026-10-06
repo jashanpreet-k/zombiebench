@@ -545,3 +545,22 @@ just zb-40 blind: regression #3139, **no doubt**.
   gemini-3.1-flash-lite name it too.
 - I made the results summary file by hand and deleted it after saving the results JSON. It
   isn't committed.
+
+## Phase 8: The official Kaggle leaderboard (2026-10-06)
+
+- **What it is:** the leaderboard on the [Kaggle task](https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench).
+  Kaggle ran it once per model, separately from my own notebook runs (Phase 7). Its score is
+  accuracy over answered cases. Saved in `results/2026-10-06-kaggle-official-leaderboard.json`.
+- **Scores:**
+  - 1.00: GPT-6.1 Sol, GPT-5.5, Claude Opus 5.5, Gemini 3.1 Pro Preview, Gemini 3.7 Flash,
+    Gemini 3.5 Flash and Gemma 4 31B
+  - GLM-5 0.98 · Claude Opus 4.5 0.97 · GPT-5.4 mini 0.88 · Claude Sonnet 4.5 0.88 ·
+    gpt-oss-20b 0.88 · Gemini 3.1 Flash-Lite Preview 0.85 · Claude Haiku 4.5 0.81 ·
+    Qwen 3 235B A22B Instruct 0.73 · Gemini 2.5 Flash 0.73 · GPT-5.4 nano 0.55
+  - Gemini 3.8 Flash's score is missing: my copy of the table showed "X.XX".
+  - I left gpt-oss-120b out because it was stuck running for hours.
+- **The two runs differ by up to 7 cases.** Gemini 2.5 Flash scored 42/48 in my run and 0.73
+  (about 35/48) on Kaggle. Gemma 4 31B scored 47/48 in my run and 1.00 on Kaggle. So small gaps
+  between models aren't meaningful.
+- **The DEV post** (`post.md`, not committed) shows both: my runs as the detailed table, since
+  every finding and quote comes from them, and Kaggle's official leaderboard as a second table.
