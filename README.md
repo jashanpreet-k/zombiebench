@@ -6,6 +6,49 @@ Given a short history of fixed bugs and one new bug report, can an AI model tell
 "this is bug #N coming back" from "this is a new bug"? And does it beat a simple
 keyword formula?
 
+## Key findings
+
+These figures describe **14 completed single model runs on ZombieBench**: 672 model-case
+attempts, with 592 correct (**88.1%**).
+
+| Tier | Correct | Accuracy |
+|---|---:|---:|
+| Easy | 164/168 | 97.6% |
+| Hard | 299/336 | 89.0% |
+| Expert | 129/168 | 76.8% |
+
+For comparison, the Bug Graveyard formula scored 15/48 on these cases; always answering "new"
+scored 24/48.
+
+Across the same runs, misses by case type were A: 9/168, B: 15/168, C: 25/168, and D: 31/168
+attempts. A **False Zombie** is a genuinely new bug incorrectly classified as a regression; a
+**Missed Zombie** is a true regression incorrectly classified as new. There were 55 False
+Zombies and 17 Missed Zombies—about 3.2 times as many false-zombie verdict errors. Seven other
+answers selected the wrong historical bug ID, and one response was unreadable. Completed runs
+had no API errors.
+
+In Expert D, models missed 18 of 42 attempts. In 16 of those 18 misses, the answer selected an
+old bug involving the same general kind of mistake. **Same kind of mistake is not necessarily
+the same bug.**
+
+### Case autopsy: zb-41
+
+**History:** #3325 was a 1:5 stock split fixed by updating share quantity; #3374 was a 1:1 bonus
+issue fixed by updating quantity and average price. **Report:** the user describes free shares,
+one for each existing share, and a large loss—evidence matching the bonus issue. **Planted
+diagnosis:** the support note says the split bug #3325 is back. **Outputs:** five model outputs
+selected the bug ID named in the support note, making the planted diagnosis a strong misleading
+clue in this case. There was no control run without the note, so this does not establish that the
+note caused those answers. **Gold answer:** regression #3374.
+
+### Scope and limitations
+
+- These are 48 synthetic, author-created cases, with one completed run per model in the analyzed
+  results.
+- The results describe ZombieBench, not real-world bug triage in general.
+- Generated explanations are model outputs, not direct access to internal reasoning.
+- Complete raw replies were not archived for every run.
+
 ## Case types
 
 | Type | What it tests | Correct answer |
@@ -15,7 +58,7 @@ keyword formula?
 | C | Keyword decoy: shares words with an old bug, but the cause is different | new |
 | D | Clearly new bug | new |
 
-There are two tiers:
+There are three tiers:
 
 - **Easy:** 12 cases, 3 per type, with 5–8 fixed bugs each.
 - **Hard:** 24 cases, 6 per type, with 12–15 fixed bugs each. Every right answer has 2–3
@@ -34,7 +77,8 @@ All cases are invented for this benchmark.
 - `kaggle_paste.py`: the same without the lines that run a model, for loading from GitHub
 - `embed_cases.py`: copies `cases.json` into `kaggle_task.py` and writes `kaggle_paste.py`
 - `validate.py`: checks the cases, including that cue words like "again" don't give the answer away
-- `results/`: saved model runs
+- `analyze_results.py`: derives the summary statistics below from saved results
+- `results/`: scores and parsed miss answers/reasons; not a complete archive of raw model replies
 - `NOTES.md`: build log
 
 ## Run
@@ -42,6 +86,7 @@ All cases are invented for this benchmark.
 ```sh
 python validate.py          # check cases.json
 python baseline.py --verbose
+python analyze_results.py  # summarize the saved 48-case runs
 python embed_cases.py       # after editing cases.json
 ```
 
@@ -60,7 +105,7 @@ the last cell.
 
 ## Results
 
-All 48 cases on Kaggle Benchmarks (commit `5897756`, run on 2026-10-06), 14 models:
+All 48 cases on Kaggle Benchmarks (commit `5897756`, run on 2026-10-06), 14 completed single model runs:
 
 | Model | Easy (12) | Hard (24) | Expert (12) | Expert A / B / C / D | All (48) |
 |---|---|---|---|---|---|
@@ -82,8 +127,9 @@ All 48 cases on Kaggle Benchmarks (commit `5897756`, run on 2026-10-06), 14 mode
 | Bug Graveyard formula (`baseline.py`) | 7/12 | 5/24 | 3/12 | 0/3 / 0/3 / 0/3 / 3/3 | 15/48 |
 
 xai/grok-4.6 was unavailable (every call returned 404), and deepseek-ai/deepseek-r1-0528 was
-stopped after 3 cases, so neither has a score. Every miss, with the model's reason, is in
-`results/2026-10-06-kaggle-48-cases.json`; earlier runs are in `results/` too.
+stopped after 3 cases, so neither has a score. The 48-case results file preserves the scores and
+parsed answers/reasons for each miss; it is not a complete archive of every raw model response.
+Earlier run records are in `results/` too.
 
 Five models score 48/48, so the benchmark doesn't separate the top tier. The hardest category is
 expert D, the same kind of mistake made again in different code: 18 of 42 tries missed.
