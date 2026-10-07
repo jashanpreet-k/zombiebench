@@ -145,6 +145,19 @@ def main():
     print(f"  API errors in completed runs: {api_errors}")
     print(f"  Expert D misses: {expert_d_misses}/{expert_d_attempts} attempts")
 
+    hardest = sorted(Counter(miss["case"] for miss in scored_misses).items(),
+                     key=lambda item: (-item[1], item[0]))[:8]
+    print("\nHardest cases:")
+    for case_id, count in hardest:
+        print(f"  {case_id}: {count} of {len(completed)}")
+    return {
+        "models": len(completed), "attempts": attempts, "correct": correct,
+        "misses": len(scored_misses),
+        "miss_types": {"False Zombies": false_zombies, "Missed Zombies": missed_zombies,
+                       "Wrong old bug IDs": wrong_historical_ids, "Unreadable": unreadable},
+        "hardest": hardest,
+    }
+
 
 if __name__ == "__main__":
     try:

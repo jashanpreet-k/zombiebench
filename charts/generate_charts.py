@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the three ZombieBench post charts from saved run results.
+"""Generate the ZombieBench post charts and cover from saved run results.
 
 Requires matplotlib. The script validates the expected run and miss counts
 before writing any images.
@@ -7,6 +7,7 @@ before writing any images.
 
 import json
 import re
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -18,6 +19,8 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from analyze_results import main as analyze_results
 RESULTS = ROOT / "results" / "2026-10-06-kaggle-48-cases.json"
 CASES = ROOT / "cases.json"
 OUT = ROOT / "charts"
@@ -80,6 +83,11 @@ def classify_miss(miss, case_histories):
 
 
 def load_and_validate():
+    summary = analyze_results()
+    if (summary["models"], summary["attempts"], summary["correct"], summary["misses"]) != (14, 672, 592, 80):
+        raise ValueError("analyze_results.py totals differ from the approved counts; stopping.")
+    if summary["miss_types"] != EXPECTED_MISS_TYPES or summary["hardest"] != EXPECTED_HARDEST:
+        raise ValueError("analyze_results.py miss counts differ from the approved counts; stopping.")
     with RESULTS.open(encoding="utf-8") as file:
         results = json.load(file)
     with CASES.open(encoding="utf-8") as file:
@@ -91,6 +99,7 @@ def load_and_validate():
         for case in cases
     }
     runs = [run for run in results["runs"] if run.get("status") == "completed"]
+    runs.sort(key=lambda run: list(MODEL_LABELS).index(run["model"]))
     if len(runs) != 14 or len({run["model"] for run in runs}) != 14:
         raise ValueError(f"Expected 14 distinct completed model runs, found {len(runs)}.")
     if set(MODEL_LABELS) != {run["model"] for run in runs}:
@@ -200,7 +209,7 @@ def make_miss_types(miss_types, total_attempts, total_correct):
     ax.invert_yaxis()
     ax.set_xlim(0, max(values) * 1.22)
     ax.set_xlabel("Number of wrong outputs")
-    ax.set_title("All 80 misses across 14 models: most were false zombies", fontsize=14, pad=34)
+    fig.suptitle("All 80 misses across 14 models: most were false zombies", fontsize=14, y=0.95)
     ax.text(
         0.5, 1.025,
         f"80 misses · {total_attempts:,} attempts · {total_correct:,} correct",
@@ -257,10 +266,22 @@ def main():
     make_heatmap(runs, case_denominators)
     make_miss_types(miss_types, total_attempts, total_correct)
     make_hardest_cases(case_info, missed_cases)
+    make_cover(miss_types, len(all_misses))
     print("Validated: 14 runs, 672 attempts, 592 correct, 80 misses")
     print("Miss categories:", dict(miss_types))
     print("Hardest cases:", sorted(missed_cases.items(), key=lambda item: (-item[1], item[0]))[:8])
-    print("Wrote three 200 dpi PNG charts to charts/.")
+    print("Wrote three 200 dpi PNG charts and a 1000x420 cover to charts/.")
+
+
+def make_cover(miss_types, total_misses):
+    fig = plt.figure(figsize=(5, 2.1), dpi=200, facecolor="white")
+    fig.text(0.07, 0.73, "ZombieBench", fontsize=29, weight="bold", color="#08306b")
+    fig.text(0.07, 0.42,
+             f"{miss_types['False Zombies']} of {total_misses} misses were false zombies:",
+             fontsize=13, weight="bold", color="#08519c")
+    fig.text(0.07, 0.27, "a new bug called an old one", fontsize=14, color="#2171b5")
+    fig.savefig(OUT / "cover.png", dpi=200, facecolor="white")
+    plt.close(fig)
 
 
 if __name__ == "__main__":
