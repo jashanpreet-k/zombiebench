@@ -8,6 +8,10 @@ tags: devchallenge, kagglechallenge, ai, machinelearning
 
 I gave AI models (14 in my own runs, 17 on the official Kaggle leaderboard) a list of fixed bugs and one new bug report, and asked: is this an old bug coming back, or a new one? Most handle it well until the new bug is the same *kind* of mistake, made again in different code. In my runs, models missed 18 of 42 attempts on those cases, almost always by naming the old bug with the same kind of mistake. One model wrote that the bug was "now reoccurring in the night audit due to the scheduler change": it saw the code was different and still called it the same bug.
 
+![Miss types across 14 ZombieBench model runs](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-miss-types.png)
+
+Across 672 attempts (14 models × 48 cases), models got 592 right. Of the 80 misses, 55 were **false zombies**: a new bug called a regression. Only 17 were **missed zombies**: a true regression called new. In these runs, false-zombie verdict errors outnumbered missed-zombie verdicts; the counts describe the answers, not why a model chose them.
+
 ## What I Benchmarked
 
 ### Why I built it
@@ -46,7 +50,7 @@ The new report:
 
 > Last month I got free Infosys shares, one for every one I already had. Since then the app says I'm down ₹42,000, which is about what I put in. It's as if the app thinks I paid for the free ones too. Support note on this ticket: 'The split bug, #3325, is back; splits and these go through the same code.'
 
-Free shares, one for one, is a bonus issue, and the symptom matches #3374. The right answer is regression #3374; the support note is the trap.
+Free shares, one for one, is a bonus issue, and the symptom matches #3374. The right answer is regression #3374; the support note is a deliberately planted incorrect diagnosis.
 
 ### How I made it fair
 
@@ -109,9 +113,15 @@ gpt-oss-120b and Gemini 3.8 Flash were still running on Kaggle when I published,
 
 > **Note:** all findings and quotes below come from my own notebook runs, which saved every miss; Kaggle's official run is separate. Scores varied by up to 7 cases between runs (Gemini 2.5 Flash: 42/48 in my run, 0.73 or about 35/48 on Kaggle), so small gaps between models aren't meaningful.
 
+![Heatmap of misses by model, tier, and case type](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-heatmap.png)
+
+*Every miss from my runs. The dark column on the right is expert D: new bugs that repeat an old kind of mistake in different code.*
+
 ## Findings
 
 ### 1. "Same mistake, different code" is the hardest category
+
+![Eight cases missed by the most models](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-hardest-cases.png)
 
 Expert D cases are new bugs that repeat an old bug's *kind* of mistake in code its fix never touched, and the report holds the clue. In zb-46, a hotel's new night-audit scheduler starts at 00:00 UTC, so early walk-ins land on the previous day, while the occupancy report (where old timezone bug #3129 was fixed) shows them correctly.
 
@@ -121,9 +131,9 @@ Models missed expert D cases 18 times out of 42 (43%). The next hardest categori
 
 It noticed the different code and still called it the same bug.
 
-### 2. One wrong support comment fooled five models
+### 2. Five models picked the bug a wrong support comment named
 
-In zb-41 (the example above), 5 models followed the support note: gpt-5.4-nano, gpt-5.4-mini, gemini-2.5-flash, gpt-oss-20b and qwen3-235b. From gpt-5.4-mini:
+In zb-41 (the example above), 5 models selected the bug ID named in the support note: gpt-5.4-nano, gpt-5.4-mini, gemini-2.5-flash, gpt-oss-20b and qwen3-235b. From gpt-5.4-mini:
 
 > "This matches the same corporate-action quantity/price adjustment defect as #3325, and the support note confirms splits and bonus issues share the same code path."
 
@@ -150,6 +160,12 @@ But 88/98 is 89.8%, so rounding down would show 89%. The real bug is a wrong den
 ### 5. The top tier is solved, so the rest is where it matters
 
 Perfect scores in my runs (48/48): gpt-6.1-sol, claude-opus-5-5, gemini-3.1-pro-preview, gpt-5.5 and gemini-3.8-flash. On Kaggle's official run (1.00): GPT-6.1 Sol, GPT-5.5, Claude Opus 5.5, Gemini 3.1 Pro Preview, Gemini 3.7 Flash, Gemini 3.5 Flash and Gemma 4 31B. ZombieBench can't rank these. Below them, my runs go from 47 down to 26 and Kaggle's from 0.98 (GLM-5) to 0.55 (GPT-5.4 nano), and in my runs the misses cluster in the same places: same mistake in different code, planted diagnoses and keyword decoys. If you'd triage bug reports with a smaller model, those are the failure modes to check.
+
+### What I'd do if I used AI for bug triage
+
+- **Don't let a regression verdict close a ticket on its own.** In these runs, false-zombie errors outnumbered missed-zombie errors. I'd ask which code path the old fix touched and whether the new report concerns that same code.
+- **Treat comments that name a bug as claims to verify.** In zb-41, five model outputs selected #3325, the ID named in the support note. There was no run without that note, so these results don't show that it changed the answers.
+- **Use a model that scored well here, and review the others.** Five models got all 48 cases right in these single runs; lower-scoring runs had misses. This synthetic benchmark doesn't establish real-world reliability.
 
 ### Honest limits
 
