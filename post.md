@@ -1,6 +1,7 @@
 ---
 title: "Same Kind of Bug Isn't the Same Bug: Where AI Models Get Fooled"
 published: true
+cover_image: https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/cover.png
 tags: devchallenge, kagglechallenge, ai, machinelearning
 ---
 
@@ -10,7 +11,7 @@ I gave AI models (14 in my own runs, 17 on the official Kaggle leaderboard) a li
 
 ![Miss types across 14 ZombieBench model runs](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-miss-types.png)
 
-Across 672 attempts (14 models × 48 cases), models got 592 right. Of the 80 misses, 55 were **false zombies**: a new bug called a regression. Only 17 were **missed zombies**: a true regression called new. In these runs, false-zombie verdict errors outnumbered missed-zombie verdicts; the counts describe the answers, not why a model chose them.
+Across 672 attempts (14 models × 48 cases), models got 592 right. Of the 80 misses, 55 were *false zombies*: a new bug called a regression. Only 17 went the other way. When these models are wrong, they're usually wrong in one direction: they see a familiar pattern and assume it's the old bug back.
 
 ## What I Benchmarked
 
@@ -61,6 +62,8 @@ Free shares, one for one, is a bonus issue, and the symptom matches #3374. The r
 - **Baselines.** Always answering "new" scores 24/48, so that's the floor to beat. My Bug Graveyard formula scores 15/48, worse than guessing.
 
 ## Models Tested
+
+I picked a spread on purpose: frontier models, plus the smaller and open-weight models that are cheap enough to run on every incoming ticket, because those are the ones a team would actually use for triage.
 
 I ran 16 models, from frontier down to small and open-weight ones, on the same 48 cases, once each. Two didn't finish: xai/grok-4.6 returned "404 – model not found" on every call, and I stopped deepseek-r1-0528 after 3 slow cases. The 14 that finished had no API errors.
 
@@ -163,9 +166,9 @@ Perfect scores in my runs (48/48): gpt-6.1-sol, claude-opus-5-5, gemini-3.1-pro-
 
 ### What I'd do if I used AI for bug triage
 
-- **Don't let a regression verdict close a ticket on its own.** In these runs, false-zombie errors outnumbered missed-zombie errors. I'd ask which code path the old fix touched and whether the new report concerns that same code.
-- **Treat comments that name a bug as claims to verify.** In zb-41, five model outputs selected #3325, the ID named in the support note. There was no run without that note, so these results don't show that it changed the answers.
-- **Use a model that scored well here, and review the others.** Five models got all 48 cases right in these single runs; lower-scoring runs had misses. This synthetic benchmark doesn't establish real-world reliability.
+- **Don't let a "regression" verdict close a ticket on its own:** most misses were false zombies, so check which code path the old fix touched.
+- **Strip or flag comments that name a bug:** in zb-41, five models selected #3325, the ID named in the support note. There was no run without that note, so these results don't show that it changed their answers.
+- **Use a frontier model, or check the small one:** the top models got every case right, and the cheaper ones are where these mistakes showed up. These single runs on synthetic cases don't establish real-world reliability.
 
 ### Honest limits
 
