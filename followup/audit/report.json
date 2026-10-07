@@ -1,0 +1,17 @@
+{
+  "audit": "Fresh agent, no inherited conversation; read only shuffled label-free prompt file.",
+  "model": "Inherited parent model; runtime did not expose an exact version identifier.",
+  "agreement": {
+    "exp2": {
+      "agreed": 18,
+      "total": 18
+    },
+    "exp1": {
+      "agreed": 34,
+      "total": 34
+    }
+  },
+  "disagreements": [],
+  "ambiguities": [],
+  "limitations": "One blind AI audit is a clarity check, not independent human validation or a model-performance estimate."
+}

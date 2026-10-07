@@ -1,0 +1,49 @@
+{
+  "prompts_per_model": 86,
+  "models": 11,
+  "calls_before_retries": 946,
+  "characters_per_model": 504572,
+  "rate_assumptions_usd_per_million": {
+    "nine_models": {
+      "input": 1,
+      "output": 5
+    },
+    "two_controls": {
+      "input": 5,
+      "output": 25
+    }
+  },
+  "warning": "Rates and token ratios are hypothetical; actual Kaggle tariff, reasoning tokens, failed calls and quota must be checked. These are scenarios, not a guarantee of completion within two days.",
+  "scenarios": [
+    {
+      "name": "short replies",
+      "characters_per_input_token": 4,
+      "output_tokens_per_call": 150,
+      "estimated_input_tokens_per_model": 126143,
+      "estimated_output_tokens_per_model": 12900,
+      "oct8_nine_models_usd": 1.72,
+      "oct9_two_controls_usd": 1.91,
+      "total_usd": 3.62
+    },
+    {
+      "name": "planning buffer",
+      "characters_per_input_token": 2.5,
+      "output_tokens_per_call": 500,
+      "estimated_input_tokens_per_model": 201829,
+      "estimated_output_tokens_per_model": 43000,
+      "oct8_nine_models_usd": 3.75,
+      "oct9_two_controls_usd": 4.17,
+      "total_usd": 7.92
+    },
+    {
+      "name": "long reasoning stress",
+      "characters_per_input_token": 2.5,
+      "output_tokens_per_call": 2000,
+      "estimated_input_tokens_per_model": 201829,
+      "estimated_output_tokens_per_model": 172000,
+      "oct8_nine_models_usd": 9.56,
+      "oct9_two_controls_usd": 10.62,
+      "total_usd": 20.17
+    }
+  ]
+}
