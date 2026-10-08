@@ -46,16 +46,39 @@ class FollowupTests(unittest.TestCase):
         model=FakeModel()
         with contextlib.redirect_stdout(io.StringIO()):
             with self.assertRaises(self.mod.BudgetStop):self.mod.execute_model(model,model.model,self.mod.Budget(10),max_calls=5)
-            score=self.mod.execute_model(model,model.model,self.mod.Budget(10))
-        self.assertEqual(score,1.0);self.assertEqual(len(model.calls),86)
-        self.assertEqual(len(set(self.chat_names)),86)
+            score=self.mod.execute_model(model,model.model,self.mod.Budget(10),n_runs=2)
+        self.assertEqual(score,1.0);self.assertEqual(len(model.calls),188)
+        self.assertEqual(len(set(self.chat_names)),188)
         data=self.mod.load(model.model)
         self.assertTrue(data['summary']['complete'])
         self.assertEqual(data['summary']['stability']['all']['changed'],0)
-        self.assertEqual(data['summary']['stability']['all']['comparable_valid_answers'],34)
-        self.assertEqual(len(data['calls']),86)
-        with contextlib.redirect_stdout(io.StringIO()):self.mod.execute_model(model,model.model,self.mod.Budget(10))
-        self.assertEqual(len(model.calls),86)
+        self.assertEqual(data['summary']['stability']['all']['comparable_valid_answers'],85)
+        self.assertEqual(len(data['calls']),188)
+        with contextlib.redirect_stdout(io.StringIO()):self.mod.execute_model(model,model.model,self.mod.Budget(10),n_runs=2)
+        self.assertEqual(len(model.calls),188)
+    def test_single_run_then_second_exp1_only(self):
+        model=FakeModel()
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.mod.execute_model(model,model.model,self.mod.Budget(10),n_runs=1)
+            self.assertEqual(len(model.calls),103)
+            self.mod.execute_model(model,model.model,self.mod.Budget(10),n_runs=2)
+        self.assertEqual(len(model.calls),188)
+        self.assertEqual(self.mod.load(model.model)['summary']['stability']['all']['identical'],85)
+    def test_error_retried_once_and_raw_attempt_saved(self):
+        model=FakeModel();original=model.prompt;attempts=[0]
+        def flaky(prompt):
+            attempts[0]+=1
+            if attempts[0]==1:raise RuntimeError('fixture')
+            return original(prompt)
+        model.prompt=flaky
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.mod.execute_model(model,model.model,self.mod.Budget(10))
+        data=self.mod.load(model.model)
+        self.assertEqual(len(data['calls']),104)
+        self.assertEqual(data['calls'][0]['status'],'error')
+        self.assertEqual(data['calls'][0]['reason'],'RuntimeError')
+        self.assertIn('raw_reply',data['calls'][1])
+        self.assertTrue(data['summary']['complete'])
     def test_changed_and_unreadable_answers(self):
         rows={}
         for c in CASES:
@@ -63,9 +86,9 @@ class FollowupTests(unittest.TestCase):
                 r=judge(c,json.dumps(c['expected']));r['comment_bug_id']=c.get('comment_bug_id');rows[f'r{rep}:{c["id"]}']=r
         c=CASES[0];key='r2:'+c['id'];rows[key].update(verdict='new',bug_id=None,status='fail')
         c2=CASES[1];rows['r2:'+c2['id']].update(verdict=None,bug_id=None,problem='unreadable',status='fail')
-        summary=summarize(CASES,rows)
+        summary=summarize(CASES,rows,n_runs=2)
         self.assertEqual(summary['stability']['all']['changed'],1)
-        self.assertEqual(summary['stability']['all']['comparable_valid_answers'],33)
+        self.assertEqual(summary['stability']['all']['comparable_valid_answers'],84)
         self.assertEqual(len(summary['stability']['all']['unreadable_pair_ids']),1)
     def test_missing_cost_and_reserve_fail_closed(self):
         b=self.mod.Budget(10);b.record({})
@@ -75,7 +98,7 @@ class FollowupTests(unittest.TestCase):
         with self.assertRaises(ValueError):self.mod.Budget(0)
     def test_errors_excluded_not_stable(self):
         rows={'r1:'+CASES[0]['id']:{'status':'error'}}
-        summary=summarize(CASES,rows)
+        summary=summarize(CASES,rows,n_runs=2)
         self.assertFalse(summary['complete']);self.assertEqual(summary['overall']['answered'],0)
         self.assertIsNone(summary['stability']['all']['change_rate'])
     def test_no_label_fields_in_prompt(self):

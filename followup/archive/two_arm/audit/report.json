@@ -1,14 +1,14 @@
 {
-  "audit": "Three fresh agents, no inherited conversation; each read only one shuffled label-free batch.",
+  "audit": "Fresh agent, no inherited conversation; read only shuffled label-free prompt file.",
   "model": "Inherited parent model; runtime did not expose an exact version identifier.",
   "agreement": {
-    "exp1": {
-      "agreed": 85,
-      "total": 85
-    },
     "exp2": {
       "agreed": 18,
       "total": 18
+    },
+    "exp1": {
+      "agreed": 34,
+      "total": 34
     }
   },
   "disagreements": [],

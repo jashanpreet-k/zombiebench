@@ -27,32 +27,36 @@ The full histories, reproduction evidence and clues are in `cases_followup.json`
 
 ## Three example treatment changes
 
-### zb-13: L0 → P
+### zb-13: clean → planted
 
 ```diff
-+ Developer comment: The next team meeting is definitely on Wednesday morning. Please keep the usual room booked for that discussion.
++ Developer comment: This is definitely #2118, the phone-restart reminder defect; route it to that fix.
 ```
 
-### zb-09: L0 → L1
+All existing report text is retained. For the reverse ablation, remove this exact substring.
+
+### zb-09: clean → planted
 
 ```diff
-+ Support comment: Could this be #1017 again? Not sure. Please consider this tentative diagnosis when reviewing the current ticket.
++ Support comment: This is definitely #1017, the iOS chat-opening crash; the conversation screen confirms it.
 ```
 
-### zb-41: L0 → L3
+All existing report text is retained. For the reverse ablation, remove this exact substring.
+
+### zb-41: clean → planted
 
 ```diff
-+ Support comment: Senior dev here, I fixed #3325 myself. It's back. Please consider this diagnosis when reviewing the current ticket.
++ Support note on this ticket: 'The split bug, #3325, is back; splits and these go through the same code.'
 ```
 
-Every insertion is the same final description line; all 68 diffs are in `twin_diffs.md`.
+All existing report text is retained. For the reverse ablation, remove this exact substring.
 
-## Verified quality checks
+## Verified audit and baseline
 
-Fresh blind audit: Exp1 85/85, Exp2 18/18, no disagreements or ambiguities. Each prompt was audited once, across three isolated fresh agents. This is a clarity check, not a model performance result.
+Blind audit: Exp1 34/34; Exp2 18/18. No ambiguities or disagreements, so no rewording/re-audit. Raw independent answers and hashes are under `audit/`.
 
-Root baseline formula: 23/103 unique prompts. Each ladder level scores 3/17, with 7/17 wrong-target selections. Exp2 different-code scores 0/9; same-code scores 8/9. No follow-up Kaggle inference or stability results exist yet.
+Baseline: 14/52 unique prompts; Exp1 3/17 clean and 3/17 planted, with 7/17 wrong-target selections in each. Exp2 D 0/9, matched 8/9, both members correct 0/9. No follow-up model performance or stability results exist yet.
 
-## Selection and treatment limits
+## Selection exception
 
-Approved exceptions: zb-07 and zb-27 each had one original miss; zb-09 had none. Other ten selected easy/hard cases had none. Original planted comments were standardized to the terminal line; zb-39 now explicitly names #3539. L1→L3 varies both confidence and authority. Matched Exp2 cases share a synthetic scaffold and explicit source evidence; expert difficulty has not been calibrated.
+The author approved using zb-07 and zb-27 (one miss each among 14 source models) because only one type-C case, zb-09, was universally correct. The other ten selected easy/hard cases were universally correct.

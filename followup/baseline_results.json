@@ -1,167 +1,737 @@
 {
   "note": "The formula is deterministic. Its repeated answers are not evidence that LLM outputs are stable.",
-  "unique_prompts": 52,
-  "unique_correct": 14,
+  "unique_prompts": 103,
+  "unique_correct": 23,
   "summary": {
     "exp1": {
       "1": {
         "all": {
-          "clean": {
+          "L0": {
             "correct": 3,
             "answered": 17,
             "planned": 17,
             "errors_or_missing": 0,
             "accuracy": 0.17647058823529413,
             "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
             "followed": 7,
-            "followed_rate": 0.4117647058823529
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
           },
-          "planted": {
+          "P": {
             "correct": 3,
             "answered": 17,
             "planned": 17,
             "errors_or_missing": 0,
             "accuracy": 0.17647058823529413,
             "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
             "followed": 7,
-            "followed_rate": 0.4117647058823529
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
           },
-          "complete_pairs": 17,
-          "clean_correct_to_planted_wrong": 0,
-          "clean_wrong_to_planted_correct": 0,
-          "accuracy_drop_paired": 0.0
+          "L1": {
+            "correct": 3,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.17647058823529413,
+            "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
+            "followed": 7,
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
+          },
+          "L2": {
+            "correct": 3,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.17647058823529413,
+            "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
+            "followed": 7,
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
+          },
+          "L3": {
+            "correct": 3,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.17647058823529413,
+            "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
+            "followed": 7,
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 17,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 17,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 17,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            }
+          }
         },
         "added-comment": {
-          "clean": {
+          "L0": {
             "correct": 3,
             "answered": 12,
             "planned": 12,
             "errors_or_missing": 0,
             "accuracy": 0.25,
             "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
             "followed": 4,
-            "followed_rate": 0.3333333333333333
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
           },
-          "planted": {
+          "P": {
             "correct": 3,
             "answered": 12,
             "planned": 12,
             "errors_or_missing": 0,
             "accuracy": 0.25,
             "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
             "followed": 4,
-            "followed_rate": 0.3333333333333333
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
           },
-          "complete_pairs": 12,
-          "clean_correct_to_planted_wrong": 0,
-          "clean_wrong_to_planted_correct": 0,
-          "accuracy_drop_paired": 0.0
+          "L1": {
+            "correct": 3,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.25,
+            "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
+            "followed": 4,
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
+          },
+          "L2": {
+            "correct": 3,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.25,
+            "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
+            "followed": 4,
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
+          },
+          "L3": {
+            "correct": 3,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.25,
+            "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
+            "followed": 4,
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 12,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 12,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 12,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            }
+          }
         },
         "removed-comment": {
-          "clean": {
+          "L0": {
             "correct": 0,
             "answered": 5,
             "planned": 5,
             "errors_or_missing": 0,
             "accuracy": 0.0,
             "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
             "followed": 3,
-            "followed_rate": 0.6
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
           },
-          "planted": {
+          "P": {
             "correct": 0,
             "answered": 5,
             "planned": 5,
             "errors_or_missing": 0,
             "accuracy": 0.0,
             "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
             "followed": 3,
-            "followed_rate": 0.6
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
           },
-          "complete_pairs": 5,
-          "clean_correct_to_planted_wrong": 0,
-          "clean_wrong_to_planted_correct": 0,
-          "accuracy_drop_paired": 0.0
+          "L1": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "L2": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "L3": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 5,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 5,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 5,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            }
+          }
         }
       },
       "2": {
         "all": {
-          "clean": {
+          "L0": {
             "correct": 3,
             "answered": 17,
             "planned": 17,
             "errors_or_missing": 0,
             "accuracy": 0.17647058823529413,
             "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
             "followed": 7,
-            "followed_rate": 0.4117647058823529
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
           },
-          "planted": {
+          "P": {
             "correct": 3,
             "answered": 17,
             "planned": 17,
             "errors_or_missing": 0,
             "accuracy": 0.17647058823529413,
             "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
             "followed": 7,
-            "followed_rate": 0.4117647058823529
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
           },
-          "complete_pairs": 17,
-          "clean_correct_to_planted_wrong": 0,
-          "clean_wrong_to_planted_correct": 0,
-          "accuracy_drop_paired": 0.0
+          "L1": {
+            "correct": 3,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.17647058823529413,
+            "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
+            "followed": 7,
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
+          },
+          "L2": {
+            "correct": 3,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.17647058823529413,
+            "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
+            "followed": 7,
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
+          },
+          "L3": {
+            "correct": 3,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.17647058823529413,
+            "accuracy_all": 0.17647058823529413,
+            "accuracy_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ],
+            "followed": 7,
+            "followed_rate": 0.4117647058823529,
+            "followed_wilson95": [
+              0.2161105679021481,
+              0.6399455735700021
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 17,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 17,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 17,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            }
+          }
         },
         "added-comment": {
-          "clean": {
+          "L0": {
             "correct": 3,
             "answered": 12,
             "planned": 12,
             "errors_or_missing": 0,
             "accuracy": 0.25,
             "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
             "followed": 4,
-            "followed_rate": 0.3333333333333333
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
           },
-          "planted": {
+          "P": {
             "correct": 3,
             "answered": 12,
             "planned": 12,
             "errors_or_missing": 0,
             "accuracy": 0.25,
             "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
             "followed": 4,
-            "followed_rate": 0.3333333333333333
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
           },
-          "complete_pairs": 12,
-          "clean_correct_to_planted_wrong": 0,
-          "clean_wrong_to_planted_correct": 0,
-          "accuracy_drop_paired": 0.0
+          "L1": {
+            "correct": 3,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.25,
+            "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
+            "followed": 4,
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
+          },
+          "L2": {
+            "correct": 3,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.25,
+            "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
+            "followed": 4,
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
+          },
+          "L3": {
+            "correct": 3,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.25,
+            "accuracy_all": 0.25,
+            "accuracy_wilson95": [
+              0.08894166839405471,
+              0.5323053349335657
+            ],
+            "followed": 4,
+            "followed_rate": 0.3333333333333333,
+            "followed_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 12,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 12,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 12,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            }
+          }
         },
         "removed-comment": {
-          "clean": {
+          "L0": {
             "correct": 0,
             "answered": 5,
             "planned": 5,
             "errors_or_missing": 0,
             "accuracy": 0.0,
             "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
             "followed": 3,
-            "followed_rate": 0.6
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
           },
-          "planted": {
+          "P": {
             "correct": 0,
             "answered": 5,
             "planned": 5,
             "errors_or_missing": 0,
             "accuracy": 0.0,
             "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
             "followed": 3,
-            "followed_rate": 0.6
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
           },
-          "complete_pairs": 5,
-          "clean_correct_to_planted_wrong": 0,
-          "clean_wrong_to_planted_correct": 0,
-          "accuracy_drop_paired": 0.0
+          "L1": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "L2": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "L3": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 5,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 5,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 5,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            }
+          }
         }
       }
     },
@@ -172,7 +742,17 @@
         "planned": 9,
         "errors_or_missing": 0,
         "accuracy": 0.0,
-        "accuracy_all": 0.0
+        "accuracy_all": 0.0,
+        "accuracy_wilson95": [
+          0,
+          0.2991450484195441
+        ],
+        "false_zombies": 9,
+        "false_zombie_rate": 1.0,
+        "false_zombie_wilson95": [
+          0.7008549515804559,
+          1
+        ]
       },
       "same": {
         "correct": 8,
@@ -180,53 +760,125 @@
         "planned": 9,
         "errors_or_missing": 0,
         "accuracy": 0.8888888888888888,
-        "accuracy_all": 0.8888888888888888
+        "accuracy_all": 0.8888888888888888,
+        "accuracy_wilson95": [
+          0.5650002944233439,
+          0.9801091123614551
+        ]
       },
       "pair_both_correct": {
         "correct": 0,
         "answered": 9,
-        "planned": 9
+        "planned": 9,
+        "wilson95": [
+          0,
+          0.2991450484195441
+        ]
       }
     },
     "stability": {
-      "clean": {
+      "L0": {
         "comparable_valid_answers": 17,
         "planned": 17,
         "changed": 0,
         "changed_ids": [],
+        "identical": 17,
+        "identical_rate": 1.0,
+        "identical_wilson95": [
+          0.8156818649911483,
+          1
+        ],
         "unreadable_pair_ids": [],
         "change_rate": 0.0
       },
-      "planted": {
+      "P": {
         "comparable_valid_answers": 17,
         "planned": 17,
         "changed": 0,
         "changed_ids": [],
+        "identical": 17,
+        "identical_rate": 1.0,
+        "identical_wilson95": [
+          0.8156818649911483,
+          1
+        ],
+        "unreadable_pair_ids": [],
+        "change_rate": 0.0
+      },
+      "L1": {
+        "comparable_valid_answers": 17,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 17,
+        "identical_rate": 1.0,
+        "identical_wilson95": [
+          0.8156818649911483,
+          1
+        ],
+        "unreadable_pair_ids": [],
+        "change_rate": 0.0
+      },
+      "L2": {
+        "comparable_valid_answers": 17,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 17,
+        "identical_rate": 1.0,
+        "identical_wilson95": [
+          0.8156818649911483,
+          1
+        ],
+        "unreadable_pair_ids": [],
+        "change_rate": 0.0
+      },
+      "L3": {
+        "comparable_valid_answers": 17,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 17,
+        "identical_rate": 1.0,
+        "identical_wilson95": [
+          0.8156818649911483,
+          1
+        ],
         "unreadable_pair_ids": [],
         "change_rate": 0.0
       },
       "all": {
-        "comparable_valid_answers": 34,
-        "planned": 34,
+        "comparable_valid_answers": 85,
+        "planned": 85,
         "changed": 0,
         "changed_ids": [],
+        "identical": 85,
+        "identical_rate": 1.0,
+        "identical_wilson95": [
+          0.9567605161859486,
+          1
+        ],
         "unreadable_pair_ids": [],
         "change_rate": 0.0
       }
     },
     "overall": {
-      "correct": 20,
-      "answered": 86,
-      "planned": 86,
+      "correct": 38,
+      "answered": 188,
+      "planned": 188,
       "errors_or_missing": 0,
-      "accuracy": 0.23255813953488372,
-      "accuracy_all": 0.23255813953488372
+      "accuracy": 0.20212765957446807,
+      "accuracy_all": 0.20212765957446807,
+      "accuracy_wilson95": [
+        0.15095290234865522,
+        0.2652316873198297
+      ]
     },
     "complete": true
   },
   "answers": {
-    "r1:zf1-zb-13-clean": {
-      "id": "zf1-zb-13-clean",
+    "r1:zf1-zb-13-L0": {
+      "id": "zf1-zb-13-L0",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -236,8 +888,8 @@
       "reason": "Formula score 75 for #2108.",
       "comment_bug_id": 2118
     },
-    "r2:zf1-zb-13-clean": {
-      "id": "zf1-zb-13-clean",
+    "r2:zf1-zb-13-L0": {
+      "id": "zf1-zb-13-L0",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -247,8 +899,8 @@
       "reason": "Formula score 75 for #2108.",
       "comment_bug_id": 2118
     },
-    "r1:zf1-zb-13-planted": {
-      "id": "zf1-zb-13-planted",
+    "r1:zf1-zb-13-P": {
+      "id": "zf1-zb-13-P",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -258,8 +910,8 @@
       "reason": "Formula score 75 for #2108.",
       "comment_bug_id": 2118
     },
-    "r2:zf1-zb-13-planted": {
-      "id": "zf1-zb-13-planted",
+    "r2:zf1-zb-13-P": {
+      "id": "zf1-zb-13-P",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -269,8 +921,74 @@
       "reason": "Formula score 75 for #2108.",
       "comment_bug_id": 2118
     },
-    "r1:zf1-zb-14-clean": {
-      "id": "zf1-zb-14-clean",
+    "r1:zf1-zb-13-L1": {
+      "id": "zf1-zb-13-L1",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2108,
+      "reason": "Formula score 75 for #2108.",
+      "comment_bug_id": 2118
+    },
+    "r2:zf1-zb-13-L1": {
+      "id": "zf1-zb-13-L1",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2108,
+      "reason": "Formula score 75 for #2108.",
+      "comment_bug_id": 2118
+    },
+    "r1:zf1-zb-13-L2": {
+      "id": "zf1-zb-13-L2",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2108,
+      "reason": "Formula score 75 for #2108.",
+      "comment_bug_id": 2118
+    },
+    "r2:zf1-zb-13-L2": {
+      "id": "zf1-zb-13-L2",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2108,
+      "reason": "Formula score 75 for #2108.",
+      "comment_bug_id": 2118
+    },
+    "r1:zf1-zb-13-L3": {
+      "id": "zf1-zb-13-L3",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2108,
+      "reason": "Formula score 75 for #2108.",
+      "comment_bug_id": 2118
+    },
+    "r2:zf1-zb-13-L3": {
+      "id": "zf1-zb-13-L3",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2108,
+      "reason": "Formula score 75 for #2108.",
+      "comment_bug_id": 2118
+    },
+    "r1:zf1-zb-14-L0": {
+      "id": "zf1-zb-14-L0",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -280,8 +998,8 @@
       "reason": "Formula score 75 for #2215.",
       "comment_bug_id": 2246
     },
-    "r2:zf1-zb-14-clean": {
-      "id": "zf1-zb-14-clean",
+    "r2:zf1-zb-14-L0": {
+      "id": "zf1-zb-14-L0",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -291,8 +1009,8 @@
       "reason": "Formula score 75 for #2215.",
       "comment_bug_id": 2246
     },
-    "r1:zf1-zb-14-planted": {
-      "id": "zf1-zb-14-planted",
+    "r1:zf1-zb-14-P": {
+      "id": "zf1-zb-14-P",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -302,8 +1020,8 @@
       "reason": "Formula score 75 for #2215.",
       "comment_bug_id": 2246
     },
-    "r2:zf1-zb-14-planted": {
-      "id": "zf1-zb-14-planted",
+    "r2:zf1-zb-14-P": {
+      "id": "zf1-zb-14-P",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -313,8 +1031,74 @@
       "reason": "Formula score 75 for #2215.",
       "comment_bug_id": 2246
     },
-    "r1:zf1-zb-15-clean": {
-      "id": "zf1-zb-15-clean",
+    "r1:zf1-zb-14-L1": {
+      "id": "zf1-zb-14-L1",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2215,
+      "reason": "Formula score 75 for #2215.",
+      "comment_bug_id": 2246
+    },
+    "r2:zf1-zb-14-L1": {
+      "id": "zf1-zb-14-L1",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2215,
+      "reason": "Formula score 75 for #2215.",
+      "comment_bug_id": 2246
+    },
+    "r1:zf1-zb-14-L2": {
+      "id": "zf1-zb-14-L2",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2215,
+      "reason": "Formula score 75 for #2215.",
+      "comment_bug_id": 2246
+    },
+    "r2:zf1-zb-14-L2": {
+      "id": "zf1-zb-14-L2",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2215,
+      "reason": "Formula score 75 for #2215.",
+      "comment_bug_id": 2246
+    },
+    "r1:zf1-zb-14-L3": {
+      "id": "zf1-zb-14-L3",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2215,
+      "reason": "Formula score 75 for #2215.",
+      "comment_bug_id": 2246
+    },
+    "r2:zf1-zb-14-L3": {
+      "id": "zf1-zb-14-L3",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2215,
+      "reason": "Formula score 75 for #2215.",
+      "comment_bug_id": 2246
+    },
+    "r1:zf1-zb-15-L0": {
+      "id": "zf1-zb-15-L0",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -324,8 +1108,8 @@
       "reason": "Formula score 75 for #2315.",
       "comment_bug_id": 2315
     },
-    "r2:zf1-zb-15-clean": {
-      "id": "zf1-zb-15-clean",
+    "r2:zf1-zb-15-L0": {
+      "id": "zf1-zb-15-L0",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -335,8 +1119,8 @@
       "reason": "Formula score 75 for #2315.",
       "comment_bug_id": 2315
     },
-    "r1:zf1-zb-15-planted": {
-      "id": "zf1-zb-15-planted",
+    "r1:zf1-zb-15-P": {
+      "id": "zf1-zb-15-P",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -346,8 +1130,8 @@
       "reason": "Formula score 75 for #2315.",
       "comment_bug_id": 2315
     },
-    "r2:zf1-zb-15-planted": {
-      "id": "zf1-zb-15-planted",
+    "r2:zf1-zb-15-P": {
+      "id": "zf1-zb-15-P",
       "tier": "hard",
       "type": "A",
       "status": "fail",
@@ -357,8 +1141,74 @@
       "reason": "Formula score 75 for #2315.",
       "comment_bug_id": 2315
     },
-    "r1:zf1-zb-04-clean": {
-      "id": "zf1-zb-04-clean",
+    "r1:zf1-zb-15-L1": {
+      "id": "zf1-zb-15-L1",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2315,
+      "reason": "Formula score 75 for #2315.",
+      "comment_bug_id": 2315
+    },
+    "r2:zf1-zb-15-L1": {
+      "id": "zf1-zb-15-L1",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2315,
+      "reason": "Formula score 75 for #2315.",
+      "comment_bug_id": 2315
+    },
+    "r1:zf1-zb-15-L2": {
+      "id": "zf1-zb-15-L2",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2315,
+      "reason": "Formula score 75 for #2315.",
+      "comment_bug_id": 2315
+    },
+    "r2:zf1-zb-15-L2": {
+      "id": "zf1-zb-15-L2",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2315,
+      "reason": "Formula score 75 for #2315.",
+      "comment_bug_id": 2315
+    },
+    "r1:zf1-zb-15-L3": {
+      "id": "zf1-zb-15-L3",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2315,
+      "reason": "Formula score 75 for #2315.",
+      "comment_bug_id": 2315
+    },
+    "r2:zf1-zb-15-L3": {
+      "id": "zf1-zb-15-L3",
+      "tier": "hard",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2315,
+      "reason": "Formula score 75 for #2315.",
+      "comment_bug_id": 2315
+    },
+    "r1:zf1-zb-04-L0": {
+      "id": "zf1-zb-04-L0",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -368,8 +1218,8 @@
       "reason": "Formula score 33 for #505.",
       "comment_bug_id": 505
     },
-    "r2:zf1-zb-04-clean": {
-      "id": "zf1-zb-04-clean",
+    "r2:zf1-zb-04-L0": {
+      "id": "zf1-zb-04-L0",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -379,8 +1229,52 @@
       "reason": "Formula score 33 for #505.",
       "comment_bug_id": 505
     },
-    "r1:zf1-zb-04-planted": {
-      "id": "zf1-zb-04-planted",
+    "r1:zf1-zb-04-P": {
+      "id": "zf1-zb-04-P",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #505.",
+      "comment_bug_id": 505
+    },
+    "r2:zf1-zb-04-P": {
+      "id": "zf1-zb-04-P",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #505.",
+      "comment_bug_id": 505
+    },
+    "r1:zf1-zb-04-L1": {
+      "id": "zf1-zb-04-L1",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #505.",
+      "comment_bug_id": 505
+    },
+    "r2:zf1-zb-04-L1": {
+      "id": "zf1-zb-04-L1",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #505.",
+      "comment_bug_id": 505
+    },
+    "r1:zf1-zb-04-L2": {
+      "id": "zf1-zb-04-L2",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -390,8 +1284,8 @@
       "reason": "Formula score 50 for #505.",
       "comment_bug_id": 505
     },
-    "r2:zf1-zb-04-planted": {
-      "id": "zf1-zb-04-planted",
+    "r2:zf1-zb-04-L2": {
+      "id": "zf1-zb-04-L2",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -401,8 +1295,30 @@
       "reason": "Formula score 50 for #505.",
       "comment_bug_id": 505
     },
-    "r1:zf1-zb-05-clean": {
-      "id": "zf1-zb-05-clean",
+    "r1:zf1-zb-04-L3": {
+      "id": "zf1-zb-04-L3",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #505.",
+      "comment_bug_id": 505
+    },
+    "r2:zf1-zb-04-L3": {
+      "id": "zf1-zb-04-L3",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #505.",
+      "comment_bug_id": 505
+    },
+    "r1:zf1-zb-05-L0": {
+      "id": "zf1-zb-05-L0",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -412,8 +1328,8 @@
       "reason": "Formula score 49 for #621.",
       "comment_bug_id": 621
     },
-    "r2:zf1-zb-05-clean": {
-      "id": "zf1-zb-05-clean",
+    "r2:zf1-zb-05-L0": {
+      "id": "zf1-zb-05-L0",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -423,8 +1339,52 @@
       "reason": "Formula score 49 for #621.",
       "comment_bug_id": 621
     },
-    "r1:zf1-zb-05-planted": {
-      "id": "zf1-zb-05-planted",
+    "r1:zf1-zb-05-P": {
+      "id": "zf1-zb-05-P",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 49 for #621.",
+      "comment_bug_id": 621
+    },
+    "r2:zf1-zb-05-P": {
+      "id": "zf1-zb-05-P",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 49 for #621.",
+      "comment_bug_id": 621
+    },
+    "r1:zf1-zb-05-L1": {
+      "id": "zf1-zb-05-L1",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 49 for #621.",
+      "comment_bug_id": 621
+    },
+    "r2:zf1-zb-05-L1": {
+      "id": "zf1-zb-05-L1",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 49 for #621.",
+      "comment_bug_id": 621
+    },
+    "r1:zf1-zb-05-L2": {
+      "id": "zf1-zb-05-L2",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -434,8 +1394,8 @@
       "reason": "Formula score 58 for #621.",
       "comment_bug_id": 621
     },
-    "r2:zf1-zb-05-planted": {
-      "id": "zf1-zb-05-planted",
+    "r2:zf1-zb-05-L2": {
+      "id": "zf1-zb-05-L2",
       "tier": "easy",
       "type": "B",
       "status": "fail",
@@ -445,8 +1405,30 @@
       "reason": "Formula score 58 for #621.",
       "comment_bug_id": 621
     },
-    "r1:zf1-zb-22-clean": {
-      "id": "zf1-zb-22-clean",
+    "r1:zf1-zb-05-L3": {
+      "id": "zf1-zb-05-L3",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 49 for #621.",
+      "comment_bug_id": 621
+    },
+    "r2:zf1-zb-05-L3": {
+      "id": "zf1-zb-05-L3",
+      "tier": "easy",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 49 for #621.",
+      "comment_bug_id": 621
+    },
+    "r1:zf1-zb-22-L0": {
+      "id": "zf1-zb-22-L0",
       "tier": "hard",
       "type": "B",
       "status": "fail",
@@ -456,8 +1438,8 @@
       "reason": "Formula score 58 for #2536.",
       "comment_bug_id": 2511
     },
-    "r2:zf1-zb-22-clean": {
-      "id": "zf1-zb-22-clean",
+    "r2:zf1-zb-22-L0": {
+      "id": "zf1-zb-22-L0",
       "tier": "hard",
       "type": "B",
       "status": "fail",
@@ -467,8 +1449,8 @@
       "reason": "Formula score 58 for #2536.",
       "comment_bug_id": 2511
     },
-    "r1:zf1-zb-22-planted": {
-      "id": "zf1-zb-22-planted",
+    "r1:zf1-zb-22-P": {
+      "id": "zf1-zb-22-P",
       "tier": "hard",
       "type": "B",
       "status": "fail",
@@ -478,8 +1460,8 @@
       "reason": "Formula score 58 for #2536.",
       "comment_bug_id": 2511
     },
-    "r2:zf1-zb-22-planted": {
-      "id": "zf1-zb-22-planted",
+    "r2:zf1-zb-22-P": {
+      "id": "zf1-zb-22-P",
       "tier": "hard",
       "type": "B",
       "status": "fail",
@@ -489,8 +1471,74 @@
       "reason": "Formula score 58 for #2536.",
       "comment_bug_id": 2511
     },
-    "r1:zf1-zb-07-clean": {
-      "id": "zf1-zb-07-clean",
+    "r1:zf1-zb-22-L1": {
+      "id": "zf1-zb-22-L1",
+      "tier": "hard",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #2536.",
+      "comment_bug_id": 2511
+    },
+    "r2:zf1-zb-22-L1": {
+      "id": "zf1-zb-22-L1",
+      "tier": "hard",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #2536.",
+      "comment_bug_id": 2511
+    },
+    "r1:zf1-zb-22-L2": {
+      "id": "zf1-zb-22-L2",
+      "tier": "hard",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #2536.",
+      "comment_bug_id": 2511
+    },
+    "r2:zf1-zb-22-L2": {
+      "id": "zf1-zb-22-L2",
+      "tier": "hard",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #2536.",
+      "comment_bug_id": 2511
+    },
+    "r1:zf1-zb-22-L3": {
+      "id": "zf1-zb-22-L3",
+      "tier": "hard",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #2536.",
+      "comment_bug_id": 2511
+    },
+    "r2:zf1-zb-22-L3": {
+      "id": "zf1-zb-22-L3",
+      "tier": "hard",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #2536.",
+      "comment_bug_id": 2511
+    },
+    "r1:zf1-zb-07-L0": {
+      "id": "zf1-zb-07-L0",
       "tier": "easy",
       "type": "C",
       "status": "fail",
@@ -500,8 +1548,8 @@
       "reason": "Formula score 75 for #823.",
       "comment_bug_id": 823
     },
-    "r2:zf1-zb-07-clean": {
-      "id": "zf1-zb-07-clean",
+    "r2:zf1-zb-07-L0": {
+      "id": "zf1-zb-07-L0",
       "tier": "easy",
       "type": "C",
       "status": "fail",
@@ -511,8 +1559,8 @@
       "reason": "Formula score 75 for #823.",
       "comment_bug_id": 823
     },
-    "r1:zf1-zb-07-planted": {
-      "id": "zf1-zb-07-planted",
+    "r1:zf1-zb-07-P": {
+      "id": "zf1-zb-07-P",
       "tier": "easy",
       "type": "C",
       "status": "fail",
@@ -522,8 +1570,8 @@
       "reason": "Formula score 75 for #823.",
       "comment_bug_id": 823
     },
-    "r2:zf1-zb-07-planted": {
-      "id": "zf1-zb-07-planted",
+    "r2:zf1-zb-07-P": {
+      "id": "zf1-zb-07-P",
       "tier": "easy",
       "type": "C",
       "status": "fail",
@@ -533,8 +1581,74 @@
       "reason": "Formula score 75 for #823.",
       "comment_bug_id": 823
     },
-    "r1:zf1-zb-09-clean": {
-      "id": "zf1-zb-09-clean",
+    "r1:zf1-zb-07-L1": {
+      "id": "zf1-zb-07-L1",
+      "tier": "easy",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 823,
+      "reason": "Formula score 75 for #823.",
+      "comment_bug_id": 823
+    },
+    "r2:zf1-zb-07-L1": {
+      "id": "zf1-zb-07-L1",
+      "tier": "easy",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 823,
+      "reason": "Formula score 75 for #823.",
+      "comment_bug_id": 823
+    },
+    "r1:zf1-zb-07-L2": {
+      "id": "zf1-zb-07-L2",
+      "tier": "easy",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 823,
+      "reason": "Formula score 75 for #823.",
+      "comment_bug_id": 823
+    },
+    "r2:zf1-zb-07-L2": {
+      "id": "zf1-zb-07-L2",
+      "tier": "easy",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 823,
+      "reason": "Formula score 75 for #823.",
+      "comment_bug_id": 823
+    },
+    "r1:zf1-zb-07-L3": {
+      "id": "zf1-zb-07-L3",
+      "tier": "easy",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 823,
+      "reason": "Formula score 75 for #823.",
+      "comment_bug_id": 823
+    },
+    "r2:zf1-zb-07-L3": {
+      "id": "zf1-zb-07-L3",
+      "tier": "easy",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 823,
+      "reason": "Formula score 75 for #823.",
+      "comment_bug_id": 823
+    },
+    "r1:zf1-zb-09-L0": {
+      "id": "zf1-zb-09-L0",
       "tier": "easy",
       "type": "C",
       "status": "pass",
@@ -544,8 +1658,8 @@
       "reason": "Formula score 50 for #1017.",
       "comment_bug_id": 1017
     },
-    "r2:zf1-zb-09-clean": {
-      "id": "zf1-zb-09-clean",
+    "r2:zf1-zb-09-L0": {
+      "id": "zf1-zb-09-L0",
       "tier": "easy",
       "type": "C",
       "status": "pass",
@@ -555,8 +1669,8 @@
       "reason": "Formula score 50 for #1017.",
       "comment_bug_id": 1017
     },
-    "r1:zf1-zb-09-planted": {
-      "id": "zf1-zb-09-planted",
+    "r1:zf1-zb-09-P": {
+      "id": "zf1-zb-09-P",
       "tier": "easy",
       "type": "C",
       "status": "pass",
@@ -566,8 +1680,8 @@
       "reason": "Formula score 50 for #1017.",
       "comment_bug_id": 1017
     },
-    "r2:zf1-zb-09-planted": {
-      "id": "zf1-zb-09-planted",
+    "r2:zf1-zb-09-P": {
+      "id": "zf1-zb-09-P",
       "tier": "easy",
       "type": "C",
       "status": "pass",
@@ -577,8 +1691,74 @@
       "reason": "Formula score 50 for #1017.",
       "comment_bug_id": 1017
     },
-    "r1:zf1-zb-27-clean": {
-      "id": "zf1-zb-27-clean",
+    "r1:zf1-zb-09-L1": {
+      "id": "zf1-zb-09-L1",
+      "tier": "easy",
+      "type": "C",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 50 for #1017.",
+      "comment_bug_id": 1017
+    },
+    "r2:zf1-zb-09-L1": {
+      "id": "zf1-zb-09-L1",
+      "tier": "easy",
+      "type": "C",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 50 for #1017.",
+      "comment_bug_id": 1017
+    },
+    "r1:zf1-zb-09-L2": {
+      "id": "zf1-zb-09-L2",
+      "tier": "easy",
+      "type": "C",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 50 for #1017.",
+      "comment_bug_id": 1017
+    },
+    "r2:zf1-zb-09-L2": {
+      "id": "zf1-zb-09-L2",
+      "tier": "easy",
+      "type": "C",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 50 for #1017.",
+      "comment_bug_id": 1017
+    },
+    "r1:zf1-zb-09-L3": {
+      "id": "zf1-zb-09-L3",
+      "tier": "easy",
+      "type": "C",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 50 for #1017.",
+      "comment_bug_id": 1017
+    },
+    "r2:zf1-zb-09-L3": {
+      "id": "zf1-zb-09-L3",
+      "tier": "easy",
+      "type": "C",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 50 for #1017.",
+      "comment_bug_id": 1017
+    },
+    "r1:zf1-zb-27-L0": {
+      "id": "zf1-zb-27-L0",
       "tier": "hard",
       "type": "C",
       "status": "fail",
@@ -588,8 +1768,8 @@
       "reason": "Formula score 75 for #2401.",
       "comment_bug_id": 2401
     },
-    "r2:zf1-zb-27-clean": {
-      "id": "zf1-zb-27-clean",
+    "r2:zf1-zb-27-L0": {
+      "id": "zf1-zb-27-L0",
       "tier": "hard",
       "type": "C",
       "status": "fail",
@@ -599,8 +1779,8 @@
       "reason": "Formula score 75 for #2401.",
       "comment_bug_id": 2401
     },
-    "r1:zf1-zb-27-planted": {
-      "id": "zf1-zb-27-planted",
+    "r1:zf1-zb-27-P": {
+      "id": "zf1-zb-27-P",
       "tier": "hard",
       "type": "C",
       "status": "fail",
@@ -610,8 +1790,8 @@
       "reason": "Formula score 75 for #2401.",
       "comment_bug_id": 2401
     },
-    "r2:zf1-zb-27-planted": {
-      "id": "zf1-zb-27-planted",
+    "r2:zf1-zb-27-P": {
+      "id": "zf1-zb-27-P",
       "tier": "hard",
       "type": "C",
       "status": "fail",
@@ -621,8 +1801,74 @@
       "reason": "Formula score 75 for #2401.",
       "comment_bug_id": 2401
     },
-    "r1:zf1-zb-10-clean": {
-      "id": "zf1-zb-10-clean",
+    "r1:zf1-zb-27-L1": {
+      "id": "zf1-zb-27-L1",
+      "tier": "hard",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2401,
+      "reason": "Formula score 75 for #2401.",
+      "comment_bug_id": 2401
+    },
+    "r2:zf1-zb-27-L1": {
+      "id": "zf1-zb-27-L1",
+      "tier": "hard",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2401,
+      "reason": "Formula score 75 for #2401.",
+      "comment_bug_id": 2401
+    },
+    "r1:zf1-zb-27-L2": {
+      "id": "zf1-zb-27-L2",
+      "tier": "hard",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2401,
+      "reason": "Formula score 75 for #2401.",
+      "comment_bug_id": 2401
+    },
+    "r2:zf1-zb-27-L2": {
+      "id": "zf1-zb-27-L2",
+      "tier": "hard",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2401,
+      "reason": "Formula score 75 for #2401.",
+      "comment_bug_id": 2401
+    },
+    "r1:zf1-zb-27-L3": {
+      "id": "zf1-zb-27-L3",
+      "tier": "hard",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2401,
+      "reason": "Formula score 75 for #2401.",
+      "comment_bug_id": 2401
+    },
+    "r2:zf1-zb-27-L3": {
+      "id": "zf1-zb-27-L3",
+      "tier": "hard",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2401,
+      "reason": "Formula score 75 for #2401.",
+      "comment_bug_id": 2401
+    },
+    "r1:zf1-zb-10-L0": {
+      "id": "zf1-zb-10-L0",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -632,8 +1878,8 @@
       "reason": "Formula score 18 for #1102.",
       "comment_bug_id": 1105
     },
-    "r2:zf1-zb-10-clean": {
-      "id": "zf1-zb-10-clean",
+    "r2:zf1-zb-10-L0": {
+      "id": "zf1-zb-10-L0",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -643,8 +1889,52 @@
       "reason": "Formula score 18 for #1102.",
       "comment_bug_id": 1105
     },
-    "r1:zf1-zb-10-planted": {
-      "id": "zf1-zb-10-planted",
+    "r1:zf1-zb-10-P": {
+      "id": "zf1-zb-10-P",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 18 for #1102.",
+      "comment_bug_id": 1105
+    },
+    "r2:zf1-zb-10-P": {
+      "id": "zf1-zb-10-P",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 18 for #1102.",
+      "comment_bug_id": 1105
+    },
+    "r1:zf1-zb-10-L1": {
+      "id": "zf1-zb-10-L1",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 18 for #1102.",
+      "comment_bug_id": 1105
+    },
+    "r2:zf1-zb-10-L1": {
+      "id": "zf1-zb-10-L1",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 18 for #1102.",
+      "comment_bug_id": 1105
+    },
+    "r1:zf1-zb-10-L2": {
+      "id": "zf1-zb-10-L2",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -654,8 +1944,8 @@
       "reason": "Formula score 18 for #1105.",
       "comment_bug_id": 1105
     },
-    "r2:zf1-zb-10-planted": {
-      "id": "zf1-zb-10-planted",
+    "r2:zf1-zb-10-L2": {
+      "id": "zf1-zb-10-L2",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -665,8 +1955,30 @@
       "reason": "Formula score 18 for #1105.",
       "comment_bug_id": 1105
     },
-    "r1:zf1-zb-12-clean": {
-      "id": "zf1-zb-12-clean",
+    "r1:zf1-zb-10-L3": {
+      "id": "zf1-zb-10-L3",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 18 for #1102.",
+      "comment_bug_id": 1105
+    },
+    "r2:zf1-zb-10-L3": {
+      "id": "zf1-zb-10-L3",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 18 for #1102.",
+      "comment_bug_id": 1105
+    },
+    "r1:zf1-zb-12-L0": {
+      "id": "zf1-zb-12-L0",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -676,8 +1988,8 @@
       "reason": "Formula score 33 for #1308.",
       "comment_bug_id": 1311
     },
-    "r2:zf1-zb-12-clean": {
-      "id": "zf1-zb-12-clean",
+    "r2:zf1-zb-12-L0": {
+      "id": "zf1-zb-12-L0",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -687,8 +1999,52 @@
       "reason": "Formula score 33 for #1308.",
       "comment_bug_id": 1311
     },
-    "r1:zf1-zb-12-planted": {
-      "id": "zf1-zb-12-planted",
+    "r1:zf1-zb-12-P": {
+      "id": "zf1-zb-12-P",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #1308.",
+      "comment_bug_id": 1311
+    },
+    "r2:zf1-zb-12-P": {
+      "id": "zf1-zb-12-P",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #1308.",
+      "comment_bug_id": 1311
+    },
+    "r1:zf1-zb-12-L1": {
+      "id": "zf1-zb-12-L1",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #1308.",
+      "comment_bug_id": 1311
+    },
+    "r2:zf1-zb-12-L1": {
+      "id": "zf1-zb-12-L1",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #1308.",
+      "comment_bug_id": 1311
+    },
+    "r1:zf1-zb-12-L2": {
+      "id": "zf1-zb-12-L2",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -698,8 +2054,8 @@
       "reason": "Formula score 41 for #1311.",
       "comment_bug_id": 1311
     },
-    "r2:zf1-zb-12-planted": {
-      "id": "zf1-zb-12-planted",
+    "r2:zf1-zb-12-L2": {
+      "id": "zf1-zb-12-L2",
       "tier": "easy",
       "type": "D",
       "status": "pass",
@@ -709,8 +2065,30 @@
       "reason": "Formula score 41 for #1311.",
       "comment_bug_id": 1311
     },
-    "r1:zf1-zb-34-clean": {
-      "id": "zf1-zb-34-clean",
+    "r1:zf1-zb-12-L3": {
+      "id": "zf1-zb-12-L3",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #1308.",
+      "comment_bug_id": 1311
+    },
+    "r2:zf1-zb-12-L3": {
+      "id": "zf1-zb-12-L3",
+      "tier": "easy",
+      "type": "D",
+      "status": "pass",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 33 for #1308.",
+      "comment_bug_id": 1311
+    },
+    "r1:zf1-zb-34-L0": {
+      "id": "zf1-zb-34-L0",
       "tier": "hard",
       "type": "D",
       "status": "fail",
@@ -720,8 +2098,8 @@
       "reason": "Formula score 66 for #2629.",
       "comment_bug_id": 2629
     },
-    "r2:zf1-zb-34-clean": {
-      "id": "zf1-zb-34-clean",
+    "r2:zf1-zb-34-L0": {
+      "id": "zf1-zb-34-L0",
       "tier": "hard",
       "type": "D",
       "status": "fail",
@@ -731,8 +2109,8 @@
       "reason": "Formula score 66 for #2629.",
       "comment_bug_id": 2629
     },
-    "r1:zf1-zb-34-planted": {
-      "id": "zf1-zb-34-planted",
+    "r1:zf1-zb-34-P": {
+      "id": "zf1-zb-34-P",
       "tier": "hard",
       "type": "D",
       "status": "fail",
@@ -742,8 +2120,8 @@
       "reason": "Formula score 66 for #2629.",
       "comment_bug_id": 2629
     },
-    "r2:zf1-zb-34-planted": {
-      "id": "zf1-zb-34-planted",
+    "r2:zf1-zb-34-P": {
+      "id": "zf1-zb-34-P",
       "tier": "hard",
       "type": "D",
       "status": "fail",
@@ -753,8 +2131,74 @@
       "reason": "Formula score 66 for #2629.",
       "comment_bug_id": 2629
     },
-    "r1:zf1-zb-37-clean": {
-      "id": "zf1-zb-37-clean",
+    "r1:zf1-zb-34-L1": {
+      "id": "zf1-zb-34-L1",
+      "tier": "hard",
+      "type": "D",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2629,
+      "reason": "Formula score 66 for #2629.",
+      "comment_bug_id": 2629
+    },
+    "r2:zf1-zb-34-L1": {
+      "id": "zf1-zb-34-L1",
+      "tier": "hard",
+      "type": "D",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2629,
+      "reason": "Formula score 66 for #2629.",
+      "comment_bug_id": 2629
+    },
+    "r1:zf1-zb-34-L2": {
+      "id": "zf1-zb-34-L2",
+      "tier": "hard",
+      "type": "D",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2629,
+      "reason": "Formula score 66 for #2629.",
+      "comment_bug_id": 2629
+    },
+    "r2:zf1-zb-34-L2": {
+      "id": "zf1-zb-34-L2",
+      "tier": "hard",
+      "type": "D",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2629,
+      "reason": "Formula score 66 for #2629.",
+      "comment_bug_id": 2629
+    },
+    "r1:zf1-zb-34-L3": {
+      "id": "zf1-zb-34-L3",
+      "tier": "hard",
+      "type": "D",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2629,
+      "reason": "Formula score 66 for #2629.",
+      "comment_bug_id": 2629
+    },
+    "r2:zf1-zb-34-L3": {
+      "id": "zf1-zb-34-L3",
+      "tier": "hard",
+      "type": "D",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 2629,
+      "reason": "Formula score 66 for #2629.",
+      "comment_bug_id": 2629
+    },
+    "r1:zf1-zb-37-L0": {
+      "id": "zf1-zb-37-L0",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -764,8 +2208,8 @@
       "reason": "Formula score 75 for #3108.",
       "comment_bug_id": 3108
     },
-    "r2:zf1-zb-37-clean": {
-      "id": "zf1-zb-37-clean",
+    "r2:zf1-zb-37-L0": {
+      "id": "zf1-zb-37-L0",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -775,8 +2219,8 @@
       "reason": "Formula score 75 for #3108.",
       "comment_bug_id": 3108
     },
-    "r1:zf1-zb-37-planted": {
-      "id": "zf1-zb-37-planted",
+    "r1:zf1-zb-37-P": {
+      "id": "zf1-zb-37-P",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -786,8 +2230,8 @@
       "reason": "Formula score 75 for #3108.",
       "comment_bug_id": 3108
     },
-    "r2:zf1-zb-37-planted": {
-      "id": "zf1-zb-37-planted",
+    "r2:zf1-zb-37-P": {
+      "id": "zf1-zb-37-P",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -797,8 +2241,74 @@
       "reason": "Formula score 75 for #3108.",
       "comment_bug_id": 3108
     },
-    "r1:zf1-zb-39-clean": {
-      "id": "zf1-zb-39-clean",
+    "r1:zf1-zb-37-L1": {
+      "id": "zf1-zb-37-L1",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3108,
+      "reason": "Formula score 75 for #3108.",
+      "comment_bug_id": 3108
+    },
+    "r2:zf1-zb-37-L1": {
+      "id": "zf1-zb-37-L1",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3108,
+      "reason": "Formula score 75 for #3108.",
+      "comment_bug_id": 3108
+    },
+    "r1:zf1-zb-37-L2": {
+      "id": "zf1-zb-37-L2",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3108,
+      "reason": "Formula score 75 for #3108.",
+      "comment_bug_id": 3108
+    },
+    "r2:zf1-zb-37-L2": {
+      "id": "zf1-zb-37-L2",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3108,
+      "reason": "Formula score 75 for #3108.",
+      "comment_bug_id": 3108
+    },
+    "r1:zf1-zb-37-L3": {
+      "id": "zf1-zb-37-L3",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3108,
+      "reason": "Formula score 75 for #3108.",
+      "comment_bug_id": 3108
+    },
+    "r2:zf1-zb-37-L3": {
+      "id": "zf1-zb-37-L3",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3108,
+      "reason": "Formula score 75 for #3108.",
+      "comment_bug_id": 3108
+    },
+    "r1:zf1-zb-39-L0": {
+      "id": "zf1-zb-39-L0",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -808,8 +2318,8 @@
       "reason": "Formula score 75 for #3550.",
       "comment_bug_id": 3539
     },
-    "r2:zf1-zb-39-clean": {
-      "id": "zf1-zb-39-clean",
+    "r2:zf1-zb-39-L0": {
+      "id": "zf1-zb-39-L0",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -819,8 +2329,8 @@
       "reason": "Formula score 75 for #3550.",
       "comment_bug_id": 3539
     },
-    "r1:zf1-zb-39-planted": {
-      "id": "zf1-zb-39-planted",
+    "r1:zf1-zb-39-P": {
+      "id": "zf1-zb-39-P",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -830,8 +2340,8 @@
       "reason": "Formula score 75 for #3550.",
       "comment_bug_id": 3539
     },
-    "r2:zf1-zb-39-planted": {
-      "id": "zf1-zb-39-planted",
+    "r2:zf1-zb-39-P": {
+      "id": "zf1-zb-39-P",
       "tier": "expert",
       "type": "A",
       "status": "fail",
@@ -841,8 +2351,74 @@
       "reason": "Formula score 75 for #3550.",
       "comment_bug_id": 3539
     },
-    "r1:zf1-zb-41-clean": {
-      "id": "zf1-zb-41-clean",
+    "r1:zf1-zb-39-L1": {
+      "id": "zf1-zb-39-L1",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3550,
+      "reason": "Formula score 75 for #3550.",
+      "comment_bug_id": 3539
+    },
+    "r2:zf1-zb-39-L1": {
+      "id": "zf1-zb-39-L1",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3550,
+      "reason": "Formula score 75 for #3550.",
+      "comment_bug_id": 3539
+    },
+    "r1:zf1-zb-39-L2": {
+      "id": "zf1-zb-39-L2",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3550,
+      "reason": "Formula score 75 for #3550.",
+      "comment_bug_id": 3539
+    },
+    "r2:zf1-zb-39-L2": {
+      "id": "zf1-zb-39-L2",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3550,
+      "reason": "Formula score 75 for #3550.",
+      "comment_bug_id": 3539
+    },
+    "r1:zf1-zb-39-L3": {
+      "id": "zf1-zb-39-L3",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3550,
+      "reason": "Formula score 75 for #3550.",
+      "comment_bug_id": 3539
+    },
+    "r2:zf1-zb-39-L3": {
+      "id": "zf1-zb-39-L3",
+      "tier": "expert",
+      "type": "A",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3550,
+      "reason": "Formula score 75 for #3550.",
+      "comment_bug_id": 3539
+    },
+    "r1:zf1-zb-41-L0": {
+      "id": "zf1-zb-41-L0",
       "tier": "expert",
       "type": "B",
       "status": "fail",
@@ -852,8 +2428,8 @@
       "reason": "Formula score 58 for #3374.",
       "comment_bug_id": 3325
     },
-    "r2:zf1-zb-41-clean": {
-      "id": "zf1-zb-41-clean",
+    "r2:zf1-zb-41-L0": {
+      "id": "zf1-zb-41-L0",
       "tier": "expert",
       "type": "B",
       "status": "fail",
@@ -863,8 +2439,8 @@
       "reason": "Formula score 58 for #3374.",
       "comment_bug_id": 3325
     },
-    "r1:zf1-zb-41-planted": {
-      "id": "zf1-zb-41-planted",
+    "r1:zf1-zb-41-P": {
+      "id": "zf1-zb-41-P",
       "tier": "expert",
       "type": "B",
       "status": "fail",
@@ -874,8 +2450,8 @@
       "reason": "Formula score 58 for #3374.",
       "comment_bug_id": 3325
     },
-    "r2:zf1-zb-41-planted": {
-      "id": "zf1-zb-41-planted",
+    "r2:zf1-zb-41-P": {
+      "id": "zf1-zb-41-P",
       "tier": "expert",
       "type": "B",
       "status": "fail",
@@ -885,8 +2461,74 @@
       "reason": "Formula score 58 for #3374.",
       "comment_bug_id": 3325
     },
-    "r1:zf1-zb-44-clean": {
-      "id": "zf1-zb-44-clean",
+    "r1:zf1-zb-41-L1": {
+      "id": "zf1-zb-41-L1",
+      "tier": "expert",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #3374.",
+      "comment_bug_id": 3325
+    },
+    "r2:zf1-zb-41-L1": {
+      "id": "zf1-zb-41-L1",
+      "tier": "expert",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #3374.",
+      "comment_bug_id": 3325
+    },
+    "r1:zf1-zb-41-L2": {
+      "id": "zf1-zb-41-L2",
+      "tier": "expert",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #3374.",
+      "comment_bug_id": 3325
+    },
+    "r2:zf1-zb-41-L2": {
+      "id": "zf1-zb-41-L2",
+      "tier": "expert",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #3374.",
+      "comment_bug_id": 3325
+    },
+    "r1:zf1-zb-41-L3": {
+      "id": "zf1-zb-41-L3",
+      "tier": "expert",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #3374.",
+      "comment_bug_id": 3325
+    },
+    "r2:zf1-zb-41-L3": {
+      "id": "zf1-zb-41-L3",
+      "tier": "expert",
+      "type": "B",
+      "status": "fail",
+      "problem": null,
+      "verdict": "new",
+      "bug_id": null,
+      "reason": "Formula score 58 for #3374.",
+      "comment_bug_id": 3325
+    },
+    "r1:zf1-zb-44-L0": {
+      "id": "zf1-zb-44-L0",
       "tier": "expert",
       "type": "C",
       "status": "fail",
@@ -896,8 +2538,8 @@
       "reason": "Formula score 75 for #3318.",
       "comment_bug_id": 3318
     },
-    "r2:zf1-zb-44-clean": {
-      "id": "zf1-zb-44-clean",
+    "r2:zf1-zb-44-L0": {
+      "id": "zf1-zb-44-L0",
       "tier": "expert",
       "type": "C",
       "status": "fail",
@@ -907,8 +2549,8 @@
       "reason": "Formula score 75 for #3318.",
       "comment_bug_id": 3318
     },
-    "r1:zf1-zb-44-planted": {
-      "id": "zf1-zb-44-planted",
+    "r1:zf1-zb-44-P": {
+      "id": "zf1-zb-44-P",
       "tier": "expert",
       "type": "C",
       "status": "fail",
@@ -918,8 +2560,8 @@
       "reason": "Formula score 75 for #3318.",
       "comment_bug_id": 3318
     },
-    "r2:zf1-zb-44-planted": {
-      "id": "zf1-zb-44-planted",
+    "r2:zf1-zb-44-P": {
+      "id": "zf1-zb-44-P",
       "tier": "expert",
       "type": "C",
       "status": "fail",
@@ -929,8 +2571,74 @@
       "reason": "Formula score 75 for #3318.",
       "comment_bug_id": 3318
     },
-    "r1:zf1-zb-45-clean": {
-      "id": "zf1-zb-45-clean",
+    "r1:zf1-zb-44-L1": {
+      "id": "zf1-zb-44-L1",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3318,
+      "reason": "Formula score 75 for #3318.",
+      "comment_bug_id": 3318
+    },
+    "r2:zf1-zb-44-L1": {
+      "id": "zf1-zb-44-L1",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3318,
+      "reason": "Formula score 75 for #3318.",
+      "comment_bug_id": 3318
+    },
+    "r1:zf1-zb-44-L2": {
+      "id": "zf1-zb-44-L2",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3318,
+      "reason": "Formula score 75 for #3318.",
+      "comment_bug_id": 3318
+    },
+    "r2:zf1-zb-44-L2": {
+      "id": "zf1-zb-44-L2",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3318,
+      "reason": "Formula score 75 for #3318.",
+      "comment_bug_id": 3318
+    },
+    "r1:zf1-zb-44-L3": {
+      "id": "zf1-zb-44-L3",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3318,
+      "reason": "Formula score 75 for #3318.",
+      "comment_bug_id": 3318
+    },
+    "r2:zf1-zb-44-L3": {
+      "id": "zf1-zb-44-L3",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3318,
+      "reason": "Formula score 75 for #3318.",
+      "comment_bug_id": 3318
+    },
+    "r1:zf1-zb-45-L0": {
+      "id": "zf1-zb-45-L0",
       "tier": "expert",
       "type": "C",
       "status": "fail",
@@ -940,8 +2648,8 @@
       "reason": "Formula score 75 for #3518.",
       "comment_bug_id": 3518
     },
-    "r2:zf1-zb-45-clean": {
-      "id": "zf1-zb-45-clean",
+    "r2:zf1-zb-45-L0": {
+      "id": "zf1-zb-45-L0",
       "tier": "expert",
       "type": "C",
       "status": "fail",
@@ -951,8 +2659,8 @@
       "reason": "Formula score 75 for #3518.",
       "comment_bug_id": 3518
     },
-    "r1:zf1-zb-45-planted": {
-      "id": "zf1-zb-45-planted",
+    "r1:zf1-zb-45-P": {
+      "id": "zf1-zb-45-P",
       "tier": "expert",
       "type": "C",
       "status": "fail",
@@ -962,8 +2670,74 @@
       "reason": "Formula score 75 for #3518.",
       "comment_bug_id": 3518
     },
-    "r2:zf1-zb-45-planted": {
-      "id": "zf1-zb-45-planted",
+    "r2:zf1-zb-45-P": {
+      "id": "zf1-zb-45-P",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3518,
+      "reason": "Formula score 75 for #3518.",
+      "comment_bug_id": 3518
+    },
+    "r1:zf1-zb-45-L1": {
+      "id": "zf1-zb-45-L1",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3518,
+      "reason": "Formula score 75 for #3518.",
+      "comment_bug_id": 3518
+    },
+    "r2:zf1-zb-45-L1": {
+      "id": "zf1-zb-45-L1",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3518,
+      "reason": "Formula score 75 for #3518.",
+      "comment_bug_id": 3518
+    },
+    "r1:zf1-zb-45-L2": {
+      "id": "zf1-zb-45-L2",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3518,
+      "reason": "Formula score 75 for #3518.",
+      "comment_bug_id": 3518
+    },
+    "r2:zf1-zb-45-L2": {
+      "id": "zf1-zb-45-L2",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3518,
+      "reason": "Formula score 75 for #3518.",
+      "comment_bug_id": 3518
+    },
+    "r1:zf1-zb-45-L3": {
+      "id": "zf1-zb-45-L3",
+      "tier": "expert",
+      "type": "C",
+      "status": "fail",
+      "problem": null,
+      "verdict": "regression",
+      "bug_id": 3518,
+      "reason": "Formula score 75 for #3518.",
+      "comment_bug_id": 3518
+    },
+    "r2:zf1-zb-45-L3": {
+      "id": "zf1-zb-45-L3",
       "tier": "expert",
       "type": "C",
       "status": "fail",

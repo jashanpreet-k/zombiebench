@@ -1,0 +1,247 @@
+[
+  {
+    "id": "prompt-001",
+    "verdict": "regression",
+    "bug_id": 3374,
+    "reason": "A one-for-one bonus issue leaves the free shares valued at the old average cost, matching the bonus adjustment defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-004",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The 16-bit rain counter wraps after 65,535 tips, an overflow defect absent from the fixed bugs.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-007",
+    "verdict": "regression",
+    "bug_id": 2143,
+    "reason": "Repeated execution of the same dose alarm after reboot matches duplicate alarm recreation, rather than the missing alarms in #2118.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-010",
+    "verdict": "regression",
+    "bug_id": 2304,
+    "reason": "The submit request finishes before the pending autosave, reproducing the last-answer submission race.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-013",
+    "verdict": "regression",
+    "bug_id": 2522,
+    "reason": "5.3 multiplied by 18 twice is approximately 1,717, matching the shared UnitConverter double conversion defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-016",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "DriverBriefing.notice independently omits cache eviction and was outside the StationBoard.notice fix, which still works.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-019",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Only the recommendation row exposes the restricted title while search filters correctly, so the search defect has not returned.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-022",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "WarehouseScanner.service_day independently takes the UTC date and was outside the working DispatchManifest.service_day patch.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-025",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "A quick successful export omitting only 31 August indicates a date-boundary defect, not the fixed large-export timeout.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-028",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "CourierManifest.contact independently trims a null phone and was outside the still-working SpecimenLabel.contact patch.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-031",
+    "verdict": "regression",
+    "bug_id": 3374,
+    "reason": "Free shares issued one-for-one with an apparent doubled cost basis match the bonus average-price defect, not stock-split quantity handling.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-034",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Bluetooth is enabled and failures are specific to v3 locks, unlike the fixed missing Bluetooth-off check.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-037",
+    "verdict": "regression",
+    "bug_id": 5611,
+    "reason": "WaypointEditor.height again copies feet directly into metres in the exact method previously fixed.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-040",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "HandoverPacket.day independently uses the UTC date and was outside the working StationCalendar.day fix.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-043",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The affected riders have Bluetooth enabled and can unlock other bikes, isolating a different problem with v3 locks.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-046",
+    "verdict": "regression",
+    "bug_id": 5511,
+    "reason": "AppReservation.claim again separates availability checking from writing without the connector-and-interval lock.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-049",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Hard-coded badge colors create a dark-mode contrast failure, unrelated to the fixed label encoding bug.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-052",
+    "verdict": "regression",
+    "bug_id": 618,
+    "reason": "The preserved late-evening session is assigned to the next day immediately after daylight saving ends, matching the fixed-offset streak defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-055",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The counter resets precisely beyond the unsigned 16-bit maximum, not because a missing wind reading becomes zero.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-058",
+    "verdict": "regression",
+    "bug_id": 5911,
+    "reason": "StationBoard.notice again retains its saved notice on the update event, reproducing the same invalidation defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-061",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Exactly one missing workday and counting from the 2nd indicate a date-boundary error rather than floating-point salary rounding.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-064",
+    "verdict": "regression",
+    "bug_id": 2222,
+    "reason": "Add-on bill lines again produce fractional-paise totals rejected by payment links, matching the billing arithmetic defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-067",
+    "verdict": "regression",
+    "bug_id": 2222,
+    "reason": "Three-decimal totals on bills with add-ons reproduce the floating-point money defect, not missing first meter readings.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-070",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Restricted titles appear only in recommendations while search and Browse correctly hide them, unlike the fixed search filtering bug.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-073",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "BulkRouteImport.height independently omits feet conversion and was explicitly outside the working WaypointEditor.height patch.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-076",
+    "verdict": "regression",
+    "bug_id": 3174,
+    "reason": "The checkout invoice rounds GST line by line while booking and card totals agree, matching the invoice tax rounding defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-079",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Bluetooth is on and the failure is limited to new v3 locks, so the old Bluetooth-off check does not explain it.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-082",
+    "verdict": "regression",
+    "bug_id": 618,
+    "reason": "A late-evening session moves to Sunday after summer time ends and resets the streak, matching stale UTC-offset day assignment.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-085",
+    "verdict": "regression",
+    "bug_id": 618,
+    "reason": "The session remains in history under the wrong day after the clock change, matching timezone handling rather than missing synced streak data.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-088",
+    "verdict": "regression",
+    "bug_id": 3174,
+    "reason": "Only the checkout invoice differs by a rupee and its GST is rounded per line, reproducing the invoice tax rounding defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-091",
+    "verdict": "regression",
+    "bug_id": 3374,
+    "reason": "The one-for-one free share issue with apparent cost assigned to bonus shares matches the unadjusted average buy price defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-094",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Loading large videos wholly into memory causes thumbnail-related memory exhaustion, unlike the deleted-profile null crash.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-097",
+    "verdict": "regression",
+    "bug_id": 5311,
+    "reason": "CatalogCard.load again retains its stored title after a title-change event, reproducing the same cache invalidation defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-100",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The reported crash is caused by loading large videos into RAM, not force-unwrapping a deleted user profile.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-103",
+    "verdict": "regression",
+    "bug_id": 2522,
+    "reason": "The reported 1,717 from 5.3 is the approximate result of applying the glucose factor twice through the shared UnitConverter.",
+    "ambiguity": false
+  }
+]

@@ -1,0 +1,240 @@
+[
+  {
+    "id": "prompt-003",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The 16-bit tip counter wraps after 65,535, which is integer overflow rather than any listed defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-006",
+    "verdict": "regression",
+    "bug_id": 5411,
+    "reason": "SpecimenLabel.contact again calls Trim() on a null optional phone, the exact implementation and cause fixed in #5411.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-009",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The missing first working day causes a full-day pay shortfall, unlike the floating-point deduction rounding in #823.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-012",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Bluetooth is enabled and failures are confined to v3 locks, ruling out the Bluetooth-off check defect in #2401.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-015",
+    "verdict": "regression",
+    "bug_id": 509,
+    "reason": "Accented names become the same mojibake only in outgoing emails, matching the email encoding defect in #509.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-018",
+    "verdict": "regression",
+    "bug_id": 3508,
+    "reason": "Uninterrupted 25-fps films drift five minutes over two hours on both web and TV, matching #3508 rather than the pause-specific TV defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-021",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "A fast successful export omits every invoice on the final date, indicating a date-boundary defect absent from the fixed bugs.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-024",
+    "verdict": "regression",
+    "bug_id": 5211,
+    "reason": "BillComposer.total again rounds each charge before summing, exactly the code path and rounding cause fixed in #5211.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-027",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Alerts trigger promptly and only iOS delivery is delayed with priority 5, unlike the old trigger backlog or invalid push certificate.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-030",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Loading an entire large video for its thumbnail exhausts memory, unlike the missing-profile null reference in #1017.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-033",
+    "verdict": "regression",
+    "bug_id": 618,
+    "reason": "The clock-change weekend misclassifies a retained late-evening session into the next day, matching the timezone defect in #618.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-036",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Resetting immediately after 65,535 tips identifies unsigned 16-bit overflow, which none of the fixed bugs covers.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-039",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Counting 29 instead of 30 working days loses a full day of pay, a different cause from #823 rounding deductions.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-042",
+    "verdict": "regression",
+    "bug_id": 5711,
+    "reason": "StationCalendar.day again takes the UTC date without station-timezone conversion, exactly the defect fixed in #5711.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-045",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The failing AdjustmentBatch.total is an independent implementation outside #5211, while the patched BillComposer.total remains correct.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-048",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Hard-coded dark-mode colors cause insufficient contrast, which is unrelated to the listed warehouse defects.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-051",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The export completes quickly but excludes the last day of August, a new date-range boundary issue rather than #2629 timeout.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-054",
+    "verdict": "regression",
+    "bug_id": 509,
+    "reason": "René and Zoë become mojibake only in email, reproducing #509 encoding corruption rather than duplicate delivery.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-057",
+    "verdict": "regression",
+    "bug_id": 3508,
+    "reason": "The identical cross-device drift on uninterrupted 25-fps films matches the frame-rate conversion failure in #3508.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-060",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Omission of all August 31 invoices despite a three-second successful export indicates an unlisted date-boundary defect.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-063",
+    "verdict": "regression",
+    "bug_id": 2143,
+    "reason": "Duplicate executions of the same dose reminder following reboot match the duplicate alarm scheduling defect in #2143.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-066",
+    "verdict": "regression",
+    "bug_id": 3508,
+    "reason": "Five minutes of drift over two uninterrupted hours on both web and TV for 25-fps films identifies #3508 frame-rate conversion.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-069",
+    "verdict": "regression",
+    "bug_id": 2222,
+    "reason": "Add-on bill totals with three decimal places rejected by the payment link reproduce #2222 floating-point billing errors.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-072",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Unlock fails for v3 locks despite enabled Bluetooth and successful unlocks elsewhere, unlike the Bluetooth-off defect in #2401.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-075",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The omitted joining day and whole-day salary difference indicate a new counting boundary issue rather than deduction rounding.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-078",
+    "verdict": "regression",
+    "bug_id": 2522,
+    "reason": "The value 1,717 is approximately 5.3 times 18 twice, and the changed shared UnitConverter is the helper fixed in #2522.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-081",
+    "verdict": "regression",
+    "bug_id": 618,
+    "reason": "A late-evening session assigned to Sunday after daylight saving ends matches #618 timezone-based day misclassification.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-084",
+    "verdict": "regression",
+    "bug_id": 509,
+    "reason": "Correct in-app names become accented-character mojibake in email, the same encoding failure described in #509.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-087",
+    "verdict": "regression",
+    "bug_id": 2143,
+    "reason": "The same alarm executes twice after phone restart, matching #2143 duplicate recreation of dose reminders.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-090",
+    "verdict": "regression",
+    "bug_id": 2304,
+    "reason": "The logs show submission completes before pending autosave succeeds, directly reproducing the race fixed in #2304.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-093",
+    "verdict": "regression",
+    "bug_id": 509,
+    "reason": "The outgoing messages garble accented names while the app displays them correctly, matching #509 email encoding corruption.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-096",
+    "verdict": "regression",
+    "bug_id": 3374,
+    "reason": "One free share per existing share is a 1:1 bonus issue whose unadjusted cost basis reproduces #3374.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-099",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "Prompt alert triggering with delayed iOS-only priority-5 pushes indicates a delivery-priority issue absent from the fixed bugs.",
+    "ambiguity": false
+  },
+  {
+    "id": "prompt-102",
+    "verdict": "new",
+    "bug_id": null,
+    "reason": "The unreadable badge comes from hard-coded dark-mode colors, an unlisted contrast defect.",
+    "ambiguity": false
+  }
+]

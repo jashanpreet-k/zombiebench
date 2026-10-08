@@ -9,24 +9,26 @@ from pathlib import Path
 import kaggle_benchmarks as kbench
 
 PLANNED_MODELS = [
- 'openai/gpt-5.4-nano-2026-03-17', 'openai/gpt-5.4-mini-2026-03-17',
- 'anthropic/claude-haiku-4-5@20251001', 'anthropic/claude-sonnet-4-5@20250929',
- 'google/gemini-2.5-flash', 'google/gemini-3.1-flash-lite-preview',
- 'openai/gpt-oss-20b', 'qwen/qwen3-235b-a22b-instruct-2507',
- 'google/gemma-4-31b', 'openai/gpt-6.1-sol', 'anthropic/claude-opus-5-5@default',
+ 'openai/gpt-5.4-nano-2026-03-17', 'google/gemini-3.1-flash-lite-preview',
+ 'openai/gpt-oss-20b', 'anthropic/claude-haiku-4-5@20251001',
+ 'google/gemini-2.5-flash', 'openai/gpt-5.4-mini-2026-03-17',
+ 'qwen/qwen3-235b-a22b-instruct-2507', 'google/gemma-4-31b',
+ 'anthropic/claude-sonnet-4-5@20250929', 'openai/gpt-6.1-sol',
+ 'anthropic/claude-opus-5-5@default',
 ]
-DAY1_MODELS=PLANNED_MODELS[:9]
-DAY2_MODELS=PLANNED_MODELS[9:]
+CHEAPER_MODELS=PLANNED_MODELS[:9]
+FRONTIER_MODELS=PLANNED_MODELS[9:]
 DATA_SHA=hashlib.sha256(json.dumps(CASES,sort_keys=True).encode()).hexdigest()
 # Explicit second repetition, no SDK response cache enabled.
 # One source prompt per isolated chat; evaluation metadata never reaches the model.
 
-def schedule():
-    first=[(1,c) for c in CASES if c['experiment']=='exp1']
-    second=[(2,c) for c in CASES if c['experiment']=='exp1']
-    expansion=[(1,c) for c in CASES if c['experiment']=='exp2']
-    for seed,block in enumerate((first,second,expansion),20261008):random.Random(seed).shuffle(block)
-    return first+second+expansion
+def schedule(n_runs=1):
+    if n_runs not in (1,2):raise ValueError('n_runs must be 1 or 2')
+    blocks=[[(1,c) for c in CASES if c['experiment']=='exp1'],
+            [(1,c) for c in CASES if c['experiment']=='exp2']]
+    if n_runs==2:blocks.append([(2,c) for c in CASES if c['experiment']=='exp1'])
+    for seed,block in enumerate(blocks,20261008):random.Random(seed).shuffle(block)
+    return [row for block in blocks for row in block]
 
 
 def output_path(model):
@@ -56,7 +58,7 @@ class Budget:
 
     User supplies currently displayed remaining quota. Keep $2 reserve. Stop if
     usage is absent or remaining allocation is below max($1, 3 * largest call).
-    No automatic retries; failed calls can still consume quota. The platform's
+    One retry per API error; failed calls can still consume quota. The platform's
     daily quota is the final cap; avoid concurrent sessions and recheck the UI.
     """
     def __init__(self, remaining_usd):
@@ -80,11 +82,12 @@ def usage_dict(chat):
                'output_tokens_cost_nanodollars','total_backend_latency_ms')}
 
 
-def execute_model(llm, model, budget, max_calls=0):
+def execute_model(llm, model, budget, max_calls=0, n_runs=1):
     data=load(model); path=output_path(model);made=0;stop=None
-    for rep,case in schedule():
+    for rep,case in [item for item in schedule(n_runs) for _ in range(2)]:
         key=f'r{rep}:{case["id"]}'
         if answered(data['results'].get(key)):continue
+        if sum(x['key']==key for x in data['calls'])>=2:continue
         if max_calls and made>=max_calls:stop='Requested call checkpoint reached';break
         try:budget.before()
         except BudgetStop as err:stop=str(err);break
@@ -105,34 +108,35 @@ def execute_model(llm, model, budget, max_calls=0):
                       cohort=case.get('cohort'),comment_bug_id=case.get('comment_bug_id'),raw_reply=reply,
                       prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),started_at=started,usage=usage)
         data['results'][key]=result
-        data['calls'].append({'key':key,'at':started,'status':result['status'],'usage':usage})
+        data['calls'].append(dict(result,key=key))
         save(path,data)
         print(key,result['status'],describe(result.get('verdict'),result.get('bug_id')))
         if result['status']!='pass':print('reason:',result['reason'])
-        if failure or budget.unknown:
-            stop='Call failed or cost unavailable: check quota; resume explicitly (no automatic retries).';break
+        if budget.unknown:
+            stop='Cost metadata unavailable: check inference quota before resuming.';break
         time.sleep(1.5)
-    summary=summarize(CASES,data['results']);data['summary']=summary;save(path,data)
+    summary=summarize(CASES,data['results'],n_runs=n_runs);data['summary']=summary;data['n_runs']=n_runs;save(path,data)
     print_metrics(summary)
     print('All saved misses/errors:')
     for key,result in data['results'].items():
         if result['status']!='pass':print(key,result.get('raw_reply'),result['reason'])
     print('Session recorded spend:',round(budget.spent,6),'USD; output:',path)
     if stop:raise BudgetStop(stop)
-    if not summary['complete']:raise RuntimeError('Incomplete run: no leaderboard score until all 86 answers exist.')
-    return summary['overall']['accuracy']
+    if not summary['complete']:raise RuntimeError('Incomplete run: no leaderboard score until all planned answers exist (API errors retry at most once).')
+    # Keep the published score comparable when optional stability calls are added.
+    return summarize(CASES,data['results'],n_runs=1)['overall']['accuracy']
 
 
 @kbench.task(name='zombiebench_followup',description='Controlled bug-comment ablations with repeat runs and matched same-code versus different-code defects.')
-def zombiebench_followup(llm, remaining_usd: float = 0.0, max_calls: int = 0) -> float:
+def zombiebench_followup(llm, remaining_usd: float = 0.0, max_calls: int = 0, n_runs: int = 1) -> float:
     model=getattr(llm,'model',None) or getattr(llm,'name',None)
     if not model:raise ValueError('Model must have a stable identifier.')
     budget=ACTIVE_BUDGET or Budget(remaining_usd)
-    return execute_model(llm,str(model),budget,max_calls=max_calls)
+    return execute_model(llm,str(model),budget,max_calls=max_calls,n_runs=n_runs)
 
 
-def run_models(models, remaining_usd, max_calls=0):
-    """Resume planned runs. Both Exp1 repetitions are automatic; do not run twice manually."""
+def run_models(models, remaining_usd, max_calls=0, n_runs=1):
+    """Resume saved runs; n_runs=2 adds only missing second-repetition Exp1 calls."""
     global ACTIVE_BUDGET
     models=[models] if isinstance(models,str) else list(models)
     missing=[m for m in models if m not in kbench.llms]
@@ -140,7 +144,7 @@ def run_models(models, remaining_usd, max_calls=0):
     ACTIVE_BUDGET=Budget(remaining_usd)
     try:
         for model in models:
-            run=zombiebench_followup.run(llm=kbench.llms[model],remaining_usd=remaining_usd,max_calls=max_calls)
+            run=zombiebench_followup.run(llm=kbench.llms[model],remaining_usd=remaining_usd,max_calls=max_calls,n_runs=n_runs)
             # SDK may capture task exceptions instead of propagating them. Stop
             # the batch whenever its persisted model record is incomplete.
             if not load(model).get('summary',{}).get('complete'):
@@ -148,8 +152,28 @@ def run_models(models, remaining_usd, max_calls=0):
     finally:ACTIVE_BUDGET=None
 
 
+def run_plan(remaining_usd):
+    """One notebook cell, ordered priorities, resumable files, shared daily reserve."""
+    global ACTIVE_BUDGET
+    missing=[m for m in PLANNED_MODELS if m not in kbench.llms]
+    if missing:raise ValueError('Unavailable requested model IDs: '+repr(missing)+'. No substitutions or calls made.')
+    ACTIVE_BUDGET=Budget(remaining_usd)
+    try:
+        for models,n_runs in ((CHEAPER_MODELS,1),(FRONTIER_MODELS,1),(CHEAPER_MODELS,2)):
+            for model in models:
+                zombiebench_followup.run(llm=kbench.llms[model],remaining_usd=remaining_usd,n_runs=n_runs)
+                summary=summarize(CASES,load(model)['results'],n_runs=n_runs)
+                if not summary['complete']:
+                    print('STOP: incomplete model; save all followup/runs files, check quota, and resume.');return
+        print('COMPLETE: all priority batches and stability repetitions saved.')
+    finally:
+        import shutil
+        shutil.make_archive('zombiebench-followup-results','zip','followup','runs')
+        ACTIVE_BUDGET=None
+
+
 def preview_plan():
-    print('52 unique prompts: 34 Exp1 twice + 18 Exp2 once = 86/model; 946 across 11 models.')
+    print('103 unique prompts: 85 Exp1 + 18 Exp2. Second Exp1 adds 85/model. Planned total: 1,898 calls.')
     print('Planned IDs must be checked against this notebook catalog:',PLANNED_MODELS)
     print('No calls have been made. Check daily/monthly quota, then supply remaining_usd.')
 

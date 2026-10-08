@@ -1,0 +1,24 @@
+{
+  "phase": "A validated; B awaiting restored OAuth",
+  "updated_at_utc": "2026-10-08T08:27:17.097422+00:00",
+  "blind_audit": {
+    "exp1": [
+      85,
+      85
+    ],
+    "exp2": [
+      18,
+      18
+    ]
+  },
+  "baseline_unique": [
+    23,
+    103
+  ],
+  "kaggle_inference_started": false,
+  "followup_task_public": false,
+  "live_dev_modified": false,
+  "blocker": "Cached OAuth rejected. New OAuth browser flow pending; Computer Use permission unavailable.",
+  "next_action": "Complete pending Kaggle OAuth login; check inference dollar quota, catalog, build CLI entry point and push only follow-up task.",
+  "dev_key": "Left in place for authorized later article update; never read during phase A."
+}

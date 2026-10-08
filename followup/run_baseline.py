@@ -16,11 +16,11 @@ for c in cases:
  for rep in ((1,2) if c['experiment']=='exp1' else (1,)):
   r=judge(c,json.dumps(prediction));r['comment_bug_id']=c.get('comment_bug_id')
   rows[f'r{rep}:{c["id"]}']=r
-summary=summarize(cases,rows)
+summary=summarize(cases,rows,n_runs=2)
 out={'note':'The formula is deterministic. Its repeated answers are not evidence that LLM outputs are stable.',
-     'unique_prompts':52,'unique_correct':sum(r['status']=='pass' for key,r in rows.items() if key.startswith('r1:')),
+     'unique_prompts':len(cases),'unique_correct':sum(r['status']=='pass' for key,r in rows.items() if key.startswith('r1:')),
      'summary':summary,'answers':rows}
 (HERE/'baseline_results.json').write_text(json.dumps(out,indent=2)+'\n')
-print('Unique prompts:',out['unique_correct'],'/ 52')
+print('Unique prompts:',out['unique_correct'],'/',len(cases))
 print('Exp1:',json.dumps(summary['exp1']['1']['all']))
 print('Exp2:',json.dumps(summary['exp2']))

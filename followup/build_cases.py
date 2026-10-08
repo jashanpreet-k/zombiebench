@@ -159,20 +159,38 @@ def main():
     for source,(named,comment) in {**SELECTION,**REMOVALS}.items():
         original=originals[source]
         is_added=source in SELECTION
-        for variant in ['clean','planted']:
-            c=copy.deepcopy(original)
-            if is_added and variant=='planted': c['new_report']['description']+=' '+comment
-            if not is_added and variant=='clean':
-                assert c['new_report']['description'].count(comment)==1
-                c['new_report']['description']=c['new_report']['description'].replace(comment,'',1)
+        clean=copy.deepcopy(original)
+        if not is_added:
+            assert clean['new_report']['description'].count(comment)==1
+            clean['new_report']['description']=clean['new_report']['description'].replace(comment,'',1)
+        # All inserted arms use the same terminal line position. Original comments
+        # are normalized to a speaker-labelled line, including an explicit ID for zb-39.
+        l2=comment if is_added else {
+          'zb-37': 'Developer comment: This is definitely #3108 again, the confirmation-page fix regressed. Please review this diagnosis with the ticket.',
+          'zb-39': 'Developer comment: This is definitely #3539 again, the Android TV pause problem. Please review this diagnosis with the ticket.',
+          'zb-41': 'Support comment: The split bug, #3325, is back; splits and these go through the same code.',
+          'zb-44': 'Developer comment: This is definitely #3318 again, the overnight batch is back. Please review this diagnosis with the ticket.',
+          'zb-45': 'Developer comment: This is definitely #3518 again, the rating filter regressed. Please review this diagnosis with the ticket.',
+        }[source]
+        role=l2.split(':',1)[0]+':'
+        comments={
+          'L0':'',
+          'P':f'{role} The next team meeting is definitely on Wednesday morning. Please keep the usual room booked for that discussion.',
+          'L1':f'{role} Could this be #{named} again? Not sure. Please consider this tentative diagnosis when reviewing the current ticket.',
+          'L2':l2,
+          'L3':f"{role} Senior dev here, I fixed #{named} myself. It's back. Please consider this diagnosis when reviewing the current ticket.",
+        }
+        for variant,inserted in comments.items():
+            c=copy.deepcopy(clean)
+            if inserted:c['new_report']['description']+='\n'+inserted
             c.update(id=f'zf1-{source}-{variant}',experiment='exp1',pair_id=source,variant=variant,
                      source_case_id=source,source_misses=misses[source],source_models=14,
-                     cohort='added-comment' if is_added else 'removed-comment',comment=comment,
-                     comment_bug_id=named,comment_names_id=source!='zb-39',
+                     cohort='added-comment' if is_added else 'removed-comment',comment=inserted,
+                     comment_bug_id=named,comment_names_id=variant in ('L1','L2','L3'),
                      selection_exception=is_added and misses[source]>0)
             out.append(c)
     out+=make_exp2()
     (OUT/'cases_followup.json').write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n')
-    print(f'Wrote {len(out)} cases; Exp1 34, Exp2 18.')
+    print(f'Wrote {len(out)} cases; Exp1 85, Exp2 18.')
 
 if __name__=='__main__':main()

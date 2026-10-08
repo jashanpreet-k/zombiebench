@@ -1,135 +1,74 @@
 # ZombieBench controlled follow-up
 
-This is a separate experiment. The original benchmark, result files, article source and live DEV post are unchanged. No Kaggle model runs have been executed for this follow-up yet.
+Status: ladder built and audited; **no follow-up inference results yet**. The original dataset, grading task, results and live article are unchanged by this upgrade.
 
-## Design and departures from the requested selection
+## Design
 
-**Experiment 1:** 17 clean/planted pairs (34 unique prompts). Run both arms twice per model, in fresh chats, with identical prompts and provider settings in both repetitions. The original prompt and parser/grader are frozen in `grading.py`; evaluation metadata is never sent to a model.
+Experiment 1 uses 17 source cases × five levels = 85 prompts. L0 has no comment; P adds a confident but irrelevant meeting note; L1 names the wrong historical bug tentatively; L2 makes the existing confident diagnosis; L3 claims the author personally fixed that wrong bug. All inserted comments occupy one terminal description line. They have 14–20 whitespace-delimited words and 90–134 characters; within each case the longest is at most 1.5 times the shortest. Only that line changes. L0 necessarily has no added text.
 
-- Added-comment sample: zb-13, zb-14, zb-15 (A); zb-04, zb-05, zb-22 (B); zb-07, zb-09, zb-27 (C); zb-10, zb-12, zb-34 (D). Three per type; six easy and six hard.
-- Only zb-09 among easy/hard C cases was correct in all 14 completed source runs. With the author's explicit approval, zb-07 and zb-27 are exceptions: each was missed by one model. Among equally eligible one-miss candidates, choose lowest case ID (zb-07, zb-27 before zb-28). The other ten selected cases had no misses. Report these exceptions; do not call all 12 universally solved.
-- A/B comments name an actual sibling; C comments name the recorded decoy. Original D cases have no `decoy_bug_id` by schema, so the wrong historical target is recorded separately as `comment_bug_id` (zb-10 → #1105, zb-12 → #1311, zb-34 → #2629). These are symptom-level distractors, not previously designated gold-data decoys.
-- Removed-comment sample: zb-37, zb-39, zb-41, zb-44, zb-45. The planted arm preserves the original report byte-for-byte; the clean arm deletes only the specified comment substring. In zb-39 the team names the pause diagnosis, not an explicit numeric ID. Its associated history target is #3539; flag this distinction in any write-up.
-- Existing non-treatment wording (including guesses elsewhere in a report and zb-37's misfiled metadata) is deliberately retained. “Clean” means the experimental comment is absent, not that all other distractions are removed.
-- `twin_diffs.md` shows the model-prompt diff for **every** pair. All other report fields, history and gold answers are identical within each pair.
+The 12 additions have three cases per type A/B/C/D, six easy and six hard. Approved exception: zb-07 and zb-27 each had one miss among the original 14 models; only zb-09 was a universally correct type-C case. The other ten added cases had no misses. Five original planted-diagnosis cases supply the remaining ladders. Their comment is removed from the source and normalized to the same terminal position. In zb-39, the original diagnosis-only comment now explicitly names its corresponding wrong ID #3539. Thus this is a controlled standardized follow-up, not an exact rerun of the original planted arms.
 
-**Experiment 2:** Nine new different-code bugs (D) plus nine matched same-code regressions (A). Within each pair, the histories, title, language and component are identical. The failing route and the working control route exchange roles. Source snapshots identify whether the defective operation is in the function covered by the old patch or its independent implementation. Each history has 27 bugs including related alternatives; answer positions are balanced across the first, middle and last third.
+Experiment 2 has nine matched pairs: one distinct defect in an independent function and one true regression in the historically patched function. Histories and input contracts match within pairs. Domains and fault kinds vary, but the repeated scaffold and explicit source traces may make these easier than the original expert cases. They are synthetic and not calibrated for expert difficulty.
 
-Domains: cold-chain dispatch, water billing, library circulation, pathology administration, EV charging, drone planning, satellite operations, energy settlement and transit alerts. Mistakes: timezone, rounding, caching, null handling, races and units. The histories intentionally use a common distractor scaffold with domain-specific entities; these are expert-style histories, not yet empirically calibrated expert-difficulty items. Explicit route evidence may make them easier than the original expert D cases. This tests transfer of the same/new distinction, not real-world bug-triage accuracy.
+## Quality evidence
 
-## Quality gates completed
+`python followup/validate.py` extends the root checks without editing them: valid IDs/gold/siblings, source selection counts, all 68 insertion diffs, label balance, comment positions/lengths, ID-free placebo, matched histories and equal tested cue-word counts. These finite cue tests cannot prove absence of every possible shortcut.
 
-- `python3 -B followup/validate.py`: passes. Reuses root `validate.py` checks without modifying it. Checks source eligibility/exceptions, IDs, exact comment-only changes, gold preservation, counts, embedded prompt fields, matched histories and equal cue counts within each Exp2 pair.
-- `python3 -B followup/check_audit.py`: fresh agent with no inherited conversation, restricted to shuffled prompt text without answers, labels, case IDs or pair metadata. **34/34 Exp1 and 18/18 Exp2 agreement; no ambiguities.** No rewording/re-audit was required. The first attempt was blocked by account quota; the retry after the reset completed. Answers, prompt hashes and comparison report are in `audit/`. This is one blind AI clarity audit, not human validation or measured model robustness.
-- `python3 -B followup/run_baseline.py`: unchanged root formula scored **14/52 unique prompts**. Exp1 clean **3/17**, planted **3/17**, wrong-target selections **7/17** in each arm. Exp2 D **0/9**, matched **8/9**, both members correct **0/9 pairs**. Repeating a deterministic baseline does not establish LLM stability.
-- `python3 -B followup/test_followup.py`: offline tests cover independent calls, resume without duplicating completed answers, paired metrics, changed-answer counts, unreadable exclusions, metadata isolation and missing-cost budget stops.
+Three fresh agents independently answered disjoint shuffled batches without the answer key or conversation. Agreement: Exp1 85/85 and Exp2 18/18; no ambiguity or rewording. This is one audit per prompt, not three votes per prompt. Audit files include prompt hashes. The previous two-arm audit is preserved in `archive/two_arm/`.
 
-## What to report after Kaggle runs
-
-`kaggle_followup.py` is a standalone, paste-able task named **zombiebench_followup**. It makes no calls when loaded. Per model it runs **34 × 2 + 18 = 86 prompts**, for **946 initial calls across 11 models**. It uses separate isolated chats and no SDK response cache. Within each repetition, clean/planted prompts are shuffled with a fixed, recorded seed; repetition two uses a different order. Nothing from an earlier answer is added to another prompt. Keep the same provider model IDs/settings across both repetitions.
-
-Outputs are written after every call to `followup/runs/` in the notebook working directory. Full raw replies, parsed answers/reasons, prompt hashes, repetition IDs, timestamps, usage and all call attempts are retained. Every miss and reason is printed, including saved misses when resuming. Dataset hashes prevent incompatible checkpoints being reused.
-
-Metrics:
-
-- Exp1 clean/planted accuracy and target-following rate **for each repetition**, both pooled and separately for the 12 added-comment versus five removed-comment pairs.
-- “Followed” = a parsed regression answer names `comment_bug_id`. Also count this in the clean arm to measure how often the same target is chosen without the treatment. Following does not establish the model's internal reasoning.
-- Complete-pair clean-correct → planted-wrong and clean-wrong → planted-correct counts, plus paired accuracy drop. Retain both effects; don't report only harmed pairs.
-- Repeat stability: changed `(verdict, bug_id)` answers out of comparable valid answers, separately for clean, planted and all 34 prompts. Reasons aren't compared. Missing/API-error answers and unreadable pairs are excluded and explicitly reported. Two unreadable answers do not count as stable.
-- Exp2 D accuracy, matched-regression accuracy and number of pairs with **both** answers correct. Always-new gets 9/18 but zero pairs fully correct.
-- Malformed answers are wrong, as in the original grader. API failures are separate. Partial runs are saved but cannot produce a leaderboard score; do not make causal/stability claims until all 86 answers are available.
-
-Two repetitions measure observed agreement, not a general guarantee of stability. Treat the 17 pairs (and nine matched pairs) as the units of analysis; don't pretend repeated calls or models create hundreds of independent cases. The selected high-performing cohort is deliberately selected and does not estimate typical bug-report performance.
-
-## Kaggle access check
-
-Checked October 7, 2026: no `kaggle` executable on PATH, no package in the default Python environment, no executable in the usual user install locations, and no standard Kaggle auth files/environment variables. No credentials were printed. A browser login is separate from CLI authentication. Local authenticated CLI execution could not be established, so use the notebook workflow below.
-
-## Quota plan: October 8 and October 9 (India time)
-
-The account's live quota balance and model tariffs are not available here. `cost_plan.json` and `estimate_cost.py` provide **scenarios**, not current Kaggle price quotes. The actual full workload contains 504,572 prompt characters per model, roughly 126k–202k input tokens depending on tokenizer. Reasoning tokens, retries and provider prices can materially change cost.
-
-| Assumptions | Oct 8: nine models | Oct 9: two frontier controls | Total |
-|---|---:|---:|---:|
-| 4 chars/input token, 150 output tokens/call | $1.72 | $1.91 | $3.62 |
-| 2.5 chars/input token, 500 output tokens/call | $3.75 | $4.17 | $7.92 |
-| 2.5 chars/input token, 2,000 output tokens/call | $9.56 | $10.62 | $20.17 |
-
-These assume $1/$5 input/output per million tokens for the nine-model group and $5/$25 for the controls. **They are hypothetical blended rates**, not individual model prices. Display rounding can make rounded columns differ from their rounded sum.
-
-Plan the nine cheaper/mid models on **October 8** and two frontier controls on **October 9**, keeping both Exp1 repetitions for a model in the same session when possible. Check Kaggle's actual refill countdown, daily balance and monthly balance; don't assume refill occurs at India midnight. Start with a five-call checkpoint to see actual usage, then re-read the quota and resume. A five-call checkpoint is not enough to establish stability.
-
-The runner uses the remaining daily balance you enter, reserves $2, and stops before starting another call when its allocation has less than max($1, three times the largest observed call). It also stops if costs are unavailable or a call fails; there are no automatic retries. This guard cannot know the cost of the next unseen response or other sessions. **Kaggle's enforced daily quota is the final cap.** Don't purchase extra credits, run other jobs concurrently or lower the reserve to force completion. If actual costs do not fit by October 9, stop with checkpoints rather than claim the full plan fits. Completion within two days cannot be guaranteed without actual prices/usage.
-
-## Click-by-click notebook steps
-
-1. Sign in to [Kaggle Benchmarks](https://www.kaggle.com/benchmarks). Check your AI quota and its refill countdown. Do not edit the original ZombieBench task.
-2. Click **Create task** (or open [the task notebook creator](https://www.kaggle.com/benchmarks/tasks/new)). Name the new notebook `ZombieBench follow-up`. No GPU is needed. If Kaggle asks for phone/identity verification, complete that yourself.
-3. In the first code cell, paste the **entire contents** of `followup/kaggle_followup.py`. Alternatively load the exact release from GitHub as described in `KAGGLE_LOAD.md`. Run this cell; it only defines the task.
-4. In a second cell, inspect availability before spending quota:
-
-```python
-preview_plan()
-print([m for m in PLANNED_MODELS if m not in kbench.llms])
-```
-
-If the list is nonempty, don't silently substitute models: inspect `list(kbench.llms.keys())` and record any model/version change before starting. Keep the same ID in both repetitions.
-
-5. On **October 8**, in a third cell enter the *actual remaining* daily balance when prompted and run a five-call checkpoint on nano:
-
-```python
-remaining = float(input("Remaining daily AI quota shown by Kaggle (USD): "))
-run_models([DAY1_MODELS[0]], remaining_usd=remaining, max_calls=5)
-```
-
-A checkpoint intentionally stops the task as incomplete after saving its results. Read the cost/output and recheck the daily/monthly quota. Then resume all nine day-one models:
-
-```python
-remaining = float(input("Fresh remaining daily AI quota (USD): "))
-run_models(DAY1_MODELS, remaining_usd=remaining)
-```
-
-**Do not run the cell twice to obtain two repetitions.** Both repetitions are already included. Re-running resumes completed checkpoints and only asks missing/errored prompts. A task stop or failure is not a benchmark result.
-
-6. In the notebook file/output panel, download the `followup/runs/` files. You can make one zip in a cell:
-
-```python
-import shutil
-shutil.make_archive("followup/checkpoints", "zip", "followup/runs")
-```
-
-Download `followup/checkpoints.zip`. Save the notebook and its outputs. Keep these checkpoints if the session restarts.
-
-7. On **October 9**, after the displayed quota reset, reuse the notebook and load the code if necessary. Restore any missing checkpoint files to the notebook's `followup/runs/` directory before resuming day-one work. Do not overwrite newer files. Then:
-
-```python
-remaining = float(input("Fresh remaining daily AI quota (USD): "))
-run_models(DAY2_MODELS, remaining_usd=remaining)
-```
-
-Download the final checkpoint files. If any model is incomplete, use the same `run_models([model_id], remaining_usd=...)` after checking quota; completed responses are reused, errors are retried once per explicit resume.
-
-8. If you want a separate official task page after collecting valid runs, use `%choose zombiebench_followup` in the final cell and **Save Task**. Check whether the save dialog schedules further execution; those calls also use quota. Do not bulk-add leaderboard models before checking the remaining budget. Keep the new task private until its output is reviewed. No live DEV update is part of this experiment.
-
-When finished, provide the downloaded run JSONs. They contain the clean/planted comparisons and repeat-change counts needed for a defensible follow-up claim.
-
-## Reproduce locally (no inference)
+The unchanged root baseline formula scored 23/103 unique prompts: 3/17 at each ladder level, 0/9 different-code and 8/9 same-code. Deterministic repeat agreement does not establish LLM stability.
 
 ```sh
-python3 -B followup/build_cases.py
-python3 -B followup/prepare.py
-python3 -B followup/validate.py
-python3 -B followup/check_audit.py
-python3 -B followup/run_baseline.py
-python3 -B followup/build_task.py
-python3 -B followup/test_followup.py
-python3 -B followup/estimate_cost.py
+python followup/build_cases.py
+python followup/prepare.py
+python followup/validate.py
+python followup/check_audit.py
+python followup/run_baseline.py
+python followup/build_task.py
+python followup/test_followup.py
+python followup/estimate_cost.py
 ```
 
-Do not change cases after auditing without repeating the blind audit; `check_audit.py` checks exact prompt equality and hashes. Rebuilding the standalone task is required after modifying data, grader, metrics or runtime.
+## Execution and quota
 
-## Primary documentation checked
+`kaggle_followup.py` is a standalone task named `zombiebench_followup`; it makes no calls merely on import. `n_runs=1` means 85 ladder prompts + 18 expansion prompts. `n_runs=2` adds only the 85 missing second-repeat ladder answers when saved outputs are present. Calls use separate chats, provider defaults and no SDK response cache.
 
-- [Kaggle task creation and access requirements](https://www.kaggle.com/docs/benchmarks)
-- [Kaggle SDK: isolated chats, task parameters and usage costs](https://github.com/Kaggle/kaggle-benchmarks/blob/ci/user_guide.md)
-- [Kaggle CLI: task runs, model catalog and inference quota](https://github.com/Kaggle/kaggle-cli/blob/main/docs/benchmarks.md)
+`run_plan(remaining_usd)` runs the requested nine cheaper models first, then two frontier controls, then repeats only the cheaper models' Experiment 1. Total planned workload is 1,898 calls before retries. Missing requested model IDs stop the plan rather than silently substituting a model. Raw replies, parsed answers, reasons, prompt hashes and every attempt's usage are saved in `followup/runs/` and included in a result ZIP. An API error is retried once. Unreadable model text is a scored miss, not an API retry.
+
+Check both daily and monthly **inference dollars** before each batch. Installed CLI 2.2.4's `kaggle quota` reports accelerator hours; `python followup/inference_quota.py` reads the official SDK dollar-quota endpoint. Newer CLI releases offer `kaggle benchmarks quota`. Never print access tokens or proxy credentials.
+
+The session guard subtracts $2 from the supplied remaining balance, accounts for reported nanodollar usage, and stops when less than max($1, three times the largest observed call) remains in that allocation. Missing cost metadata stops the plan. This is a conservative heuristic, not a provable pre-call cap: unusually large reasoning output can exceed the allowance. Check quota again after each batch and avoid concurrent jobs. Resume only after the actual refill shown by Kaggle, preserving the saved files; do not infer a reset from the local calendar date.
+
+`cost_plan.json` gives hypothetical tariff scenarios, not verified Kaggle prices: $5.93 / $13.02 / $33.44 total for short / buffered / long-reasoning assumptions. Actual completion within two $8 spend allocations is unverified until rates and usage are available.
+
+[Single-cell notebook fallback and exact files to return](KAGGLE_LOAD.md).
+
+## Interpretation
+
+Metrics report accuracy and wrong-target selection at every level, paired placebo/causal/hedge-to-authority changes, original-five recoveries, and same/different-code accuracy. At L0 and P, "followed" means selected the counterfactual target ID; there is no diagnosis comment to follow. L1→L3 changes confidence **and** claimed authority together, so it cannot isolate either mechanism. L0→L2 estimates the effect of the whole inserted comment. P controls for some extra-text distraction, not every semantic difference.
+
+Stability compares verdict and ID, excluding missing/API-error/unreadable pairs; reasons are retained but not required to match. One repeated run measures repeat agreement only, and does not prove general reliability. Wilson 95% intervals describe these observations; pooled intervals do not account for dependence between shared cases and models. Headline analysis should use first runs to avoid overweighting the nine repeated models.
+
+Original public task: https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench
+
+Follow-up task URL: pending actual push; no public follow-up task has been verified.
+
+## CLI entry point
+
+A definition-only file is not sufficient for task creation: Kaggle requires a captured task invocation. After the authenticated quota check, `make_cli_source.py --remaining-usd <verified balance>` builds `kaggle_cli_source.py` with that invocation. Pushing can execute its initial run, so quota must be checked **before** push. Use only the follow-up task slug.
+
+```sh
+kaggle quota --format json
+python followup/inference_quota.py
+kaggle benchmarks tasks models
+# After checking balances, build the entry point using that actual balance:
+# python followup/make_cli_source.py --remaining-usd <verified balance>
+kaggle benchmarks tasks push zombiebench_followup -f followup/kaggle_cli_source.py --wait 60
+kaggle benchmarks tasks status zombiebench_followup
+# Select one verified model at a time, rechecking dollar quota between batches:
+# kaggle benchmarks tasks run zombiebench_followup -m <verified model> --wait 60
+kaggle benchmarks tasks download zombiebench_followup -o followup/runs
+kaggle benchmarks tasks publish zombiebench_followup
+```
+
+For CLI second repetitions, download and review all first-run records, then build with `--n-runs 2`. The builder embeds those saved responses into the new backing notebook so they can be skipped. Without them it refuses to prepare a repeat for the selected model. Before any remote rerun, ensure the source's supplied balance is no greater than the freshly checked balance; stale balances must not authorize further spend.
