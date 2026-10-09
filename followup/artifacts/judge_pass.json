@@ -195,9 +195,9 @@
       "total": 48
     }
   ],
-  "followup_headline": "In a controlled test across 4 models, adding a confident wrong diagnosis reduced accuracy from 61/68 to 42/68 (27.9 percentage points). Each comparison used the same report, with only the comment changed.",
+  "followup_headline": "In a controlled test across 9 models, adding a confident wrong diagnosis reduced accuracy from 145/153 to 121/153 (15.7 percentage points). Each comparison used the same report, with only the comment changed.",
   "followup_dataset_sha256": "1fb7d035af88be567b9f3eb2939660e656a13bcd40e044b95b57766844a67631",
-  "article_sha256": "4d3a4aeb1fe731b0889bc170496709e545d0eae7f516622a91e098a903df0125",
+  "article_sha256": "4ee70295d6f7fb284d38949842ae3c476f79b3acf49c597350f2caef2229528d",
   "sdk_actual_models": [
     {
       "path": "runs/zombiebench-followup/2/gpt-5.4-mini-2026-03-17/4590814/zombiebench_followup-run_id_Run_1_openai_gpt-5.4-mini-2026-03-17.result.json",
@@ -208,12 +208,36 @@
       "actual_model": "google/gemini-3.7-flash"
     },
     {
+      "path": "runs/zombiebench-followup/2/gemini-2.5-flash/4590813/zombiebench_followup-run_id_Run_1_google_gemini-2.5-flash.result.json",
+      "actual_model": "google/gemini-2.5-flash"
+    },
+    {
       "path": "runs/zombiebench-followup/2/gemini-3.1-flash-lite-preview/4590762/zombiebench_followup-run_id_Run_1_google_gemini-3.1-flash-lite-preview.result.json",
       "actual_model": "google/gemini-3.1-flash-lite-preview"
     },
     {
+      "path": "runs/zombiebench-followup/2/gemma-4-31b-it/4593307/zombiebench_followup-run_id_Run_1_google_gemma-4-31b.result.json",
+      "actual_model": "google/gemma-4-31b"
+    },
+    {
       "path": "runs/zombiebench-followup/2/claude-haiku-4-5-20251001/4590764/zombiebench_followup-run_id_Run_1_anthropic_claude-haiku-4-520251001.result.json",
       "actual_model": "anthropic/claude-haiku-4-5@20251001"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/gpt-oss-20b/4590763/zombiebench_followup-run_id_Run_1_openai_gpt-oss-20b.result.json",
+      "actual_model": "openai/gpt-oss-20b"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/qwen3-235b-a22b-instruct-2507/4590848/zombiebench_followup-run_id_Run_1_qwen_qwen3-235b-a22b-instruct-2507.result.json",
+      "actual_model": "qwen/qwen3-235b-a22b-instruct-2507"
+    },
+    {
+      "path": "runs/zombiebench-followup/3/claude-opus-5-5-default/4601191/zombiebench_followup-run_id_Run_1_anthropic_claude-opus-5-5default.result.json",
+      "actual_model": "anthropic/claude-opus-5-5@default"
+    },
+    {
+      "path": "runs/zombiebench-followup/3/gpt-6.1-sol/4601190/zombiebench_followup-run_id_Run_1_openai_gpt-6.1-sol.result.json",
+      "actual_model": "openai/gpt-6.1-sol"
     },
     {
       "path": "runs/zombiebench-followup/1/gpt-5.4-nano-2026-03-17/4590650/zombiebench_followup-run_id_Run_1_openai_gpt-5.4-nano-2026-03-17.result.json",

@@ -33,3 +33,5 @@ r1:zf1-zb-27-L3 fail regression #2401
 reason: The endless spinner reappears on unlock, identical to the original #2401 symptom, now occurring on v3 locks with Bluetooth on – a clear regression of the same defect.
 r1:zf1-zb-05-L3 pass regression #618
 r1:zf1-zb-14-P pass regression #2222
+r1:zf1-zb-12-L0 pass new
+Response ended prematurely

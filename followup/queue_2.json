@@ -1,0 +1,31 @@
+{
+  "n_runs": 2,
+  "allocation_usd": 1.0,
+  "external_allocation_usd": 2.0,
+  "completed": [
+    "openai/gpt-5.4-nano-2026-03-17"
+  ],
+  "unavailable": [
+    "anthropic/claude-sonnet-4-5@20250929"
+  ],
+  "started_at": "2026-10-09T15:29:36.447377+00:00",
+  "incomplete_first_run_not_repeated": [
+    "qwen/qwen3-235b-a22b-instruct-2507"
+  ],
+  "last_quota": [
+    {
+      "period": "DAILY",
+      "used": 2.7752173530000004,
+      "total": 10,
+      "remaining": 7.224782647,
+      "refill_at": "2026-10-10 03:07:01.033000"
+    },
+    {
+      "period": "MONTHLY",
+      "used": 12.309639398000002,
+      "total": 100,
+      "remaining": 87.690360602,
+      "refill_at": "2026-11-01 05:06:33.812000"
+    }
+  ]
+}

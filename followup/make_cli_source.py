@@ -16,8 +16,10 @@ parser.add_argument('--remaining-usd',type=float,required=True)
 parser.add_argument('--n-runs',type=int,choices=[1,2],default=1)
 parser.add_argument('--model',default='openai/gpt-5.4-nano-2026-03-17')
 parser.add_argument('--fresh',action='store_true',help='Publish a reproducible fresh task without archived response seeds.')
+parser.add_argument('--session-usd',type=float,default=2.0)
 args=parser.parse_args()
 if not 2<args.remaining_usd<=10:parser.error('Current quota must exceed $2 and not exceed $10.')
+if not 0<args.session_usd<=args.remaining_usd-2:parser.error('Session allocation must fit above the $2 reserve.')
 cases=json.loads((HERE/'cases_followup.json').read_text())
 sha=hashlib.sha256(json.dumps(cases,sort_keys=True).encode()).hexdigest()
 seeds,_=records(HERE)
@@ -36,6 +38,6 @@ source+='import base64 as _b64, zlib as _zl\n'
 source+='SEED_RUNS = json.loads(_zl.decompress(_b64.b64decode('+repr(compressed)+')))\n'
 source+='for _model, _record in SEED_RUNS.items():\n    _path=output_path(_model)\n    if not _path.exists():save(_path,_record)\n'
 source+='\n# The CLI/server captures this task invocation for model evaluation.\n'
-source+=f'zombiebench_followup.run(llm=kbench.llm, remaining_usd={args.remaining_usd!r}, n_runs={args.n_runs})\n'
+source+=f'zombiebench_followup.run(llm=kbench.llm, remaining_usd={args.remaining_usd!r}, n_runs={args.n_runs}, max_session_usd={args.session_usd!r})\n'
 (HERE/'kaggle_cli_source.py').write_text(source)
 print('Prepared followup/kaggle_cli_source.py; pushing it can execute a paid initialization run.')

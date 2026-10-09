@@ -9,7 +9,7 @@ The CLI is working and the [follow-up task is public](https://www.kaggle.com/ben
 ```python
 import hashlib, urllib.request
 source = urllib.request.urlopen("https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/followup/kaggle_followup.py").read()
-assert hashlib.sha256(source).hexdigest() == "d6d6cc83171d12351132bc67e8c7a1fd5c61aa9f1db51eb500d4ab93bd9ac991", "Source changed; review before running."
+assert hashlib.sha256(source).hexdigest() == "2dcc56b3c8822feaa6f2a0ba00125ce78be4fba855541f7469eef51b78fcac93", "Source changed; review before running."
 exec(compile(source, "zombiebench_followup.py", "exec"))
 remaining = float(input("Current remaining AI inference dollars (min of daily/monthly, up to 10): "))
 run_plan(remaining_usd=remaining)

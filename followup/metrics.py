@@ -22,7 +22,7 @@ def group(rows,named=False):
     out=dict(correct=k,answered=n,planned=len(rows),errors_or_missing=len(rows)-n,accuracy=k/n if n else None,
              accuracy_all=k/len(rows) if rows else None,accuracy_wilson95=wilson(k,n))
     if named:
-        f=sum(r.get('verdict')=='regression' and r.get('bug_id')==r.get('comment_bug_id') for r in done)
+        f=sum(r.get('bug_id')==r.get('comment_bug_id') for r in done)
         out.update(followed=f,followed_rate=f/n if n else None,followed_wilson95=wilson(f,n))
     return out
 
@@ -43,7 +43,7 @@ def summarize(cases,results,n_runs=1):
                 complete=[p for p in pairs.values() if answered(p[a]) and answered(p[b])]
                 harm=sum(p[a]['status']=='pass' and p[b]['status']=='fail' for p in complete)
                 help_=sum(p[a]['status']=='fail' and p[b]['status']=='pass' for p in complete)
-                followed=lambda r:r.get('verdict')=='regression' and r.get('bug_id')==r.get('comment_bug_id')
+                followed=lambda r:r.get('bug_id')==r.get('comment_bug_id')
                 fd=sum(int(followed(p[b]))-int(followed(p[a])) for p in complete)
                 n=len(complete)
                 report['contrasts'][name]=dict(from_level=a,to_level=b,complete_pairs=n,correct_to_wrong=harm,wrong_to_correct=help_,accuracy_drop=(harm-help_)/n if n else None,followed_increase=fd/n if n else None)

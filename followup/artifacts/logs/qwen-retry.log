@@ -1,0 +1,9 @@
+
+═══ Logs for qwen3-235b-a22b-instruct-2507 (Run 4601189) [RUNNING] ═══
+{"status":"BOUND","bound_ip":"34.53.15.171","bound_time":"2026-10-09T15:06:03Z","effective_expire_time":"2026-10-10T03:06:03Z"}
+r1:zf1-zb-39-L0 pass regression #3508
+r1:zf1-zb-27-L2 pass new
+r1:zf1-zb-44-L2 pass new
+r1:zf1-zb-04-L1 pass regression #509
+r1:zf1-zb-22-P pass regression #2522
+r1:zf1-zb-27-L0 pass new

@@ -3,6 +3,7 @@ No inference calls. Conflicting repetitions are rejected, not cherry-picked.
 """
 import hashlib
 import json
+import re
 from pathlib import Path
 from grading import build_prompt, judge
 from metrics import summarize, LEVELS
@@ -44,7 +45,7 @@ def analyze():
                 if r:pooled_rows[f'r{rep}:{clone["id"]}']=r
             r=rows.get('r1:'+c['id'])
             if c['experiment']=='exp1' and c['variant']=='L3' and r and r['status']=='fail' and r['verdict']=='regression' and r['bug_id']==c['comment_bug_id']:
-                quote_candidates.append(dict(model=model,case_id=c['id'],reason=r['reason']))
+                quote_candidates.append(dict(model=model,case_id=c['id'],reason=r['reason'],expected=c['expected'],comment_bug_id=c['comment_bug_id']))
     if not included:raise SystemExit('Only incomplete runs are available; finish them before headline analysis.')
     pooled=summarize(pooled_cases,pooled_rows,n_runs=2)
     ladder=pooled['exp1']['1']['all'];clean=ladder['L0'];planted=ladder['L2'];delta=ladder['contrasts']['causal']['accuracy_drop']
@@ -54,8 +55,10 @@ def analyze():
         headline=(f'Across {len(included)} models and {clean["answered"]} paired reports, the confident wrong comment did not reduce pooled accuracy: it rose from {clean["correct"]}/{clean["answered"]} to {planted["correct"]}/{planted["answered"]}.')
     else:
         headline=(f'Across {len(included)} models and {clean["answered"]} paired reports, clean and confidently misdiagnosed reports had the same pooled accuracy: {clean["correct"]}/{clean["answered"]}.')
+    explicit_quotes=[q for q in quote_candidates if re.search(r'\b(developer|senior|comment|support|confirmed|confirms?)\b',q['reason'],re.I)]
+    illustrative=min(explicit_quotes or quote_candidates,key=lambda q:(len(q['reason'].split()),q['model'],q['case_id'])) if quote_candidates else None
     out=dict(dataset_sha256=sha,models=reports,included_first_run_models=included,excluded_incomplete_models=partial,
-      sources=sources,excluded_initialization_models=extra,pooled=pooled,headline=headline,l3_quote=quote_candidates[0] if quote_candidates else None,
+      sources=sources,excluded_initialization_models=extra,pooled=pooled,headline=headline,l3_quote=illustrative,
       caveats=['Pooled headline uses first runs only.','Wilson intervals are descriptive binomial intervals; shared-case/model dependence is not modeled.',
        'Paired differences are observed contrasts, not independent-arm significance tests.','L1 to L3 combines confidence and authority.',
        'At L0/P, followed means choosing the counterfactual wrong target ID.'])

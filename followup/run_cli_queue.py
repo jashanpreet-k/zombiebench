@@ -9,6 +9,7 @@ from kaggle import api
 from inference_quota import balances
 from metrics import summarize
 from run_records import records
+from download_run import download
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
 TASK='zombiebench-followup'
@@ -19,10 +20,11 @@ PLANNED=[
  'openai/gpt-6.1-sol','anthropic/claude-opus-5-5@default']
 
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('--n-runs',type=int,choices=(1,2),default=1);args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('--n-runs',type=int,choices=(1,2),default=1);parser.add_argument('--allocation-usd',type=float,default=2.0);parser.add_argument('--external-allocation-usd',type=float,default=0.0);args=parser.parse_args()
+ if not 0<args.allocation_usd<=2:parser.error('Task allocation must be >0 and <=2; match the uploaded task.')
  cs=json.loads((HERE/'cases_followup.json').read_text());catalog=json.loads((HERE/'model_catalog.json').read_text());slugs={m['proxy']:m['slug'] for m in catalog}
  models=PLANNED if args.n_runs==1 else PLANNED[:9]
- progress={'n_runs':args.n_runs,'completed':[],'unavailable':[],'started_at':datetime.now(timezone.utc).isoformat()}
+ progress={'n_runs':args.n_runs,'allocation_usd':args.allocation_usd,'external_allocation_usd':args.external_allocation_usd,'completed':[],'unavailable':[],'started_at':datetime.now(timezone.utc).isoformat()}
  def save(): (HERE/f'queue_{args.n_runs}.json').write_text(json.dumps(progress,indent=2)+'\n')
  def cli(*parts):
   result=subprocess.run(['kaggle','benchmarks','tasks',*parts],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
@@ -48,17 +50,19 @@ def main():
    progress['unavailable'].append(model);save();print('UNAVAILABLE',model,flush=True);continue
   if model in data and summarize(cs,data[model]['results'],n_runs=args.n_runs)['complete']:
    progress['completed'].append(model);save();print('ALREADY SAVED',model,flush=True);continue
+  if args.n_runs==2 and (model not in data or not summarize(cs,data[model]['results'],n_runs=1)['complete']):
+   progress.setdefault('incomplete_first_run_not_repeated',[]).append(model);save();print('SKIPPING REPEAT; first run incomplete:',model,flush=True);continue
   pending.append(model)
  while pending:
   wanted=[slugs[m] for m in pending];runs=current_runs(wanted)
   byslug={r.model_version_slug:r for r in runs}
   finished=[m for m in pending if slugs[m] in byslug and byslug[slugs[m]].state in api._TERMINAL_RUN_STATES]
   if finished:
-   cli('download',TASK,*[arg for model in finished for arg in ('-m',slugs[model])],'-o','followup/runs')
+   for model in finished:download(task.slug.version_number,slugs[model],byslug[slugs[model]].id)
    data,_=records(HERE)
    for model in finished:
     if model not in data or not summarize(cs,data[model]['results'],n_runs=args.n_runs)['complete']:
-     progress['stop']='Incomplete or actual-model mismatch: '+model;save();print('REVIEW STOP',progress['stop'],flush=True);return
+     progress.setdefault('incomplete',[]).append(model);pending.remove(model);save();print('INCOMPLETE; retained for honest partial reporting:',model,flush=True);continue
     progress['completed'].append(model);pending.remove(model);save();print('SAVED',model,flush=True)
   if not pending:break
   active=[m for m in pending if slugs[m] in byslug and byslug[slugs[m]].state not in api._TERMINAL_RUN_STATES]
@@ -69,14 +73,14 @@ def main():
    quota=balances();progress['last_quota']=quota;save()
    remaining=min(x['remaining'] for x in quota)
    # Conservative: reserve the full $2 for each ongoing job even if some is spent.
-   capacity=min(3-len(active),max(0,int((remaining-2-2*len(active))//2)))
+   capacity=min(3-len(active),max(0,int((remaining-2-args.external_allocation_usd-args.allocation_usd*len(active))//args.allocation_usd)))
    print('QUOTA',json.dumps(quota),'active',len(active),flush=True)
    if capacity:
     batch=waiting[:capacity]
     cli('run',TASK,*[arg for model in batch for arg in ('-m',slugs[model])])
     print('LAUNCHED',batch,flush=True)
    elif not active:
-    progress['stop']='Preserving $2 account reserve plus $2 per scheduled task.';save();print('BUDGET STOP',flush=True);return
+    progress['stop']=f'Preserving $2 account reserve plus ${args.allocation_usd:g} per scheduled task.';save();print('BUDGET STOP',flush=True);return
   time.sleep(30)
  progress['complete']=True;save();print('QUEUE COMPLETE',flush=True)
 

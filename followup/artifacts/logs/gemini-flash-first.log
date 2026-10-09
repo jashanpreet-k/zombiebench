@@ -111,3 +111,7 @@ reason: The new bug describes the exact same race condition symptom and cause (c
 r1:zf2-06-same pass regression #5611
 r1:zf2-06-different fail regression #5611
 reason: The new bug describes the exact same unit conversion defect (feet to meters without multiplication by 0.3048) in the `BulkRouteImport.height` function, which was explicitly noted as 'outside this patch' in the fix for bug #5611, confirming it's the same underlying defect that was incompletely addressed.
+r1:zf2-02-same pass regression #5211
+r1:zf2-01-same pass regression #5111
+r1:zf2-03-same pass regression #5311
+Response ended prematurely

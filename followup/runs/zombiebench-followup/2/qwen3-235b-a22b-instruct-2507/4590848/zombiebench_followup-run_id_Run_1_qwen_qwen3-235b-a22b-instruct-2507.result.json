@@ -1,0 +1,39 @@
+{
+  "task_name": "zombiebench_followup",
+  "trial_name": "zombiebench_followup-Run #1",
+  "trial_uri": "kbench://not-a-harbor-trial",
+  "task_id": {
+    "path": "kbench://not-a-harbor-task"
+  },
+  "task_checksum": "unknown (kbench)",
+  "config": {
+    "task": {
+      "path": "kbench://not-a-harbor-task"
+    }
+  },
+  "agent_info": {
+    "name": "kaggle-benchmarks",
+    "version": "0.6.1",
+    "model_info": {
+      "name": "qwen/qwen3-235b-a22b-instruct-2507"
+    }
+  },
+  "agent_result": {
+    "n_input_tokens": 12824,
+    "n_output_tokens": 523,
+    "cost_usd": 0.00328152
+  },
+  "verifier_result": {
+    "rewards": {
+      "score": 0.0
+    }
+  },
+  "exception_info": {
+    "exception_type": "BudgetStop",
+    "exception_message": "Cost metadata unavailable: check inference quota before resuming.",
+    "exception_traceback": "Traceback (most recent call last):\n  File \"/benchmarks/src/kaggle_benchmarks/tasks.py\", line 171, in run\n    run.result = self.func(*args, **kwargs)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ipykernel_14/3335422739.py\", line 343, in zombiebench_followup\n    return execute_model(llm,str(model),budget,max_calls=max_calls,n_runs=n_runs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ipykernel_14/3335422739.py\", line 329, in execute_model\n    if stop:raise BudgetStop(stop)\n            ^^^^^^^^^^^^^^^^^^^^^^\nBudgetStop: Cost metadata unavailable: check inference quota before resuming.\n",
+    "occurred_at": "2026-10-09T04:47:46.605156Z"
+  },
+  "started_at": "2026-10-09T03:54:06.882850Z",
+  "finished_at": "2026-10-09T04:47:46.605156Z"
+}

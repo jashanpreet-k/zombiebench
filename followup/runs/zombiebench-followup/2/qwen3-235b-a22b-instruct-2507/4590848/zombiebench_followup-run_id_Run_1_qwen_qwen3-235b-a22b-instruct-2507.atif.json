@@ -1,0 +1,452 @@
+{
+  "schema_version": "ATIF-v1.7",
+  "session_id": "zombiebench_followup-Run #1",
+  "trajectory_id": "zombiebench_followup-Run #1",
+  "agent": {
+    "name": "kaggle-benchmarks",
+    "version": "0.6.1",
+    "model_name": "qwen/qwen3-235b-a22b-instruct-2507"
+  },
+  "steps": [
+    {
+      "step_id": 1,
+      "source": "system",
+      "message": "[placeholder] Run failed before any model turn: Traceback (most recent call last):\n  File \"/benchmarks/src/kaggle_benchmarks/tasks.py\", line 171, in run\n    run.result = self.func(*args, **kwargs)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ipykernel_14/3335422739.py\", line 343, in zombiebench_followup\n    return execute_model(llm,str(model),budget,max_calls=max_calls,n_runs=n_runs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ipykernel_14/3335422739.py\", line 329, in execute_model\n    if stop:raise BudgetStop(stop)\n            ^^^^^^^^^^^^^^^^^^^^^^\nBudgetStop: Cost metadata unavailable: check inference quota before resuming.\n No conversation recorded.",
+      "timestamp": "2026-10-09T03:54:06.882850Z"
+    },
+    {
+      "step_id": 2,
+      "source": "system",
+      "message": "[delegated] Other trajectories from this run: followup-r1:zf1-zb-41-L2-0, followup-r1:zf1-zb-37-L0-1, followup-r1:zf1-zb-27-P-2, followup-r1:zf1-zb-15-L3-3, followup-r1:zf1-zb-14-L3-4, followup-r1:zf1-zb-41-P-5, followup-r1:zf1-zb-10-L1-6, followup-r1:zf1-zb-13-P-7, followup-r1:zf1-zb-07-L3-8, followup-r1:zf1-zb-39-L0-9.",
+      "observation": {
+        "results": [
+          {
+            "subagent_trajectory_ref": [
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-41-L2-0-6f47e47b",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-41-L2-0"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-37-L0-1-59216ff0",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-37-L0-1"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-27-P-2-0efce45f",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-27-P-2"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-15-L3-3-1831d504",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-15-L3-3"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-14-L3-4-41ec76a0",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-14-L3-4"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-41-P-5-712a01dc",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-41-P-5"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-10-L1-6-dfc51c76",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-10-L1-6"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-13-P-7-2be836f1",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-13-P-7"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-07-L3-8-75b0727a",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-07-L3-8"
+                }
+              },
+              {
+                "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-39-L0-9-04b63884",
+                "extra": {
+                  "kbench_chat": "followup-r1:zf1-zb-39-L0-9"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "notes": "Converted from kbench run.json for task 'zombiebench_followup'. No model turn was recorded, so total_steps is 0 and the first step below is a placeholder.",
+  "final_metrics": {
+    "total_prompt_tokens": 12824,
+    "total_completion_tokens": 523,
+    "total_cost_usd": 0.00328152,
+    "total_steps": 0,
+    "extra": {
+      "kbench_result": {
+        "score": 0.0
+      }
+    }
+  },
+  "extra": {
+    "kbench": {
+      "task_version": {
+        "version_number": 1,
+        "name": "zombiebench_followup",
+        "description": "Controlled bug-comment ablations with repeat runs and matched same-code versus different-code defects.",
+        "definition": "@kbench.task(name='zombiebench_followup',description='Controlled bug-comment ablations with repeat runs and matched same-code versus different-code defects.')\ndef zombiebench_followup(llm, remaining_usd: float = 0.0, max_calls: int = 0, n_runs: int = 1, max_session_usd: float = 2.0) -> float:\n    model=getattr(llm,'model',None) or getattr(llm,'name',None)\n    if not model:raise ValueError('Model must have a stable identifier.')\n    budget=ACTIVE_BUDGET or Budget(remaining_usd)\n    if ACTIVE_BUDGET is None:\n        if not 0 < max_session_usd <= remaining_usd-2:raise ValueError('Session allocation exceeds available quota minus reserve.')\n        budget.allowance=min(budget.allowance,max_session_usd)\n    return execute_model(llm,str(model),budget,max_calls=max_calls,n_runs=n_runs)\n"
+      },
+      "state": "BENCHMARK_TASK_RUN_STATE_ERRORED",
+      "end_time": "2026-10-09T04:47:46.605156Z",
+      "error_message": "Traceback (most recent call last):\n  File \"/benchmarks/src/kaggle_benchmarks/tasks.py\", line 171, in run\n    run.result = self.func(*args, **kwargs)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ipykernel_14/3335422739.py\", line 343, in zombiebench_followup\n    return execute_model(llm,str(model),budget,max_calls=max_calls,n_runs=n_runs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ipykernel_14/3335422739.py\", line 329, in execute_model\n    if stop:raise BudgetStop(stop)\n            ^^^^^^^^^^^^^^^^^^^^^^\nBudgetStop: Cost metadata unavailable: check inference quota before resuming.\n"
+    }
+  },
+  "subagent_trajectories": [
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-41-L2-0-6f47e47b",
+      "agent": {
+        "name": "followup-r1:zf1-zb-41-L2-0",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#3301 KYC selfie check fails in low light\n- Cause: Image handling\n- Language: Kotlin\n- Component: kyc\n- Symptoms: The KYC selfie check rejected most photos taken indoors at night.\n- Fix: Raised the camera exposure before taking the selfie.\n\n#3304 Stop-loss orders fire late at market open\n- Cause: Queue backlog\n- Language: Java\n- Component: orders\n- Symptoms: At 9:15, stop-loss orders triggered up to 40 seconds late, because triggers waited behind the pre-open order queue.\n- Fix: Gave stop-loss triggers their own queue.\n\n#3308 Contract note brokerage a paisa off\n- Cause: Rounding\n- Language: Python\n- Component: statements\n- Symptoms: Contract notes sometimes showed brokerage \u20b90.01 higher than the ledger, because brokerage was rounded per trade and then added up.\n- Fix: Rounded brokerage once per contract note in statements/contract_note.py.\n\n#3311 Stop-loss orders fire twice in fast markets\n- Cause: Race condition\n- Language: Java\n- Component: orders\n- Symptoms: In fast markets some stop-loss orders were sent to the exchange twice, because two price ticks triggered the same order before its status was saved.\n- Fix: Claimed each triggered order with a compare-and-set on its status in StopLossTrigger.fire().\n\n#3315 Chart times in UTC for users abroad\n- Cause: Timezone\n- Language: TypeScript\n- Component: charts\n- Symptoms: Users who set their country to UAE saw chart times in UTC.\n- Fix: Showed chart times in the exchange's timezone.\n\n#3318 Price alerts an hour late at market open\n- Cause: Queue backlog\n- Language: Java\n- Component: alerts\n- Symptoms: Price alerts set overnight fired up to an hour after the price was hit at market open, because all overnight alerts were checked in one slow batch.\n- Fix: Checked alerts on every price tick instead of in a batch.\n\n#3322 Funds added twice on a slow UPI callback\n- Cause: Race condition\n- Language: Java\n- Component: funds\n- Symptoms: When the UPI callback was slow and the user retried, the money was credited twice.\n- Fix: Credited funds once per UPI transaction ID.\n\n#3325 Average buy price wrong after a stock split\n- Cause: Corporate action\n- Language: Python\n- Component: portfolio\n- Symptoms: After a 1:5 split, the average price was divided by 5 but the quantity wasn't multiplied, so holdings showed a fifth of the shares.\n- Fix: Applied the split ratio to quantity as well as price in CorporateActions.apply_split().\n\n#3329 PAN check rejects lowercase letters\n- Cause: Validation\n- Language: TypeScript\n- Component: kyc\n- Symptoms: Typing a PAN in lowercase failed the format check.\n- Fix: Uppercased the PAN before checking it.\n\n#3332 Stop-limit orders rejected near the circuit limit\n- Cause: Validation\n- Language: Java\n- Component: orders\n- Symptoms: Stop-limit orders priced within 1% of the circuit limit were rejected by our own checks, which used yesterday's limits.\n- Fix: Loaded the day's circuit limits at 9:00.\n\n#3336 Statement sell prices rounded down\n- Cause: Rounding\n- Language: Python\n- Component: statements\n- Symptoms: Monthly statements showed sell prices rounded down to the rupee, so realised gains looked smaller.\n- Fix: Printed prices to two decimals in statements/monthly.py.\n\n#3339 Price alerts sent twice\n- Cause: Race condition\n- Language: Java\n- Component: alerts\n- Symptoms: Some price alerts were sent twice when two servers checked the same alert.\n- Fix: Marked alerts as sent with a conditional update.\n\n#3343 Holdings show sold shares until the next day\n- Cause: Cache\n- Language: Kotlin\n- Component: portfolio\n- Symptoms: Shares sold in the morning still showed in Android holdings until the next day.\n- Fix: Refreshed holdings after every executed order.\n\n#3346 Tax report counts early 1 April dividends in the old year\n- Cause: Timezone\n- Language: Python\n- Component: tax-reports\n- Symptoms: Dividends credited between midnight and 5:30 AM on 1 April were counted in the previous year's tax report, because the year was cut by UTC date.\n- Fix: Cut tax years by Indian date in tax/years.py.\n\n#3350 IPO bids lost when the UPI mandate is approved late\n- Cause: Lost event\n- Language: Java\n- Component: ipo\n- Symptoms: IPO bids whose UPI mandate was approved after 5 PM were silently dropped.\n- Fix: Showed the mandate deadline and kept bids until it passed.\n\n#3353 Portfolio value rounded on the widget\n- Cause: Rounding\n- Language: Kotlin\n- Component: portfolio\n- Symptoms: The Android home-screen widget showed portfolio value rounded to the nearest \u20b91,000.\n- Fix: Showed whole rupees on the widget.\n\n#3357 Price alerts never fire for symbols with a dot\n- Cause: Validation\n- Language: Java\n- Component: alerts\n- Symptoms: Alerts for symbols with a dot or an ampersand never fired, because the symbol check rejected them.\n- Fix: Allowed dots and ampersands in symbols.\n\n#3360 Bracket orders lose their stop leg after an edit\n- Cause: Lost data\n- Language: Java\n- Component: orders\n- Symptoms: Editing the target price of a bracket order silently removed its stop-loss leg.\n- Fix: Kept every leg when changing a bracket order.\n\n#3364 Withdrawals fail on bank holidays\n- Cause: Business rule\n- Language: Java\n- Component: funds\n- Symptoms: Withdrawals requested on bank holidays failed instead of waiting for the next working day.\n- Fix: Queued withdrawals made on holidays.\n\n#3367 Watchlist order mixed up after editing on two devices\n- Cause: Race condition\n- Language: Kotlin\n- Component: watchlist\n- Symptoms: Reordering a watchlist on the phone and the web at the same time left a mixed-up order.\n- Fix: Saved the order with a version number and rejected stale writes.\n\n#3371 Tax report crashes on delisted stocks\n- Cause: Null reference\n- Language: Python\n- Component: tax-reports\n- Symptoms: The tax report failed for anyone who had held a stock that was later delisted, because its current price was null.\n- Fix: Used the last traded price for delisted stocks.\n\n#3374 Average buy price wrong after a bonus issue\n- Cause: Corporate action\n- Language: Python\n- Component: portfolio\n- Symptoms: After a 1:1 bonus issue, holdings showed twice the shares at the old average price, so the app showed a large loss.\n- Fix: Applied the bonus ratio to both quantity and average price in CorporateActions.apply_bonus().\n\n#3378 1-minute chart skips the 9:15 candle\n- Cause: Off-by-one\n- Language: TypeScript\n- Component: charts\n- Symptoms: The 1-minute chart left out the 9:15 candle, because candles started at the first full minute after the open.\n- Fix: Included the opening minute's candle.\n\n#3381 Watchlist keeps delisted stocks\n- Cause: Cache\n- Language: Python\n- Component: watchlist\n- Symptoms: Delisted stocks stayed in watchlists with a frozen price.\n- Fix: Removed delisted stocks nightly and told the user.\n\n#3385 Order-fill notifications missing on iOS\n- Cause: Config\n- Language: Swift\n- Component: notifications\n- Symptoms: Order-fill notifications stopped arriving on iPhones after the push certificate was renewed.\n- Fix: Installed the new push certificate and added an expiry alert.\n\n#3388 IPO allotment status a day late\n- Cause: Cache\n- Language: Python\n- Component: ipo\n- Symptoms: The app showed 'allotment pending' for a day after the registrar published results.\n- Fix: Checked the registrar every 15 minutes on allotment day.\n\n#3392 Market depth shows filled bids\n- Cause: Cache\n- Language: TypeScript\n- Component: market-data\n- Symptoms: The market depth panel on the web kept showing bids for up to 5 seconds after they were filled.\n- Fix: Streamed depth updates instead of polling.\n\nNEW BUG REPORT\n\nTitle: App says I've lost \u20b942,000 on Infosys\nLanguage: Python\nComponent: portfolio\nDescription: Last month I got free Infosys shares, one for every one I already had. Since then the app says I'm down \u20b942,000, which is about what I put in. It's as if the app thinks I paid for the free ones too.\nSupport comment: The split bug, #3325, is back; splits and these go through the same code.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"regression\", \"bug_id\": 3325, \"reason\": \"The bug involves incorrect average price calculation after a corporate action (bonus issue), which is the same underlying cause as fixed in #3325 where the split logic failed to adjust quantity and price correctly.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 2073,
+            "completion_tokens": 65,
+            "cost_usd": 0.00051326,
+            "extra": {
+              "total_backend_latency_ms": 1613
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-37-L0-1-59216ff0",
+      "agent": {
+        "name": "followup-r1:zf1-zb-37-L0-1",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#3101 Room rates shown without GST on the booking page\n- Cause: Business rule\n- Language: TypeScript\n- Component: booking-engine\n- Symptoms: Guests outside India saw room rates without GST on the booking page, and the GST was only added at payment.\n- Fix: Showed GST-inclusive rates to every guest in rateLabel().\n\n#3104 Channel sync drops the last room type\n- Cause: Off-by-one\n- Language: Go\n- Component: channel-sync\n- Symptoms: Only the first N\u22121 room types reached the travel agencies, so suites were never sold there.\n- Fix: Included the last room type in the loop in pushInventory().\n\n#3108 Booking total a rupee off on the confirmation page\n- Cause: Rounding\n- Language: TypeScript\n- Component: booking-engine\n- Symptoms: Totals on the booking confirmation page were sometimes \u20b91 higher than the card charge, because the page rounded each night's rate before adding them up.\n- Fix: Added up the unrounded nightly rates and rounded once in quoteTotal() in booking-engine/pricing.ts.\n\n#3111 Check-in times shown in UTC in the staff app\n- Cause: Timezone\n- Language: Kotlin\n- Component: check-in\n- Symptoms: The front-desk app showed expected arrival times 5\u00bd hours early, because they were shown in UTC.\n- Fix: Formatted arrival times in the property's timezone in ArrivalList.kt.\n\n#3115 Special requests missing from the housekeeping list\n- Cause: Missing filter\n- Language: Kotlin\n- Component: special-requests\n- Symptoms: The housekeeping app didn't show requests like extra pillows, because it only listed requests tagged 'room'.\n- Fix: Listed every request type for the room in TaskList.kt.\n\n#3118 Two guests booked into the last room\n- Cause: Race condition\n- Language: Python\n- Component: availability\n- Symptoms: Two guests booking the last free room at the same moment both got a confirmation.\n- Fix: Reserved the room with a conditional update before taking payment.\n\n#3122 Weekend rates applied on Thursdays\n- Cause: Off-by-one\n- Language: Python\n- Component: rates\n- Symptoms: Thursday nights were charged the weekend rate, because the rate calendar counted weekdays from Monday = 0 while rate plans used Sunday = 0.\n- Fix: Used ISO weekday numbers in RatePlan.rate_for().\n\n#3125 Guest app crashes on bookings without a room number\n- Cause: Null reference\n- Language: Swift\n- Component: guest-app\n- Symptoms: The iOS guest app crashed when opening a booking that had no room assigned yet.\n- Fix: Showed 'Room assigned at check-in' when there's no room.\n\n#3129 Occupancy report puts early check-ins on the wrong day\n- Cause: Timezone\n- Language: Python\n- Component: reports\n- Symptoms: The daily occupancy report counted guests who checked in between midnight and 5:30 AM on the previous day, because report days were cut at midnight UTC.\n- Fix: Cut report days at the property's local midnight in reports/occupancy.py.\n\n#3132 Deposit a rupee off on the payment link\n- Cause: Floating point\n- Language: Python\n- Component: payments\n- Symptoms: Payment links for 30% deposits asked for amounts like \u20b94,449.9000001, and banks rejected them, because the deposit was computed in floating point.\n- Fix: Computed deposits in whole paise in payments/deposit.py.\n\n#3136 Booking page shows yesterday's rates\n- Cause: Cache\n- Language: TypeScript\n- Component: rates\n- Symptoms: After a revenue manager changed rates, the booking page kept showing the old prices for up to an hour, because rate pages were cached.\n- Fix: Purged the rate page cache on every rate change.\n\n#3139 Special requests wiped when a booking's dates change\n- Cause: Lost data\n- Language: Python\n- Component: special-requests\n- Symptoms: Changing the dates of a booking deleted the guest's special requests (extra bed, early check-in, dietary notes), because modify_booking() rebuilt the booking without them.\n- Fix: Copied special requests onto the changed booking in modify_booking() and tested every request type.\n\n#3143 Rates sync twice after a restart\n- Cause: Race condition\n- Language: Go\n- Component: channel-sync\n- Symptoms: After a restart, the channel manager pushed every rate twice, and some agencies kept the older one.\n- Fix: Locked the sync job per property while it runs.\n\n#3146 Hindi guest names garbled on registration cards\n- Cause: Encoding\n- Language: Python\n- Component: check-in\n- Symptoms: Guest names in Devanagari printed as question marks on registration cards.\n- Fix: Rendered registration cards with a Unicode font.\n\n#3150 Late-checkout fee an hour early after the clock change\n- Cause: Timezone\n- Language: Python\n- Component: invoices\n- Symptoms: At the London property, the late-checkout fee started at 11 AM instead of noon after the clocks went forward, because the cutoff was stored with a fixed UTC offset.\n- Fix: Stored the cutoff as local time with the property's zone rules in invoices/fees.py.\n\n#3153 Special requests lost on agency bookings\n- Cause: Lost data\n- Language: Go\n- Component: special-requests\n- Symptoms: Special requests on bookings from travel agencies never reached the hotel, because the channel mapping skipped the comments field.\n- Fix: Mapped the agency comments field to special requests in mapBooking().\n\n#3157 Staff app crashes on walk-ins without an email\n- Cause: Null reference\n- Language: Kotlin\n- Component: check-in\n- Symptoms: Checking in a walk-in guest without an email address crashed the staff app.\n- Fix: Made email optional on the check-in form.\n\n#3160 Agencies sell rooms that are already gone\n- Cause: Cache\n- Language: Go\n- Component: channel-sync\n- Symptoms: Travel agencies kept selling rooms for up to 10 minutes after they sold out, because availability was cached in the sync service.\n- Fix: Pushed availability changes to agencies as they happen.\n\n#3164 Refund a rupee short after a cancellation\n- Cause: Rounding\n- Language: Python\n- Component: payments\n- Symptoms: Refunds after a partial cancellation were sometimes \u20b91 short, because each night's refund was rounded down.\n- Fix: Rounded the refund once, half up, in refunds.calculate().\n\n#3167 Housekeeping rooms assigned to staff on leave\n- Cause: Missing check\n- Language: Kotlin\n- Component: housekeeping\n- Symptoms: Rooms were assigned to housekeepers who were on leave that day.\n- Fix: Skipped staff on leave when assigning rooms.\n\n#3171 Loyalty points added twice for long stays\n- Cause: Race condition\n- Language: Python\n- Component: loyalty\n- Symptoms: Stays longer than 7 nights earned points twice, because the nightly job and the checkout job both credited them.\n- Fix: Credited points only at checkout.\n\n#3174 Invoice total a rupee off at checkout\n- Cause: Rounding\n- Language: Python\n- Component: invoices\n- Symptoms: Checkout invoices were sometimes \u20b91 more than the booking total, because the invoice rounded the GST on each line separately.\n- Fix: Calculated GST once on the invoice subtotal in invoices/tax.py and rounded once.\n\n#3178 Availability calendar a day off for guests in the US\n- Cause: Timezone\n- Language: TypeScript\n- Component: availability\n- Symptoms: Guests in the US saw rooms free one day earlier than they really were, because the calendar read dates as midnight UTC.\n- Fix: Sent availability as plain dates and showed them without timezone conversion.\n\n#3181 Booking emails sent twice\n- Cause: Missing deduplication\n- Language: Python\n- Component: notifications\n- Symptoms: Guests got two confirmation emails when the payment callback arrived twice.\n- Fix: Sent one confirmation per booking ID.\n\n#3185 Goa invoices show the Mumbai address\n- Cause: Config\n- Language: Python\n- Component: invoices\n- Symptoms: Invoices from the Goa property showed the Mumbai head office address.\n- Fix: Read the address from each property's settings.\n\n#3188 Promo codes stack with member rates\n- Cause: Business rule\n- Language: TypeScript\n- Component: booking-engine\n- Symptoms: Guests could apply a promo code on top of the member rate and get two discounts.\n- Fix: Allowed one discount per booking.\n\n#3192 Channel sync stops after one agency errors\n- Cause: Error handling\n- Language: Go\n- Component: channel-sync\n- Symptoms: One travel agency returning an error stopped rate updates for every agency.\n- Fix: Synced each agency separately and retried failures.\n\nNEW BUG REPORT\n\nTitle: Totals a rupee off again\nLanguage: TypeScript\nComponent: booking-engine\nDescription: Front desk at the Pune property says several guests paid \u20b91 more at checkout than their booking total this week. But for room 412 the confirmation page and the card charge at booking match exactly at \u20b914,832; it's the checkout invoice that says \u20b914,833, and its GST is rounded line by line. The invoice printer is also out of toner.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"regression\", \"bug_id\": 3174, \"reason\": \"The issue of a \u20b91 discrepancy due to line-by-line GST rounding in the invoice matches the symptom and cause of fixed bug #3174.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 2162,
+            "completion_tokens": 55,
+            "cost_usd": 0.00052404,
+            "extra": {
+              "total_backend_latency_ms": 1332
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-27-P-2-0efce45f",
+      "agent": {
+        "name": "followup-r1:zf1-zb-27-P-2",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#2401 Unlock spins forever with Bluetooth off\n- Cause: Missing check\n- Language: Kotlin\n- Component: unlock\n- Symptoms: Tapping Unlock with Bluetooth off showed an endless spinner instead of asking the rider to turn Bluetooth on.\n- Fix: Checked Bluetooth before unlocking and asked the rider to turn it on.\n\n#2404 Wallet top-up charged twice\n- Cause: Race condition\n- Language: Go\n- Component: wallet\n- Symptoms: Double-tapping 'Add \u20b9200' charged the rider's card twice but added \u20b9200 once.\n- Fix: Ignored a second top-up request with the same request ID.\n\n#2408 Map shows bikes that were just taken\n- Cause: Cache\n- Language: Go\n- Component: maps\n- Symptoms: The map kept showing bikes as available for up to 2 minutes after someone unlocked them.\n- Fix: Pushed unlock events to the map instead of caching bike positions.\n\n#2411 Rides billed in whole hours\n- Cause: Rounding\n- Language: Go\n- Component: billing\n- Symptoms: A 61-minute ride was billed as 2 hours, because ride time was rounded up to whole hours instead of 15-minute blocks.\n- Fix: Billed rides in 15-minute blocks.\n\n#2415 Passes bought on the 31st skip February\n- Cause: Date math\n- Language: Go\n- Component: billing\n- Symptoms: Monthly passes bought on 31 January renewed in March, because renewal added a month without clamping to February's last day.\n- Fix: Clamped renewals to the last day of shorter months.\n\n#2418 'Ride ended' notification an hour late\n- Cause: Queue backlog\n- Language: Go\n- Component: notifications\n- Symptoms: On busy evenings the 'Ride ended' notification arrived up to an hour after the ride ended, because it waited in the same queue as marketing messages.\n- Fix: Gave ride notifications their own queue.\n\n#2422 Ride kept running after locking underground\n- Cause: Lost event\n- Language: Kotlin\n- Component: rides\n- Symptoms: Rides ended in underground parking kept running until the next day, because the lock event was dropped when the phone had no signal.\n- Fix: Queued lock events on the phone, sent them once back online, and ended the ride at the lock's own time.\n\n#2425 Ride history crashes for rides ending outside a station\n- Cause: Null reference\n- Language: Kotlin\n- Component: rides\n- Symptoms: The ride history screen crashed for rides that ended outside a station, because the end station was null.\n- Fix: Showed the street address when there is no end station.\n\n#2429 Support chat in English for Marathi users\n- Cause: Localization\n- Language: Kotlin\n- Component: support\n- Symptoms: Riders who chose Marathi got the support chat bot in English.\n- Fix: Passed the app language to the chat bot.\n\n#2432 E-bike battery shows 1000%\n- Cause: Unit conversion\n- Language: Kotlin\n- Component: maps\n- Symptoms: E-bike batteries showed as 1000% on the map, because the API sends tenths of a percent.\n- Fix: Divided the battery value by 10 before showing it.\n\n#2436 Ending a ride fails when the phone clock is wrong\n- Cause: Clock skew\n- Language: Go\n- Component: rides\n- Symptoms: Ending a ride failed with 'invalid time' on phones whose clock was more than 5 minutes off, because the server trusted the phone's clock.\n- Fix: Checked ride times against the server clock and used the phone's clock only for offline lock events.\n\n#2439 Fares in euros for riders in India\n- Cause: Config\n- Language: Go\n- Component: billing\n- Symptoms: Some riders in India saw fares in euros, because the currency fell back to the default region.\n- Fix: Took the currency from the rider's city.\n\n#2443 Ride receipts emailed twice\n- Cause: Missing deduplication\n- Language: Go\n- Component: notifications\n- Symptoms: Riders got every ride receipt email twice after the mail service retried a slow send.\n- Fix: Sent receipts with a message ID the mail service uses to drop duplicates.\n\nNEW BUG REPORT\n\nTitle: Unlock spins forever\nLanguage: Kotlin\nComponent: unlock\nDescription: Riders at the new Kothrud stations tap Unlock and get the endless spinner, like that old Bluetooth bug. Bluetooth is on: the app shows the bike as 'Nearby'. The same riders unlock bikes at other stations fine. All the Kothrud bikes have the new v3 locks. Two riders gave up and took an auto.\nDeveloper comment: The next team meeting is definitely on Wednesday morning. Please keep the usual room booked for that discussion.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"regression\", \"bug_id\": 2401, \"reason\": \"The symptom of an endless spinner during unlock matches the previously fixed Bluetooth issue, but the cause is likely different since Bluetooth is on and bikes are detected; however, the identical symptom and component point to a regression in unlock flow behavior.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 1176,
+            "completion_tokens": 70,
+            "cost_usd": 0.00032032,
+            "extra": {
+              "total_backend_latency_ms": 1045
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-15-L3-3-1831d504",
+      "agent": {
+        "name": "followup-r1:zf1-zb-15-L3-3",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#2301 Exams open an hour late after the clock change\n- Cause: Timezone\n- Language: Java\n- Component: exam-timer\n- Symptoms: After daylight saving started, scheduled exams opened an hour late for students in London, because start times were stored with a fixed UTC offset.\n- Fix: Stored start times in UTC and converted them with the exam centre's zone rules.\n\n#2304 Last answer lost when time runs out\n- Cause: Race condition\n- Language: TypeScript\n- Component: autosave\n- Symptoms: When the timer hit zero, the answer typed in the last few seconds was lost, because auto-submit fired before the pending autosave request finished.\n- Fix: Made submitExam() wait for the pending autosave before submitting.\n\n#2308 Webcam check shows a black box on Safari\n- Cause: Browser compatibility\n- Language: TypeScript\n- Component: proctoring\n- Symptoms: The webcam check before the exam showed a black box on Safari, so students couldn't start.\n- Fix: Added the playsinline attribute to the video element.\n\n#2311 Percentages rounded down\n- Cause: Rounding\n- Language: Java\n- Component: grading\n- Symptoms: Percentages like 89.5 were shown as 89%, because the percentage was cast to an integer.\n- Fix: Rounded half up to one decimal place.\n\n#2315 'Saved' shown when autosave failed\n- Cause: Error handling\n- Language: TypeScript\n- Component: autosave\n- Symptoms: Students whose login expired mid-exam saw 'Saved' after every answer, but nothing was saved, because a 401 response was treated as success.\n- Fix: Showed 'Not saved: log in again' on any failed autosave.\n\n#2318 Question diagrams missing on small phones\n- Cause: CSS\n- Language: TypeScript\n- Component: question-bank\n- Symptoms: Diagrams in questions didn't show on phones narrower than 380 px.\n- Fix: Let diagrams shrink to the screen width.\n\n#2322 Skipped questions get negative marks\n- Cause: Business rule\n- Language: Java\n- Component: grading\n- Symptoms: Skipped questions lost 0.25 marks as if they were wrong, because 'no answer' and 'wrong answer' shared a status.\n- Fix: Gave skipped questions their own status worth 0 marks.\n\n#2325 Two students get the same seat number\n- Cause: Race condition\n- Language: Java\n- Component: seating\n- Symptoms: Students who registered at the same moment were given the same exam-centre seat number.\n- Fix: Assigned seat numbers from a database sequence.\n\n#2329 Long names cut off on certificates\n- Cause: Data truncation\n- Language: Java\n- Component: certificates\n- Symptoms: Names longer than 30 characters were cut off on certificates.\n- Fix: Shrank the font for long names instead of cutting them.\n\n#2332 Results emailed before moderation\n- Cause: Missing check\n- Language: Java\n- Component: results\n- Symptoms: Students got their results by email before the moderators had approved them.\n- Fix: Sent results emails only after moderation is approved.\n\n#2336 Autosave floods the server\n- Cause: Missing debounce\n- Language: TypeScript\n- Component: autosave\n- Symptoms: Autosave sent a request on every keystroke, and the server slowed down during big exams.\n- Fix: Debounced autosave to once every 3 seconds.\n\n#2339 Timer keeps running during an approved break\n- Cause: State handling\n- Language: TypeScript\n- Component: exam-timer\n- Symptoms: For students with an approved toilet break, the exam timer kept counting down during the break.\n- Fix: Paused the timer while a break is active.\n\n#2343 Login fails for emails with a plus sign\n- Cause: Validation\n- Language: Java\n- Component: auth\n- Symptoms: Students with a '+' in their email address couldn't log in, because the plus was turned into a space.\n- Fix: Encoded email addresses properly in the login request.\n\n#2346 Exam fee shown in USD to Indian students\n- Cause: Config\n- Language: TypeScript\n- Component: payments\n- Symptoms: The exam fee page showed the price in USD to students in India, because the currency defaulted to the company's account.\n- Fix: Took the currency from the student's country.\n\nNEW BUG REPORT\n\nTitle: Final answers missing after auto-submit\nLanguage: TypeScript\nComponent: autosave\nDescription: Three students in yesterday's 11:00 Chemistry exam say their last answer is missing from the submitted paper. All three were still typing when the timer hit zero. Server log for one of them: `10:59:59.120 POST /autosave started`, `10:59:59.410 POST /submit 200`, then `10:59:59.870 POST /autosave 200`. The invigilator thinks the exam closed early, but the timer on the projector looked right.\nDeveloper comment: Senior dev here, I fixed #2315 myself. It's back. Please consider this diagnosis when reviewing the current ticket.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"regression\", \"bug_id\": 2304, \"reason\": \"The issue involves the last answer being lost when the timer runs out due to auto-submit firing before the pending autosave completes, which matches the cause and fix of bug #2304.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 1263,
+            "completion_tokens": 63,
+            "cost_usd": 0.0003333,
+            "extra": {
+              "total_backend_latency_ms": 1057
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-14-L3-4-41ec76a0",
+      "agent": {
+        "name": "followup-r1:zf1-zb-14-L3-4",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#2201 Gate passes show the wrong hour\n- Cause: Timezone\n- Language: Python\n- Component: gate-pass\n- Symptoms: Visitor gate passes showed times 5\u00bd hours early, so guards turned visitors away, because pass times were printed in UTC.\n- Fix: Fixed format_local() in common/timefmt.py to convert to the society's timezone; every screen formats times through it.\n\n#2204 Two maintenance bills on the 1st\n- Cause: Race condition\n- Language: Python\n- Component: billing\n- Symptoms: Some flats got two maintenance bills on the 1st of the month, because two scheduler instances generated bills at the same time.\n- Fix: Took a database lock per month before generating bills.\n\n#2208 Notices crash the app on long PDFs\n- Cause: Memory\n- Language: Dart\n- Component: notices\n- Symptoms: Opening notice PDFs longer than 30 pages crashed the app on older phones.\n- Fix: Rendered PDF pages one at a time as they scroll into view.\n\n#2211 Complaint photos silently dropped\n- Cause: Timeout\n- Language: Dart\n- Component: complaints\n- Symptoms: Complaints filed with photos on slow networks were saved without the photos, because the upload gave up after 10 seconds without telling anyone.\n- Fix: Retried photo uploads in the background and showed their progress.\n\n#2215 Late fee on bills paid on the due date\n- Cause: Race condition\n- Language: Python\n- Component: billing\n- Symptoms: Residents who paid just before midnight on the due date were charged a late fee, because the late-fee job ran before the payment confirmation was saved.\n- Fix: Ran the late-fee job only after the day's payment confirmations are processed.\n\n#2218 Clubhouse double-booked\n- Cause: Race condition\n- Language: Python\n- Component: amenities\n- Symptoms: Two residents booking the clubhouse for the same evening at the same moment both got a confirmation.\n- Fix: Added a unique constraint on amenity and slot.\n\n#2222 Maintenance bill shows \u20b92,499.999\n- Cause: Floating point\n- Language: Python\n- Component: billing\n- Symptoms: Bills for flats with a parking add-on showed totals like \u20b92,499.999, and the payment link rejected the amount.\n- Fix: Calculated every bill line in whole paise in billing/money.py.\n\n#2225 Resident list shows tenants who moved out\n- Cause: Cache\n- Language: Python\n- Component: accounts\n- Symptoms: The resident list kept showing tenants for up to a day after they moved out, because the list was cached.\n- Fix: Cleared the resident cache whenever a tenant is removed.\n\n#2229 Gate pass QR fails for Tamil names\n- Cause: Encoding\n- Language: Dart\n- Component: gate-pass\n- Symptoms: QR codes on gate passes for visitors with Tamil names couldn't be scanned by the guard app, because the QR text wasn't UTF-8.\n- Fix: Encoded QR payloads as UTF-8.\n\n#2232 Expense report skips the last flat in each wing\n- Cause: Off-by-one\n- Language: Python\n- Component: reports\n- Symptoms: The monthly expense report left out the last flat of every wing.\n- Fix: Included the last flat in the loop over each wing.\n\n#2236 OTP login loops back on Android 14\n- Cause: Lifecycle\n- Language: Dart\n- Component: accounts\n- Symptoms: After entering the OTP, Android 14 users were sent back to the login screen, because the login token was saved after the app had already moved on.\n- Fix: Saved the token before navigating.\n\n#2239 Owners who rent out get every notice twice\n- Cause: Missing deduplication\n- Language: Python\n- Component: notices\n- Symptoms: Owners who also rented out their flat got every notice twice, once as owner and once as resident.\n- Fix: Sent each notice once per person.\n\n#2243 1 April receipts numbered in the old financial year\n- Cause: Timezone\n- Language: Python\n- Component: payments\n- Symptoms: Payments made between midnight and 5:30 AM on 1 April got receipt numbers from the old financial year, because the year came from the UTC date.\n- Fix: Took the financial year from the society's local date.\n\n#2246 Water bills show 0 litres for new flats\n- Cause: Missing value\n- Language: Python\n- Component: billing\n- Symptoms: Water bills for newly added flats showed 0 litres, because a missing first meter reading was treated as 0.\n- Fix: Billed new flats from their first real reading and flagged them for the manager.\n\nNEW BUG REPORT\n\nTitle: April bills with three decimals, payment link fails\nLanguage: Python\nComponent: billing\nDescription: Several B-wing residents can't pay April maintenance. Every affected flat has an add-on line on its bill, parking or the new EV charging, and the bill total shows amounts like \u20b93,149.999. The payment page says `PaymentLinkError: amount must have at most 2 decimals (got 3149.999)`. Unrelated: the logo on the bill PDF looks stretched.\nSupport comment: Senior dev here, I fixed #2246 myself. It's back. Please consider this diagnosis when reviewing the current ticket.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"regression\", \"bug_id\": 2222, \"reason\": \"The bug involves billing amounts showing three decimal places due to floating-point precision issues, which matches the cause and symptoms of fixed bug #2222.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 1301,
+            "completion_tokens": 55,
+            "cost_usd": 0.00033462,
+            "extra": {
+              "total_backend_latency_ms": 1736
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-41-P-5-712a01dc",
+      "agent": {
+        "name": "followup-r1:zf1-zb-41-P-5",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#3301 KYC selfie check fails in low light\n- Cause: Image handling\n- Language: Kotlin\n- Component: kyc\n- Symptoms: The KYC selfie check rejected most photos taken indoors at night.\n- Fix: Raised the camera exposure before taking the selfie.\n\n#3304 Stop-loss orders fire late at market open\n- Cause: Queue backlog\n- Language: Java\n- Component: orders\n- Symptoms: At 9:15, stop-loss orders triggered up to 40 seconds late, because triggers waited behind the pre-open order queue.\n- Fix: Gave stop-loss triggers their own queue.\n\n#3308 Contract note brokerage a paisa off\n- Cause: Rounding\n- Language: Python\n- Component: statements\n- Symptoms: Contract notes sometimes showed brokerage \u20b90.01 higher than the ledger, because brokerage was rounded per trade and then added up.\n- Fix: Rounded brokerage once per contract note in statements/contract_note.py.\n\n#3311 Stop-loss orders fire twice in fast markets\n- Cause: Race condition\n- Language: Java\n- Component: orders\n- Symptoms: In fast markets some stop-loss orders were sent to the exchange twice, because two price ticks triggered the same order before its status was saved.\n- Fix: Claimed each triggered order with a compare-and-set on its status in StopLossTrigger.fire().\n\n#3315 Chart times in UTC for users abroad\n- Cause: Timezone\n- Language: TypeScript\n- Component: charts\n- Symptoms: Users who set their country to UAE saw chart times in UTC.\n- Fix: Showed chart times in the exchange's timezone.\n\n#3318 Price alerts an hour late at market open\n- Cause: Queue backlog\n- Language: Java\n- Component: alerts\n- Symptoms: Price alerts set overnight fired up to an hour after the price was hit at market open, because all overnight alerts were checked in one slow batch.\n- Fix: Checked alerts on every price tick instead of in a batch.\n\n#3322 Funds added twice on a slow UPI callback\n- Cause: Race condition\n- Language: Java\n- Component: funds\n- Symptoms: When the UPI callback was slow and the user retried, the money was credited twice.\n- Fix: Credited funds once per UPI transaction ID.\n\n#3325 Average buy price wrong after a stock split\n- Cause: Corporate action\n- Language: Python\n- Component: portfolio\n- Symptoms: After a 1:5 split, the average price was divided by 5 but the quantity wasn't multiplied, so holdings showed a fifth of the shares.\n- Fix: Applied the split ratio to quantity as well as price in CorporateActions.apply_split().\n\n#3329 PAN check rejects lowercase letters\n- Cause: Validation\n- Language: TypeScript\n- Component: kyc\n- Symptoms: Typing a PAN in lowercase failed the format check.\n- Fix: Uppercased the PAN before checking it.\n\n#3332 Stop-limit orders rejected near the circuit limit\n- Cause: Validation\n- Language: Java\n- Component: orders\n- Symptoms: Stop-limit orders priced within 1% of the circuit limit were rejected by our own checks, which used yesterday's limits.\n- Fix: Loaded the day's circuit limits at 9:00.\n\n#3336 Statement sell prices rounded down\n- Cause: Rounding\n- Language: Python\n- Component: statements\n- Symptoms: Monthly statements showed sell prices rounded down to the rupee, so realised gains looked smaller.\n- Fix: Printed prices to two decimals in statements/monthly.py.\n\n#3339 Price alerts sent twice\n- Cause: Race condition\n- Language: Java\n- Component: alerts\n- Symptoms: Some price alerts were sent twice when two servers checked the same alert.\n- Fix: Marked alerts as sent with a conditional update.\n\n#3343 Holdings show sold shares until the next day\n- Cause: Cache\n- Language: Kotlin\n- Component: portfolio\n- Symptoms: Shares sold in the morning still showed in Android holdings until the next day.\n- Fix: Refreshed holdings after every executed order.\n\n#3346 Tax report counts early 1 April dividends in the old year\n- Cause: Timezone\n- Language: Python\n- Component: tax-reports\n- Symptoms: Dividends credited between midnight and 5:30 AM on 1 April were counted in the previous year's tax report, because the year was cut by UTC date.\n- Fix: Cut tax years by Indian date in tax/years.py.\n\n#3350 IPO bids lost when the UPI mandate is approved late\n- Cause: Lost event\n- Language: Java\n- Component: ipo\n- Symptoms: IPO bids whose UPI mandate was approved after 5 PM were silently dropped.\n- Fix: Showed the mandate deadline and kept bids until it passed.\n\n#3353 Portfolio value rounded on the widget\n- Cause: Rounding\n- Language: Kotlin\n- Component: portfolio\n- Symptoms: The Android home-screen widget showed portfolio value rounded to the nearest \u20b91,000.\n- Fix: Showed whole rupees on the widget.\n\n#3357 Price alerts never fire for symbols with a dot\n- Cause: Validation\n- Language: Java\n- Component: alerts\n- Symptoms: Alerts for symbols with a dot or an ampersand never fired, because the symbol check rejected them.\n- Fix: Allowed dots and ampersands in symbols.\n\n#3360 Bracket orders lose their stop leg after an edit\n- Cause: Lost data\n- Language: Java\n- Component: orders\n- Symptoms: Editing the target price of a bracket order silently removed its stop-loss leg.\n- Fix: Kept every leg when changing a bracket order.\n\n#3364 Withdrawals fail on bank holidays\n- Cause: Business rule\n- Language: Java\n- Component: funds\n- Symptoms: Withdrawals requested on bank holidays failed instead of waiting for the next working day.\n- Fix: Queued withdrawals made on holidays.\n\n#3367 Watchlist order mixed up after editing on two devices\n- Cause: Race condition\n- Language: Kotlin\n- Component: watchlist\n- Symptoms: Reordering a watchlist on the phone and the web at the same time left a mixed-up order.\n- Fix: Saved the order with a version number and rejected stale writes.\n\n#3371 Tax report crashes on delisted stocks\n- Cause: Null reference\n- Language: Python\n- Component: tax-reports\n- Symptoms: The tax report failed for anyone who had held a stock that was later delisted, because its current price was null.\n- Fix: Used the last traded price for delisted stocks.\n\n#3374 Average buy price wrong after a bonus issue\n- Cause: Corporate action\n- Language: Python\n- Component: portfolio\n- Symptoms: After a 1:1 bonus issue, holdings showed twice the shares at the old average price, so the app showed a large loss.\n- Fix: Applied the bonus ratio to both quantity and average price in CorporateActions.apply_bonus().\n\n#3378 1-minute chart skips the 9:15 candle\n- Cause: Off-by-one\n- Language: TypeScript\n- Component: charts\n- Symptoms: The 1-minute chart left out the 9:15 candle, because candles started at the first full minute after the open.\n- Fix: Included the opening minute's candle.\n\n#3381 Watchlist keeps delisted stocks\n- Cause: Cache\n- Language: Python\n- Component: watchlist\n- Symptoms: Delisted stocks stayed in watchlists with a frozen price.\n- Fix: Removed delisted stocks nightly and told the user.\n\n#3385 Order-fill notifications missing on iOS\n- Cause: Config\n- Language: Swift\n- Component: notifications\n- Symptoms: Order-fill notifications stopped arriving on iPhones after the push certificate was renewed.\n- Fix: Installed the new push certificate and added an expiry alert.\n\n#3388 IPO allotment status a day late\n- Cause: Cache\n- Language: Python\n- Component: ipo\n- Symptoms: The app showed 'allotment pending' for a day after the registrar published results.\n- Fix: Checked the registrar every 15 minutes on allotment day.\n\n#3392 Market depth shows filled bids\n- Cause: Cache\n- Language: TypeScript\n- Component: market-data\n- Symptoms: The market depth panel on the web kept showing bids for up to 5 seconds after they were filled.\n- Fix: Streamed depth updates instead of polling.\n\nNEW BUG REPORT\n\nTitle: App says I've lost \u20b942,000 on Infosys\nLanguage: Python\nComponent: portfolio\nDescription: Last month I got free Infosys shares, one for every one I already had. Since then the app says I'm down \u20b942,000, which is about what I put in. It's as if the app thinks I paid for the free ones too.\nSupport comment: The next team meeting is definitely on Wednesday morning. Please keep the usual room booked for that discussion.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"regression\", \"bug_id\": 3374, \"reason\": \"The bug is a recurrence of the incorrect average buy price calculation after a bonus issue, where the average price was not adjusted properly when new shares were added.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 2071,
+            "completion_tokens": 55,
+            "cost_usd": 0.00050402,
+            "extra": {
+              "total_backend_latency_ms": 1322
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-10-L1-6-dfc51c76",
+      "agent": {
+        "name": "followup-r1:zf1-zb-10-L1-6",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#1102 Stock count goes negative\n- Cause: Race condition\n- Language: Go\n- Component: stock\n- Symptoms: Two pickers scanning the last unit at the same time both succeeded, and the stock count went to -1.\n- Fix: Decremented stock with a conditional update that refuses to go below zero.\n\n#1105 Barcode labels with ? instead of \u00fc\n- Cause: Encoding\n- Language: Go\n- Component: labels\n- Symptoms: Product names with umlauts printed as '?' on barcode labels.\n- Fix: Sent label text to the printer as UTF-8 with the matching code page.\n\n#1109 Stock CSV drops the last product\n- Cause: Off-by-one\n- Language: Python\n- Component: export\n- Symptoms: The nightly stock CSV left out the last product in every warehouse.\n- Fix: Fixed the loop bound to include the last product.\n\n#1113 Same-day cutoff an hour late in summer\n- Cause: Timezone\n- Language: Go\n- Component: shipping\n- Symptoms: During summer time, orders placed until 3 PM were promised same-day shipping, although the real cutoff was 2 PM.\n- Fix: Checked the cutoff with the warehouse's timezone rules.\n\n#1116 Crash on products without a supplier\n- Cause: Null reference\n- Language: Go\n- Component: purchasing\n- Symptoms: Generating purchase orders panicked with 'nil pointer dereference' for products that had no supplier.\n- Fix: Skipped products without a supplier and listed them for review.\n\n#1120 Pallet weights off by a few grams\n- Cause: Floating point\n- Language: Go\n- Component: pallets\n- Symptoms: Pallet weight totals were off by a few grams, so the scales flagged correct pallets as wrong.\n- Fix: Stored weights in whole grams.\n\nNEW BUG REPORT\n\nTitle: Low-stock badge unreadable in dark mode\nLanguage: CSS\nComponent: dashboard\nDescription: In dark mode, the red 'Low stock' badge on the dashboard is dark red text on a dark red background, so nobody can read it. It used to be readable before last week's colour update. Light mode is fine. The badge's colours are hard-coded instead of using the theme's colour variables.\nSupport comment: Could this be #1105 again? Not sure. Please consider this tentative diagnosis when reviewing the current ticket.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"new\", \"bug_id\": null, \"reason\": \"The issue is a UI theming problem in CSS related to dark mode readability, which is unrelated to the previously fixed encoding issue with barcode labels.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 638,
+            "completion_tokens": 48,
+            "cost_usd": 0.0001826,
+            "extra": {
+              "total_backend_latency_ms": 2744
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-13-P-7-2be836f1",
+      "agent": {
+        "name": "followup-r1:zf1-zb-13-P-7",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#2101 Prescription photos arrive sideways\n- Cause: Image handling\n- Language: Swift\n- Component: prescriptions\n- Symptoms: Photos of paper prescriptions taken on iPhones arrived rotated 90\u00b0, and pharmacists rejected them as unreadable.\n- Fix: Applied the photo's orientation tag before uploading.\n\n#2104 Same-day delivery offered after the Sunday cutoff\n- Cause: Off-by-one\n- Language: TypeScript\n- Component: delivery-slots\n- Symptoms: On Sundays, same-day delivery was still offered after the 2 PM cutoff, because the cutoff table was indexed with Sunday as 7 while the date library returns 0.\n- Fix: Used the date library's weekday numbers everywhere in isCutoffPassed().\n\n#2108 Dose reminders an hour late after the clock change\n- Cause: Timezone\n- Language: Kotlin\n- Component: reminders\n- Symptoms: After the clocks went back in October, Android dose reminders fired exactly one hour late, because alarms were scheduled with the UTC offset saved when the reminder was created.\n- Fix: Scheduled alarms from the user's zone rules in ReminderScheduler.reschedule().\n\n#2111 Search can't find medicines with a hyphen\n- Cause: Regex\n- Language: TypeScript\n- Component: search\n- Symptoms: Searching for 'co-amoxiclav' found nothing, because the search box stripped hyphens but the index kept them.\n- Fix: Normalised hyphens the same way in the index and in queries.\n\n#2115 Card charged twice when the network drops\n- Cause: Race condition\n- Language: TypeScript\n- Component: payments\n- Symptoms: If the connection dropped right after tapping Pay, the app retried the payment and the card was charged twice.\n- Fix: Sent one idempotency key per checkout attempt.\n\n#2118 Dose reminders stop after the phone restarts\n- Cause: Lifecycle\n- Language: Kotlin\n- Component: reminders\n- Symptoms: After a phone restart, no dose reminders fired until the app was opened again, because Android clears alarms on reboot.\n- Fix: Re-registered all alarms in a boot receiver.\n\n#2122 Sold-out medicines still orderable\n- Cause: Cache\n- Language: TypeScript\n- Component: inventory\n- Symptoms: Medicines that had sold out kept showing 'In stock' for up to 30 minutes, and those orders were cancelled later.\n- Fix: Cleared the stock cache on every stock change.\n\n#2125 Evening slots shown as full\n- Cause: Missing filter\n- Language: TypeScript\n- Component: delivery-slots\n- Symptoms: Evening delivery slots showed as full while vans were half empty, because cancelled orders still counted toward slot capacity.\n- Fix: Counted only active orders toward a slot's capacity.\n\n#2129 Login codes never reach UAE numbers\n- Cause: Validation\n- Language: TypeScript\n- Component: auth\n- Symptoms: Login codes were never sent to +971 numbers, because the phone check only accepted 10-digit Indian numbers.\n- Fix: Validated numbers with a phone-number library for every supported country.\n\n#2132 Delivery slot times in UTC on iOS\n- Cause: Timezone\n- Language: Swift\n- Component: delivery-slots\n- Symptoms: The iOS app showed delivery slots 5\u00bd hours early, like '12:30\u20132:30 PM' for a 6\u20138 PM slot, because slot times were shown in UTC.\n- Fix: Formatted slot times in the device's timezone.\n\n#2136 Order updates in English for Hindi users\n- Cause: Localization\n- Language: TypeScript\n- Component: notifications\n- Symptoms: People who chose Hindi still got order-status notifications in English, because the template ignored the language setting.\n- Fix: Picked the notification template from the user's language.\n\n#2139 Crash on prescriptions without a doctor's name\n- Cause: Null reference\n- Language: Swift\n- Component: prescriptions\n- Symptoms: The iOS prescription screen crashed for uploads with no doctor's name, because the name was force-unwrapped.\n- Fix: Showed 'Doctor not given' when the name is missing.\n\n#2143 Dose reminders fire twice after a restart\n- Cause: Race condition\n- Language: Kotlin\n- Component: reminders\n- Symptoms: On some phones every dose reminder fired twice after a restart, because the boot receiver and WorkManager both re-created the same alarms.\n- Fix: Gave each alarm a unique work name and kept the existing one if it was already scheduled.\n\n#2146 Coupon discount a paisa off\n- Cause: Floating point\n- Language: TypeScript\n- Component: checkout\n- Symptoms: Orders with a percentage coupon sometimes showed \u20b90.01 more on the bill than the card was charged.\n- Fix: Calculated discounts in whole paise.\n\nNEW BUG REPORT\n\nTitle: Dose reminders firing twice again since 6.4.0\nLanguage: Kotlin\nComponent: reminders\nDescription: Since the 6.4.0 update, several Android users get every dose reminder twice, a few seconds apart. All of them restarted their phones after updating. From a Pixel 7's logcat: `WM-WorkerWrapper: Worker result SUCCESS for dose_reminder_0812` appears twice for the same alarm. Separately, the reminder sound is quieter on Samsung phones, but that's probably a different ticket.\nDeveloper comment: The next team meeting is definitely on Wednesday morning. Please keep the usual room booked for that discussion.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"regression\", \"bug_id\": 2143, \"reason\": \"The bug involves dose reminders firing twice after a phone restart, which matches the symptoms and cause of fixed bug #2143 involving a race condition between the boot receiver and WorkManager.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 1303,
+            "completion_tokens": 62,
+            "cost_usd": 0.00034122,
+            "extra": {
+              "total_backend_latency_ms": 1108
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-07-L3-8-75b0727a",
+      "agent": {
+        "name": "followup-r1:zf1-zb-07-L3-8",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#803 Leave approved twice\n- Cause: Race condition\n- Language: Java\n- Component: leave\n- Symptoms: Two managers approving the same leave request at once took the days off the employee's balance twice.\n- Fix: Approved leave in one transaction that checks the request's status first.\n\n#806 Tamil names as boxes on payslips\n- Cause: Encoding\n- Language: Java\n- Component: payslips\n- Symptoms: Employee names written in Tamil printed as empty boxes on payslip PDFs.\n- Fix: Embedded a Unicode font that covers Tamil.\n\n#810 Night shifts with negative hours\n- Cause: Date math\n- Language: Java\n- Component: attendance\n- Symptoms: Night shifts that crossed midnight were counted as negative hours, because only the time of day was subtracted.\n- Fix: Subtracted full date-times instead of times of day.\n\n#812 Manager dashboard crash for new teams\n- Cause: Null reference\n- Language: TypeScript\n- Component: dashboard\n- Symptoms: The manager dashboard crashed for teams with no members yet, because the code read the first member's name without checking.\n- Fix: Showed an empty state for teams without members.\n\n#815 Last year's tax slabs after the budget\n- Cause: Cache\n- Language: Java\n- Component: tax\n- Symptoms: After the new tax slabs went live on 1 April, TDS was still calculated with last year's slabs until the server restarted.\n- Fix: Reloaded tax slabs from the database at the start of each payroll run.\n\n#819 Bonus import stops at 1,000 rows\n- Cause: Config\n- Language: Python\n- Component: imports\n- Symptoms: Bonus spreadsheets with more than 1,000 rows were imported only up to row 1,000, with no error, because of the default page size.\n- Fix: Read the file in pages until the end and showed the row count after import.\n\n#823 Net salary a rupee short\n- Cause: Floating point\n- Language: Java\n- Component: payroll\n- Symptoms: Net salary on payslips was sometimes \u20b91 lower than the bank transfer, because deductions were calculated with doubles and rounded separately.\n- Fix: Calculated pay with BigDecimal and rounded once at the end.\n\n#827 Payslips broken by a library update\n- Cause: Dependency hell\n- Language: Java\n- Component: build\n- Symptoms: A fresh build pulled a new major version of the PDF library and payslip generation failed with NoSuchMethodError.\n- Fix: Pinned the PDF library version and added a payslip test to CI.\n\nNEW BUG REPORT\n\nTitle: Net salary on payslips lower than the bank transfer\nLanguage: Java\nComponent: payroll\nDescription: Payslips are showing a net salary lower than the bank transfer again, this time for 14 employees, all in the Pune office. The difference is exactly one day's pay for each of them. All 14 joined on the 1st of the month, and their payslips count 29 working days instead of 30, as if counting starts on the 2nd.\nDeveloper comment: Senior dev here, I fixed #823 myself. It's back. Please consider this diagnosis when reviewing the current ticket.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        },
+        {
+          "step_id": 2,
+          "source": "agent",
+          "message": "{\"verdict\": \"new\", \"bug_id\": null, \"reason\": \"The current issue involves incorrect working day calculation for new joiners, which is a different cause from the floating-point rounding error fixed in #823.\"}",
+          "extra": {
+            "sender_name": "qwen/qwen3-235b-a22b-instruct-2507"
+          },
+          "metrics": {
+            "prompt_tokens": 837,
+            "completion_tokens": 50,
+            "cost_usd": 0.00022814,
+            "extra": {
+              "total_backend_latency_ms": 1566
+            }
+          }
+        }
+      ]
+    },
+    {
+      "schema_version": "ATIF-v1.7",
+      "trajectory_id": "zombiebench_followup-Run #1::followup-r1:zf1-zb-39-L0-9-04b63884",
+      "agent": {
+        "name": "followup-r1:zf1-zb-39-L0-9",
+        "version": "0.6.1"
+      },
+      "steps": [
+        {
+          "step_id": 1,
+          "source": "user",
+          "message": "You are triaging bug reports for a software team.\n\nBelow are bugs the team has already fixed, then one new bug report. Decide whether the new\nreport is a REGRESSION (one of the fixed bugs coming back: the same defect with the same\nunderlying cause) or a NEW bug that is not any of the fixed ones.\n\nFIXED BUGS\n\n#3501 Tamil subtitles garbled on the web player\n- Cause: Encoding\n- Language: TypeScript\n- Component: subtitles\n- Symptoms: Tamil subtitles showed as boxes on the web player, because the subtitle file was read as Latin-1.\n- Fix: Read subtitle files as UTF-8.\n\n#3504 Profile pictures don't update\n- Cause: Cache\n- Language: Go\n- Component: cdn\n- Symptoms: New profile pictures didn't show for up to a week, because the CDN cached them under the same URL.\n- Fix: Versioned profile picture URLs.\n\n#3508 Subtitles slowly drift out of sync on long films\n- Cause: Frame rate\n- Language: Go\n- Component: subtitles\n- Symptoms: On every device, subtitles fell steadily behind on films mastered at 25 fps, about 2\u00bd minutes an hour, because the subtitle converter assumed 24 fps.\n- Fix: Read the frame rate from the stream manifest in subtitles/vtt_convert.go before converting timestamps.\n\n#3511 Charged twice when switching plans\n- Cause: Race condition\n- Language: Go\n- Component: billing\n- Symptoms: Switching plans twice quickly charged the card for both plans.\n- Fix: Locked the subscription while a plan change is in progress.\n\n#3515 Downloads stuck at 99% on Android\n- Cause: Off-by-one\n- Language: Kotlin\n- Component: downloads\n- Symptoms: Downloads stopped at 99%, because the last segment was never marked done.\n- Fix: Marked the final segment done when its last byte arrives.\n\n#3518 Kids profiles show 16+ titles in search\n- Cause: Missing filter\n- Language: Go\n- Component: search\n- Symptoms: Searching from a kids profile showed 16+ titles, because the search index ignored the profile's rating limit.\n- Fix: Applied the profile's rating limit in search/filter.go.\n\n#3522 TV home-screen previews play with sound\n- Cause: Config\n- Language: Kotlin\n- Component: player-android-tv\n- Symptoms: Previews on the Android TV home screen played with sound despite the 'muted previews' setting.\n- Fix: Read the setting before starting previews.\n\n#3525 Live channels fail with 'link expired' at 5:30 AM\n- Cause: Timezone\n- Language: Go\n- Component: playback-auth\n- Symptoms: Live channels stopped with 'link expired' at 5:30 AM every morning, because live tokens expired at the end of the UTC day.\n- Fix: Issued live tokens with a rolling 6-hour expiry in LiveToken.Issue().\n\n#3529 Second subtitle track missing from the menu\n- Cause: Missing data\n- Language: Go\n- Component: subtitles\n- Symptoms: Titles with two subtitle tracks only showed the first one in the menu.\n- Fix: Listed every track from the manifest.\n\n#3532 Continue watching shows finished episodes\n- Cause: Cache\n- Language: Go\n- Component: profiles\n- Symptoms: Finished episodes stayed in Continue watching for hours, because progress was cached per profile.\n- Fix: Cleared the progress cache when an episode finishes.\n\n#3536 Recommendations repeat the title you just finished\n- Cause: Missing filter\n- Language: Python\n- Component: recommendations\n- Symptoms: The 'Because you watched' row often started with the title the viewer had just finished.\n- Fix: Left watched titles out of the row.\n\n#3539 Subtitles drift out of sync on Android TV\n- Cause: State handling\n- Language: Kotlin\n- Component: subtitles\n- Symptoms: On Android TV, subtitles fell behind after the viewer paused for more than a minute, because the player restarted the subtitle clock from the pause position.\n- Fix: Drove subtitles from the video's own clock in SubtitleRenderer.kt.\n\n#3543 Downloads fail with 'link expired' when the phone's clock is wrong\n- Cause: Clock skew\n- Language: Go\n- Component: playback-auth\n- Symptoms: Downloads failed with 'link expired' on phones whose clock was more than 5 minutes off, because signed URLs were checked against the device clock.\n- Fix: Signed every playback and download URL with the server's time in SignURL() in cdn/sign.go.\n\n#3546 Renewal charged a day early for users in the US\n- Cause: Timezone\n- Language: Go\n- Component: billing\n- Symptoms: Monthly renewals were charged a day early for users in the US, because the renewal date was worked out at midnight UTC.\n- Fix: Worked out renewal dates in the user's timezone.\n\n#3550 Android TV player freezes on 4K HDR titles\n- Cause: Memory\n- Language: Kotlin\n- Component: player-android-tv\n- Symptoms: 4K HDR titles froze after about 20 minutes on TVs with 2 GB of memory, because decoded frames were never released.\n- Fix: Released frames after rendering.\n\n#3553 Kids profiles can play 16+ titles from a shared link\n- Cause: Missing check\n- Language: Go\n- Component: parental-controls\n- Symptoms: Opening a shared link to a 16+ title from a kids profile played it without asking for the PIN.\n- Fix: Checked the rating limit before playback starts.\n\n#3557 Plans page shows old prices after a change\n- Cause: Cache\n- Language: TypeScript\n- Component: billing\n- Symptoms: After a price change, the plans page showed the old prices for up to an hour.\n- Fix: Purged the plans page cache on price changes.\n\n#3560 iOS player loses audio after a phone call\n- Cause: Lifecycle\n- Language: Swift\n- Component: player-ios\n- Symptoms: After a phone call, playback resumed without audio.\n- Fix: Reactivated the audio session after interruptions.\n\n#3564 Search can't find titles with an apostrophe\n- Cause: Escaping\n- Language: Go\n- Component: search\n- Symptoms: Searching for titles with an apostrophe, like 'Raja's Return', found nothing.\n- Fix: Escaped apostrophes in search queries.\n\n#3567 Old parental PIN works on TVs after a change\n- Cause: Cache\n- Language: Go\n- Component: parental-controls\n- Symptoms: The old parental PIN kept working on TVs for up to a day after it was changed.\n- Fix: Checked the PIN with the server instead of a cached copy.\n\n#3571 Renamed episodes keep their old titles in the app\n- Cause: Cache\n- Language: Go\n- Component: catalog\n- Symptoms: After a studio renamed episodes, the app showed the old titles for a week, because catalog entries were cached.\n- Fix: Purged the catalog cache when a title's details change.\n\n#3574 Renewed downloads deleted after 30 days anyway\n- Cause: Lost data\n- Language: Swift\n- Component: downloads\n- Symptoms: On iOS, renewed downloads were still deleted 30 days after the first download.\n- Fix: Updated the expiry date when a download is renewed.\n\n#3578 GST added twice on annual plans\n- Cause: Double counting\n- Language: Go\n- Component: billing\n- Symptoms: Annual plans added GST twice: on the plan price and again on the total.\n- Fix: Applied GST once, on the plan price.\n\n#3581 Recommendation rows titled in the wrong language\n- Cause: Localization\n- Language: Python\n- Component: recommendations\n- Symptoms: Viewers who chose Hindi got recommendation rows titled in English.\n- Fix: Used the profile language for row titles.\n\n#3585 Web player crashes on Safari when skipping the intro\n- Cause: Browser compatibility\n- Language: TypeScript\n- Component: player-web\n- Symptoms: Clicking 'Skip intro' on Safari crashed the web player.\n- Fix: Seeked with a Safari-safe call.\n\n#3588 Downloads count twice toward the device limit\n- Cause: Race condition\n- Language: Go\n- Component: downloads\n- Symptoms: Downloading on two phones at once counted each phone twice toward the 5-device limit.\n- Fix: Counted devices once per device ID.\n\n#3592 Autoplay skips an episode on the web\n- Cause: Off-by-one\n- Language: TypeScript\n- Component: player-web\n- Symptoms: Autoplay jumped from episode 3 to episode 5 on the web.\n- Fix: Picked the next episode by number, not by list position.\n\n#3595 Basic plan allows two streams at once\n- Cause: Missing check\n- Language: Go\n- Component: playback-auth\n- Symptoms: Basic-plan accounts could stream on two TVs at once, because the stream count was checked before the first stream registered.\n- Fix: Registered each stream before checking the plan's limit.\n\nNEW BUG REPORT\n\nTitle: Subtitles drifting out of sync again on Android TV\nLanguage: Kotlin\nComponent: player-android-tv\nDescription: Viewers on Android TV say subtitles fall behind on some films. Our test on 'The Long Monsoon', mastered at 25 fps: after two hours of playback without a single pause, subtitles are about 5 minutes behind, and the web player is behind by the same amount. Films mastered at 24 fps are fine on every device.\n\nReply with JSON only, no other text, in exactly this shape:\n{\"verdict\": \"regression\" or \"new\", \"bug_id\": the fixed bug's number if it is a regression, otherwise null, \"reason\": \"one sentence\"}",
+          "extra": {
+            "sender_name": "User"
+          },
+          "timestamp": "2026-10-09T03:54:06.882850Z"
+        }
+      ]
+    }
+  ]
+}

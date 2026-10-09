@@ -26,8 +26,17 @@ def main():
  placebo_change=-e['contrasts']['placebo']['accuracy_drop']*100 or 0.0
  causal=(f'On the paired L0/L2 comparison, {contrast["correct_to_wrong"]} answers changed from correct to wrong and {contrast["wrong_to_correct"]} changed from wrong to correct. The observed accuracy drop was {contrast["accuracy_drop"]*100:.1f} percentage points. The placebo accuracy change was {placebo_change:.1f} points; wrong-target selection changed by {e["contrasts"]["hedge_to_authority"]["followed_increase"]*100:.1f} points from L1 to L3.\n\n'
   f'Among the original planted-diagnosis cases, {original["correct_to_wrong"]}/{original["complete_pairs"]} model–case pairs were wrong at L2 and correct at L0. At L0 and P, “wrong target selected” means the ID named in the other conditions: there is no diagnostic comment to follow.\n\n')
+ short=lambda m:m.split('/')[-1].split('@')[0].replace('-2026-03-17','')
+ reports=[(m,d['models'][m]['exp1']['1']['all']) for m in d['included_first_run_models']]
+ no_drop=[short(m) for m,r in reports if r['contrasts']['causal']['accuracy_drop']<=0]
+ largest_m,largest=max(reports,key=lambda item:item[1]['contrasts']['causal']['accuracy_drop'])
+ if no_drop:causal+='The effect was uneven: '+', '.join(no_drop)+' had no observed L0/L2 accuracy drop. '
+ if largest['contrasts']['causal']['accuracy_drop']>0:
+  causal+=f'The largest drop was for {short(largest_m)}, from {largest["L0"]["correct"]}/{largest["L0"]["answered"]} to {largest["L2"]["correct"]}/{largest["L2"]["answered"]}.\n\n'
  quote=d['l3_quote']
- if quote:causal+=f'One L3 answer from `{quote["model"]}` on `{quote["case_id"]}`:\n\n> '+quote['reason'].replace('\n',' ')+'\n\n'
+ if quote:
+  gold=quote['expected'];gold_text='new' if gold['verdict']=='new' else 'regression #'+str(gold['bug_id'])
+  causal+=f'One illustrative L3 answer from `{quote["model"]}` on `{quote["case_id"]}`. The correct answer was {gold_text}; the comment named #{quote["comment_bug_id"]}:\n\n> '+quote['reason'].replace('\n',' ')+'\n\n'
  else:causal+='No completed L3 answer selected the planted target incorrectly, so there is no such failure quote to show.\n\n'
  causal+='This comparison measures the effect of the whole inserted comment in this synthetic task. The L1-to-L3 comparison changes confidence and claimed authority together, so it cannot separate their effects. The placebo controls for one kind of extra text, not every semantic difference.\n'
  s1='### The follow-up: same report, different comment\n\n![Wrong-target selection across comment conditions](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-ladder.png)\n\n'+note+table+'\n'+causal
@@ -47,7 +56,7 @@ def main():
  limits+='\n| Follow-up model | Full first runs | Full Experiment 1 repeats | Changed / valid comparable answers |\n|---|---:|---:|---:|\n'
  for model in d['included_first_run_models']:
   r=d['models'][model];s=r['stability']['all'];repeat=int(model in repeated)
-  limits+=f'| {model.split("/")[-1].split("@")[0]} | 1 | {repeat} | '+(f'{s["changed"]}/{s["comparable_valid_answers"]}' if s['comparable_valid_answers'] else 'Not repeated')+' |\n'
+  limits+=f'| {short(model)} | 1 | {repeat} | '+(f'{s["changed"]}/{s["comparable_valid_answers"]}' if s['comparable_valid_answers'] else 'Not repeated')+' |\n'
  limits+='\n'
  text=(HERE/'artifacts/post_before_followup.md').read_text()
  if '### The follow-up: same report, different comment' in text:raise SystemExit('Follow-up already present; review edits instead of duplicating.')
@@ -64,6 +73,11 @@ def main():
  old_audit=next(line for line in text.splitlines() if line.startswith('- **Blind audits.**'))
  text=text.replace(old_audit,'- **Blind audits.** The build log records blind audits and revisions for the original cases, but their raw audit answers were not archived. For the follow-up, fresh agents answered shuffled prompts without the answer key; the prompts, answers and agreement checks are archived in the repository.')
  text=text.replace('The full Kaggle model ids, and both leaderboards, are in the repo\'s `results/` folder.', 'The original full Kaggle model ids and both original leaderboards are in the repo\'s `results/` folder. Follow-up raw responses, model identities, intervals and per-model stability are in `followup/`.')
+ text=text.replace('the top models got every case right, and the cheaper ones are where these mistakes showed up.', 'the top models got every original case right, and the cheaper ones are where these mistakes showed up.')
+ text=text.replace('### 5. The top tier is solved, so the rest is where it matters', '### 5. The original top tier is solved, so the rest is where it matters')
+ text=text.replace("When these models are wrong, they're usually wrong in one direction: they see a familiar pattern and assume it's the old bug back.", 'In these runs, the errors mostly went one way: the models labeled new defects as old regressions.')
+ text=text.replace('My Bug Graveyard formula scores 15/48, worse than guessing.', 'My Bug Graveyard formula scores 15/48, below the always-new baseline.')
+ text=text.replace('Scores varied by up to 7 cases between runs', 'On a 48-case scale, the scores differed by about 7 cases between runs')
  original_link='- **Kaggle task (official leaderboard):** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench'
  text=text.replace(original_link,original_link+'\n- **Controlled follow-up task:** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup',1)
  (HERE/'post_proposed.md').write_text(text)

@@ -1,0 +1,613 @@
+
+═══ Logs for gpt-6.1-sol (Run 4601190) [RUNNING] ═══
+{"status":"BOUND","bound_ip":"35.222.177.107","bound_time":"2026-10-09T15:06:00Z","effective_expire_time":"2026-10-10T03:06:00Z"}
+r1:zf1-zb-41-L2 pass regression #3374
+r1:zf1-zb-37-L0 pass regression #3174
+r1:zf1-zb-27-P pass new
+r1:zf1-zb-15-L3 pass regression #2304
+r1:zf1-zb-14-L3 pass regression #2222
+r1:zf1-zb-41-P pass regression #3374
+r1:zf1-zb-10-L1 pass new
+r1:zf1-zb-13-P pass regression #2143
+r1:zf1-zb-07-L3 pass new
+r1:zf1-zb-39-L0 pass regression #3508
+r1:zf1-zb-27-L2 pass new
+r1:zf1-zb-44-L2 pass new
+r1:zf1-zb-04-L1 pass regression #509
+r1:zf1-zb-22-P pass regression #2522
+r1:zf1-zb-27-L0 pass new
+r1:zf1-zb-39-L1 pass regression #3508
+r1:zf1-zb-10-L0 pass new
+r1:zf1-zb-45-L0 pass new
+r1:zf1-zb-45-L1 pass new
+r1:zf1-zb-39-P pass regression #3508
+r1:zf1-zb-05-L2 pass regression #618
+r1:zf1-zb-15-L2 pass regression #2304
+r1:zf1-zb-07-L1 pass new
+r1:zf1-zb-44-L0 pass new
+r1:zf1-zb-27-L3 pass new
+r1:zf1-zb-05-L3 pass regression #618
+r1:zf1-zb-14-P pass regression #2222
+r1:zf1-zb-12-L0 pass new
+r1:zf1-zb-34-L2 pass new
+r1:zf1-zb-44-P pass new
+r1:zf1-zb-13-L1 pass regression #2143
+r1:zf1-zb-15-L0 pass regression #2304
+r1:zf1-zb-04-P pass regression #509
+r1:zf1-zb-37-L1 pass regression #3174
+r1:zf1-zb-37-L3 pass regression #3174
+r1:zf1-zb-37-L2 pass regression #3174
+r1:zf1-zb-37-P pass regression #3174
+r1:zf1-zb-39-L3 pass regression #3508
+r1:zf1-zb-10-L3 pass new
+r1:zf1-zb-14-L2 pass regression #2222
+r1:zf1-zb-05-L0 pass regression #618
+r1:zf1-zb-39-L2 pass regression #3508
+r1:zf1-zb-09-L2 pass new
+r1:zf1-zb-07-L2 pass new
+r1:zf1-zb-45-L3 pass new
+r1:zf1-zb-05-P pass regression #618
+r1:zf1-zb-10-L2 pass new
+r1:zf1-zb-12-L3 pass new
+r1:zf1-zb-13-L3 pass regression #2143
+r1:zf1-zb-05-L1 pass regression #618
+r1:zf1-zb-13-L0 pass regression #2143
+r1:zf1-zb-41-L0 pass regression #3374
+r1:zf1-zb-12-L2 pass new
+r1:zf1-zb-22-L3 pass regression #2522
+r1:zf1-zb-07-P pass new
+r1:zf1-zb-22-L0 pass regression #2522
+r1:zf1-zb-27-L1 pass new
+r1:zf1-zb-04-L2 pass regression #509
+r1:zf1-zb-34-L0 pass new
+r1:zf1-zb-41-L3 pass regression #3374
+r1:zf1-zb-44-L3 pass new
+r1:zf1-zb-45-L2 pass new
+r1:zf1-zb-15-L1 pass regression #2304
+r1:zf1-zb-14-L1 pass regression #2222
+r1:zf1-zb-34-L1 pass new
+r1:zf1-zb-09-P pass new
+r1:zf1-zb-45-P pass new
+r1:zf1-zb-22-L2 pass regression #2522
+r1:zf1-zb-10-P pass new
+r1:zf1-zb-12-P pass new
+r1:zf1-zb-13-L2 pass regression #2143
+r1:zf1-zb-34-L3 pass new
+r1:zf1-zb-41-L1 pass regression #3374
+r1:zf1-zb-04-L0 pass regression #509
+r1:zf1-zb-12-L1 pass new
+r1:zf1-zb-44-L1 pass new
+r1:zf1-zb-09-L3 pass new
+r1:zf1-zb-22-L1 pass regression #2522
+r1:zf1-zb-15-P pass regression #2304
+r1:zf1-zb-09-L0 pass new
+r1:zf1-zb-04-L3 pass regression #509
+r1:zf1-zb-07-L0 pass new
+r1:zf1-zb-34-P pass new
+r1:zf1-zb-14-L0 pass regression #2222
+r1:zf1-zb-09-L1 pass new
+r1:zf2-09-same pass regression #5911
+r1:zf2-09-different pass new
+r1:zf2-07-same pass regression #5711
+r1:zf2-08-same pass regression #5811
+r1:zf2-02-different pass new
+r1:zf2-05-same pass regression #5511
+r1:zf2-01-different pass new
+r1:zf2-07-different pass new
+r1:zf2-04-same pass regression #5411
+r1:zf2-05-different pass new
+r1:zf2-06-same pass regression #5611
+r1:zf2-06-different pass new
+r1:zf2-02-same pass regression #5211
+r1:zf2-01-same pass regression #5111
+r1:zf2-03-same pass regression #5311
+r1:zf2-03-different pass new
+r1:zf2-08-different pass new
+r1:zf2-04-different pass new
+{
+  "exp1": {
+    "1": {
+      "all": {
+        "L0": {
+          "correct": 17,
+          "answered": 17,
+          "planned": 17,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.8156818649911483,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.1843181350088518
+          ]
+        },
+        "P": {
+          "correct": 17,
+          "answered": 17,
+          "planned": 17,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.8156818649911483,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.1843181350088518
+          ]
+        },
+        "L1": {
+          "correct": 17,
+          "answered": 17,
+          "planned": 17,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.8156818649911483,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.1843181350088518
+          ]
+        },
+        "L2": {
+          "correct": 17,
+          "answered": 17,
+          "planned": 17,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.8156818649911483,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.1843181350088518
+          ]
+        },
+        "L3": {
+          "correct": 17,
+          "answered": 17,
+          "planned": 17,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.8156818649911483,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.1843181350088518
+          ]
+        },
+        "contrasts": {
+          "placebo": {
+            "from_level": "L0",
+            "to_level": "P",
+            "complete_pairs": 17,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          },
+          "causal": {
+            "from_level": "L0",
+            "to_level": "L2",
+            "complete_pairs": 17,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          },
+          "hedge_to_authority": {
+            "from_level": "L1",
+            "to_level": "L3",
+            "complete_pairs": 17,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          }
+        }
+      },
+      "added-comment": {
+        "L0": {
+          "correct": 12,
+          "answered": 12,
+          "planned": 12,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.7575059933447592,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            2.7755575615628914e-17,
+            0.24249400665524085
+          ]
+        },
+        "P": {
+          "correct": 12,
+          "answered": 12,
+          "planned": 12,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.7575059933447592,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            2.7755575615628914e-17,
+            0.24249400665524085
+          ]
+        },
+        "L1": {
+          "correct": 12,
+          "answered": 12,
+          "planned": 12,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.7575059933447592,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            2.7755575615628914e-17,
+            0.24249400665524085
+          ]
+        },
+        "L2": {
+          "correct": 12,
+          "answered": 12,
+          "planned": 12,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.7575059933447592,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            2.7755575615628914e-17,
+            0.24249400665524085
+          ]
+        },
+        "L3": {
+          "correct": 12,
+          "answered": 12,
+          "planned": 12,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.7575059933447592,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            2.7755575615628914e-17,
+            0.24249400665524085
+          ]
+        },
+        "contrasts": {
+          "placebo": {
+            "from_level": "L0",
+            "to_level": "P",
+            "complete_pairs": 12,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          },
+          "causal": {
+            "from_level": "L0",
+            "to_level": "L2",
+            "complete_pairs": 12,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          },
+          "hedge_to_authority": {
+            "from_level": "L1",
+            "to_level": "L3",
+            "complete_pairs": 12,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          }
+        }
+      },
+      "removed-comment": {
+        "L0": {
+          "correct": 5,
+          "answered": 5,
+          "planned": 5,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.5655175352168251,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.43448246478317476
+          ]
+        },
+        "P": {
+          "correct": 5,
+          "answered": 5,
+          "planned": 5,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.5655175352168251,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.43448246478317476
+          ]
+        },
+        "L1": {
+          "correct": 5,
+          "answered": 5,
+          "planned": 5,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.5655175352168251,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.43448246478317476
+          ]
+        },
+        "L2": {
+          "correct": 5,
+          "answered": 5,
+          "planned": 5,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.5655175352168251,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.43448246478317476
+          ]
+        },
+        "L3": {
+          "correct": 5,
+          "answered": 5,
+          "planned": 5,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.5655175352168251,
+            1
+          ],
+          "followed": 0,
+          "followed_rate": 0.0,
+          "followed_wilson95": [
+            0,
+            0.43448246478317476
+          ]
+        },
+        "contrasts": {
+          "placebo": {
+            "from_level": "L0",
+            "to_level": "P",
+            "complete_pairs": 5,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          },
+          "causal": {
+            "from_level": "L0",
+            "to_level": "L2",
+            "complete_pairs": 5,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          },
+          "hedge_to_authority": {
+            "from_level": "L1",
+            "to_level": "L3",
+            "complete_pairs": 5,
+            "correct_to_wrong": 0,
+            "wrong_to_correct": 0,
+            "accuracy_drop": 0.0,
+            "followed_increase": 0.0
+          }
+        }
+      }
+    }
+  },
+  "exp2": {
+    "different": {
+      "correct": 9,
+      "answered": 9,
+      "planned": 9,
+      "errors_or_missing": 0,
+      "accuracy": 1.0,
+      "accuracy_all": 1.0,
+      "accuracy_wilson95": [
+        0.7008549515804559,
+        1
+      ],
+      "false_zombies": 0,
+      "false_zombie_rate": 0.0,
+      "false_zombie_wilson95": [
+        0,
+        0.2991450484195441
+      ]
+    },
+    "same": {
+      "correct": 9,
+      "answered": 9,
+      "planned": 9,
+      "errors_or_missing": 0,
+      "accuracy": 1.0,
+      "accuracy_all": 1.0,
+      "accuracy_wilson95": [
+        0.7008549515804559,
+        1
+      ]
+    },
+    "pair_both_correct": {
+      "correct": 9,
+      "answered": 9,
+      "planned": 9,
+      "wilson95": [
+        0.7008549515804559,
+        1
+      ]
+    }
+  },
+  "stability": {
+    "L0": {
+      "comparable_valid_answers": 0,
+      "planned": 17,
+      "changed": 0,
+      "changed_ids": [],
+      "identical": 0,
+      "identical_rate": null,
+      "identical_wilson95": null,
+      "unreadable_pair_ids": [],
+      "change_rate": null
+    },
+    "P": {
+      "comparable_valid_answers": 0,
+      "planned": 17,
+      "changed": 0,
+      "changed_ids": [],
+      "identical": 0,
+      "identical_rate": null,
+      "identical_wilson95": null,
+      "unreadable_pair_ids": [],
+      "change_rate": null
+    },
+    "L1": {
+      "comparable_valid_answers": 0,
+      "planned": 17,
+      "changed": 0,
+      "changed_ids": [],
+      "identical": 0,
+      "identical_rate": null,
+      "identical_wilson95": null,
+      "unreadable_pair_ids": [],
+      "change_rate": null
+    },
+    "L2": {
+      "comparable_valid_answers": 0,
+      "planned": 17,
+      "changed": 0,
+      "changed_ids": [],
+      "identical": 0,
+      "identical_rate": null,
+      "identical_wilson95": null,
+      "unreadable_pair_ids": [],
+      "change_rate": null
+    },
+    "L3": {
+      "comparable_valid_answers": 0,
+      "planned": 17,
+      "changed": 0,
+      "changed_ids": [],
+      "identical": 0,
+      "identical_rate": null,
+      "identical_wilson95": null,
+      "unreadable_pair_ids": [],
+      "change_rate": null
+    },
+    "all": {
+      "comparable_valid_answers": 0,
+      "planned": 85,
+      "changed": 0,
+      "changed_ids": [],
+      "identical": 0,
+      "identical_rate": null,
+      "identical_wilson95": null,
+      "unreadable_pair_ids": [],
+      "change_rate": null
+    }
+  },
+  "overall": {
+    "correct": 103,
+    "answered": 103,
+    "planned": 103,
+    "errors_or_missing": 0,
+    "accuracy": 1.0,
+    "accuracy_all": 1.0,
+    "accuracy_wilson95": [
+      0.964045241771352,
+      1
+    ]
+  },
+  "complete": true
+}
+All saved misses/errors:
+Session recorded spend: 0.331 USD; output: followup/runs/openai_gpt-6.1-sol_1fb7d035af88.json
+/benchmarks/.venv/lib/python3.12/site-packages/traitlets/traitlets.py:2930: FutureWarning: --Exporter.preprocessors=["remove_papermill_header.RemovePapermillHeader"] for containers is deprecated in traitlets 5.0. You can pass `--Exporter.preprocessors item` ... multiple times to add items to a list.
+  warn(
+[NbConvertApp] Converting notebook __notebook__.ipynb to notebook
+[NbConvertApp] Writing 12271133 bytes to __notebook__.ipynb
+/benchmarks/.venv/lib/python3.12/site-packages/traitlets/traitlets.py:2930: FutureWarning: --Exporter.preprocessors=["nbconvert.preprocessors.ExtractOutputPreprocessor"] for containers is deprecated in traitlets 5.0. You can pass `--Exporter.preprocessors item` ... multiple times to add items to a list.
+  warn(
+[NbConvertApp] Converting notebook __notebook__.ipynb to html
+/benchmarks/.venv/share/jupyter/nbconvert/templates/base/display_priority.j2:32: UserWarning: Your element with mimetype(s) dict_keys([]) is not able to be represented.
+  {%- elif type == 'text/vnd.mermaid' -%}
+[NbConvertApp] Writing 11289884 bytes to __results__.html
+END_OF_LOG
+═══ (608 lines) ═══
+
+Showed logs for 1 run(s) across 1 model(s).

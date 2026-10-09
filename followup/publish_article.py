@@ -22,6 +22,8 @@ def main():
   assert body.count(section)==1
  with urllib.request.urlopen(API,timeout=30) as response:before=json.load(response)
  identity(before)
+ baseline=(HERE/'artifacts/post_before_followup.md').read_text()
+ assert before['body_markdown'].strip() in (baseline.strip(),body.strip()),'Public article changed outside the reviewed update; inspect before replacing it.'
  backup=HERE/'artifacts/dev_before_followup.json'
  if not backup.exists():backup.write_text(json.dumps(before,indent=2,ensure_ascii=False)+'\n')
  # This is the only credential read. Never log headers or exception payloads.
