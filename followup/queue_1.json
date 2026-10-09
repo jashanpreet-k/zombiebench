@@ -1,0 +1,29 @@
+{
+  "n_runs": 1,
+  "completed": [
+    "openai/gpt-5.4-nano-2026-03-17",
+    "google/gemini-3.1-flash-lite-preview",
+    "anthropic/claude-haiku-4-5@20251001",
+    "openai/gpt-5.4-mini-2026-03-17"
+  ],
+  "unavailable": [
+    "anthropic/claude-sonnet-4-5@20250929"
+  ],
+  "started_at": "2026-10-09T03:46:54.175331+00:00",
+  "last_quota": [
+    {
+      "period": "DAILY",
+      "used": 1.0237059080000002,
+      "total": 10,
+      "remaining": 8.976294092,
+      "refill_at": "2026-10-10 03:07:01.033000"
+    },
+    {
+      "period": "MONTHLY",
+      "used": 10.558127952999996,
+      "total": 100,
+      "remaining": 89.441872047,
+      "refill_at": "2026-11-01 05:06:33.812000"
+    }
+  ]
+}

@@ -15,14 +15,16 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--remaining-usd',type=float,required=True)
 parser.add_argument('--n-runs',type=int,choices=[1,2],default=1)
 parser.add_argument('--model',default='openai/gpt-5.4-nano-2026-03-17')
+parser.add_argument('--fresh',action='store_true',help='Publish a reproducible fresh task without archived response seeds.')
 args=parser.parse_args()
 if not 2<args.remaining_usd<=10:parser.error('Current quota must exceed $2 and not exceed $10.')
 cases=json.loads((HERE/'cases_followup.json').read_text())
 sha=hashlib.sha256(json.dumps(cases,sort_keys=True).encode()).hexdigest()
 seeds,_=records(HERE)
+if args.fresh:seeds={}
 for d in seeds.values():
     if d['dataset_sha256']!=sha:raise SystemExit('Seed dataset mismatch')
-if args.n_runs==2:
+if args.n_runs==2 and not args.fresh:
     needed={'r1:'+c['id'] for c in cases}
     if args.model not in seeds or not needed<=seeds[args.model]['results'].keys():
         parser.error('Download the complete first run before building a second-repetition entry point.')

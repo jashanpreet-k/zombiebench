@@ -136,6 +136,9 @@ def execute_model(llm, model, budget, max_calls=0, n_runs=1):
 def zombiebench_followup(llm, remaining_usd: float = 0.0, max_calls: int = 0, n_runs: int = 1, max_session_usd: float = 2.0) -> float:
     model=getattr(llm,'model',None) or getattr(llm,'name',None)
     if not model:raise ValueError('Model must have a stable identifier.')
+    # Repeats are planned only for the cheaper requested models. A platform
+    # initialization model must not trigger an unrequested extra repetition.
+    if str(model) not in CHEAPER_MODELS:n_runs=1
     budget=ACTIVE_BUDGET or Budget(remaining_usd)
     if ACTIVE_BUDGET is None:
         if not 0 < max_session_usd <= remaining_usd-2:raise ValueError('Session allocation exceeds available quota minus reserve.')

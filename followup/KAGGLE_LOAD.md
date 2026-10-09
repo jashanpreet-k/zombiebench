@@ -1,15 +1,15 @@
 # Kaggle fallback: one cell
 
-Use this only if the CLI login/push/run cannot be restored. No follow-up task is public yet.
+The CLI is working and the [follow-up task is public](https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup). This is an archived fallback for future reproduction, not an outstanding user action.
 
-1. Open Kaggle → Benchmarks → create a new task/notebook; name it `zombiebench_followup`. Do not edit the original ZombieBench notebook.
+1. Open the existing follow-up task → edit its backing notebook, or use a separate reproduction notebook. Do not edit the original ZombieBench task.
 2. Enable the notebook's Internet access and the Kaggle Benchmarks environment. Read the daily and monthly AI-inference dollar balances; use the smaller remaining balance below (maximum $10). Keep other inference notebooks idle.
 3. Paste and run this single cell. It runs the requested model priorities and resumes saved answers. Do not replace an unavailable model silently.
 
 ```python
 import hashlib, urllib.request
 source = urllib.request.urlopen("https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/followup/kaggle_followup.py").read()
-assert hashlib.sha256(source).hexdigest() == "494f4ec2a8a2c62931b331dda6e0547e4e4b7c9bbb562df11d9c0f659b1992de", "Source changed; review before running."
+assert hashlib.sha256(source).hexdigest() == "d6d6cc83171d12351132bc67e8c7a1fd5c61aa9f1db51eb500d4ab93bd9ac991", "Source changed; review before running."
 exec(compile(source, "zombiebench_followup.py", "exec"))
 remaining = float(input("Current remaining AI inference dollars (min of daily/monthly, up to 10): "))
 run_plan(remaining_usd=remaining)

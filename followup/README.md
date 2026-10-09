@@ -1,6 +1,6 @@
 # ZombieBench controlled follow-up
 
-Status: ladder built and audited; **no follow-up inference results yet**. The original dataset, grading task, results and live article are unchanged by this upgrade.
+Status: public task running through the authenticated Kaggle CLI. Saved responses and the current analysis are in `runs/`, `analysis.json`, and [RESULTS.md](RESULTS.md). The original dataset, task and results are unchanged.
 
 ## Design
 
@@ -33,13 +33,13 @@ python followup/estimate_cost.py
 
 `kaggle_followup.py` is a standalone task named `zombiebench_followup`; it makes no calls merely on import. `n_runs=1` means 85 ladder prompts + 18 expansion prompts. `n_runs=2` adds only the 85 missing second-repeat ladder answers when saved outputs are present. Calls use separate chats, provider defaults and no SDK response cache.
 
-`run_plan(remaining_usd)` runs the requested nine cheaper models first, then two frontier controls, then repeats only the cheaper models' Experiment 1. Total planned workload is 1,898 calls before retries. Missing requested model IDs stop the plan rather than silently substituting a model. Raw replies, parsed answers, reasons, prompt hashes and every attempt's usage are saved in `followup/runs/` and included in a result ZIP. An API error is retried once. Unreadable model text is a scored miss, not an API retry.
+`run_plan(remaining_usd)` runs the requested nine cheaper models first, then two frontier controls, then repeats only the cheaper models' Experiment 1. Total planned workload is 1,898 calls before retries. The notebook helper refuses unavailable IDs; the CLI scheduler records and skips them without substitution. Sonnet 4.5 was absent from the catalog. Raw replies, parsed answers, reasons, prompt hashes and every attempt's usage are saved in `followup/runs/` and included in a result ZIP. An API error is retried once. Unreadable model text is a scored miss, not an API retry.
 
 Check both daily and monthly **inference dollars** before each batch. Installed CLI 2.2.4's `kaggle quota` reports accelerator hours; `python followup/inference_quota.py` reads the official SDK dollar-quota endpoint. Newer CLI releases offer `kaggle benchmarks quota`. Never print access tokens or proxy credentials.
 
-The session guard subtracts $2 from the supplied remaining balance, accounts for reported nanodollar usage, and stops when less than max($0.10, three times the largest observed call) remains in that allocation. Missing cost metadata stops the plan. This is a conservative heuristic, not a provable pre-call cap: unusually large reasoning output can exceed the allowance. Check quota again after each batch and avoid concurrent jobs. Resume only after the actual refill shown by Kaggle, preserving the saved files; do not infer a reset from the local calendar date.
+The session guard subtracts $2 from the supplied remaining balance, accounts for reported nanodollar usage, and stops when less than max($0.10, three times the largest observed call) remains in that allocation. Missing cost metadata stops the plan. This is a conservative heuristic, not a provable pre-call cap: unusually large reasoning output can exceed the allowance. The CLI scheduler conservatively reserves a separate $2 allocation for every active job, plus the $2 account reserve. Check quota again before each launch. Resume only after the actual refill shown by Kaggle, preserving the saved files; do not infer a reset from the local calendar date.
 
-`cost_plan.json` gives hypothetical tariff scenarios, not verified Kaggle prices: $5.93 / $13.02 / $33.44 total for short / buffered / long-reasoning assumptions. Actual completion within two $8 spend allocations is unverified until rates and usage are available.
+`cost_plan.json` gives hypothetical tariff scenarios, not verified Kaggle prices: $5.93 / $13.02 / $33.44 total for short / buffered / long-reasoning assumptions. These were planning scenarios only. Recorded execution costs are computed from saved SDK result files; the authenticated quota endpoint determines what can actually be scheduled.
 
 [Single-cell notebook fallback and exact files to return](KAGGLE_LOAD.md).
 
@@ -51,7 +51,7 @@ Stability compares verdict and ID, excluding missing/API-error/unreadable pairs;
 
 Original public task: https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench
 
-Follow-up task URL: pending actual push; no public follow-up task has been verified.
+Public follow-up task: https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup
 
 ## CLI entry point
 

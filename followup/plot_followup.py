@@ -17,11 +17,14 @@ def main():
  fig,axs=plt.subplots(rows,cols,figsize=(13,rows*2.9),squeeze=False,layout='constrained')
  entries=[('Pooled first runs',d['pooled'])]+[(label(m),d['models'][m]) for m in models]
  for ax,(name,report) in zip(axs.flat,entries):
-  ladder=report['exp1']['1']['all'];values=np.array([ladder[v]['followed_rate']*100 for v in LEVELS]);ci=np.array([ladder[v]['followed_wilson95'] for v in LEVELS])*100
-  ax.errorbar(range(5),values,yerr=np.array([values-ci[:,0],ci[:,1]-values]),color='#2166ac',marker='o',capsize=3,lw=2)
-  ax.set_xticks(range(5),LEVELS);ax.set_ylim(-5,108);ax.set_title(name,fontsize=10);ax.set_ylabel('Wrong target selected (%)');ax.grid(axis='y',alpha=.15)
+  ladder=report['exp1']['1']['all']
+  for metric,ci_name,color,marker,legend in [('accuracy','accuracy_wilson95','#164471','o','Correct answer'),('followed_rate','followed_wilson95','#70add2','s','Wrong target ID')]:
+   values=np.array([ladder[v][metric]*100 for v in LEVELS]);ci=np.array([ladder[v][ci_name] for v in LEVELS])*100
+   ax.errorbar(range(5),values,yerr=np.maximum(0,np.array([values-ci[:,0],ci[:,1]-values])),color=color,marker=marker,capsize=3,lw=2,label=legend)
+  ax.set_xticks(range(5),LEVELS);ax.set_ylim(-5,108);ax.set_title(name,fontsize=10);ax.set_ylabel('Answers (%)');ax.grid(axis='y',alpha=.15)
  for ax in list(axs.flat)[len(entries):]:ax.set_visible(False)
- fig.suptitle('Does confidence and claimed authority increase wrong-target choices?',fontsize=16)
+ fig.suptitle('Same report, different comment: accuracy and wrong-target choices',fontsize=16)
+ axs.flat[0].legend(loc='best',fontsize=8,framealpha=.9)
  fig.supxlabel('L0 clean · P irrelevant placebo · L1 hedged · L2 confident · L3 claimed authority\nFirst runs only. Bars: descriptive Wilson 95% intervals; pooled dependence is not modeled.',fontsize=10)
  OUT.mkdir(exist_ok=True);fig.savefig(OUT/'zombiebench-followup-ladder.png',dpi=200);plt.close(fig)
  fig,ax=plt.subplots(figsize=(11,max(4,n*.58+1.8)),layout='constrained');y=np.arange(n)

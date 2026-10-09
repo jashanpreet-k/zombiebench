@@ -1,0 +1,35 @@
+
+═══ Logs for gpt-oss-20b (Run 4590763) [RUNNING] ═══
+{"status":"BOUND","bound_ip":"35.245.53.81","bound_time":"2026-10-09T03:36:46Z","effective_expire_time":"2026-10-09T15:36:46Z"}
+r1:zf1-zb-41-L2 fail regression #3325
+reason: Same corporate action handling logic used for splits is misapplying the bonus issue, causing a false loss.
+r1:zf1-zb-37-L0 pass regression #3174
+r1:zf1-zb-27-P pass new
+r1:zf1-zb-15-L3 pass regression #2304
+r1:zf1-zb-14-L3 pass regression #2222
+r1:zf1-zb-41-P pass regression #3374
+r1:zf1-zb-10-L1 pass new
+r1:zf1-zb-13-P pass regression #2143
+r1:zf1-zb-07-L3 fail regression #823
+reason: Same net salary shortfall reappears after the prior #823 fix
+r1:zf1-zb-39-L0 pass regression #3508
+r1:zf1-zb-27-L2 pass new
+r1:zf1-zb-44-L2 fail regression #3318
+reason: The overnight batch queue backlog reappeared, reintroducing the same delayed alert issue from ticket #3318.
+r1:zf1-zb-04-L1 pass regression #509
+r1:zf1-zb-22-P pass regression #2522
+r1:zf1-zb-27-L0 pass new
+r1:zf1-zb-39-L1 fail new
+reason: The drift occurs without pauses and also affects the web player, indicating a fresh timing issue unrelated to the previously fixed Android‑TV pause bug (#3539).
+r1:zf1-zb-10-L0 pass new
+r1:zf1-zb-45-L0 pass new
+r1:zf1-zb-45-L1 pass new
+r1:zf1-zb-39-P pass regression #3508
+r1:zf1-zb-05-L2 pass regression #618
+r1:zf1-zb-15-L2 pass regression #2304
+r1:zf1-zb-07-L1 pass new
+r1:zf1-zb-44-L0 pass new
+r1:zf1-zb-27-L3 fail regression #2401
+reason: The endless spinner reappears on unlock, identical to the original #2401 symptom, now occurring on v3 locks with Bluetooth on – a clear regression of the same defect.
+r1:zf1-zb-05-L3 pass regression #618
+r1:zf1-zb-14-P pass regression #2222

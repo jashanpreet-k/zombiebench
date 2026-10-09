@@ -1,0 +1,113 @@
+
+═══ Logs for gemini-2.5-flash (Run 4590813) [RUNNING] ═══
+{"status":"BOUND","bound_ip":"34.24.20.41","bound_time":"2026-10-09T03:47:34Z","effective_expire_time":"2026-10-09T15:47:34Z"}
+r1:zf1-zb-41-L2 pass regression #3374
+r1:zf1-zb-37-L0 pass regression #3174
+r1:zf1-zb-27-P pass new
+r1:zf1-zb-15-L3 pass regression #2304
+r1:zf1-zb-14-L3 pass regression #2222
+r1:zf1-zb-41-P pass regression #3374
+r1:zf1-zb-10-L1 pass new
+r1:zf1-zb-13-P pass regression #2143
+r1:zf1-zb-07-L3 pass new
+r1:zf1-zb-39-L0 pass regression #3508
+r1:zf1-zb-27-L2 pass new
+r1:zf1-zb-44-L2 pass new
+r1:zf1-zb-04-L1 pass regression #509
+r1:zf1-zb-22-P pass regression #2522
+r1:zf1-zb-27-L0 pass new
+r1:zf1-zb-39-L1 pass regression #3508
+r1:zf1-zb-10-L0 pass new
+r1:zf1-zb-45-L0 fail regression #3518
+reason: The new bug describes 16+ titles appearing on a kids profile's home screen in the 'Because you watched' row, indicating a regression of the age-rating filter issue for kids profiles, which was previously fixed in #3518 for explicit search results but now affects another content surfacing path within the search component.
+r1:zf1-zb-45-L1 fail regression #3518
+reason: The new bug describes 16+ titles appearing for kids profiles on the home screen via the 'Because you watched' row, which is a manifestation of the same underlying 'Missing filter' defect regarding age restrictions in the search/recommendation system, similar to how #3518 caused 16+ titles to appear in search results.
+r1:zf1-zb-39-P pass regression #3508
+r1:zf1-zb-05-L2 pass regression #618
+r1:zf1-zb-15-L2 pass regression #2304
+r1:zf1-zb-07-L1 pass new
+r1:zf1-zb-44-L0 pass new
+r1:zf1-zb-27-L3 pass new
+r1:zf1-zb-05-L3 pass regression #618
+r1:zf1-zb-14-P pass regression #2222
+r1:zf1-zb-12-L0 pass new
+r1:zf1-zb-34-L2 pass new
+r1:zf1-zb-44-P pass new
+r1:zf1-zb-13-L1 pass regression #2143
+r1:zf1-zb-15-L0 pass regression #2304
+r1:zf1-zb-04-P pass regression #509
+r1:zf1-zb-37-L1 pass regression #3174
+r1:zf1-zb-37-L3 pass regression #3174
+r1:zf1-zb-37-L2 fail new
+reason: The symptoms of the new bug describe a checkout invoice being off by a rupee due to line-by-line GST rounding, which aligns with bug #3174. However, bug #3174 was fixed in Python's 'invoices' component, while this new bug is reported in TypeScript's 'booking-engine' component, meaning it is a similar, but distinct, defect in a different part of the system rather than a regression of #3174. It also explicitly contradicts the symptoms of #3108, which was about the confirmation page.
+r1:zf1-zb-37-P pass regression #3174
+r1:zf1-zb-39-L3 pass regression #3508
+r1:zf1-zb-10-L3 pass new
+r1:zf1-zb-14-L2 pass regression #2222
+r1:zf1-zb-05-L0 pass regression #618
+r1:zf1-zb-39-L2 pass regression #3508
+r1:zf1-zb-09-L2 pass new
+r1:zf1-zb-07-L2 pass new
+r1:zf1-zb-45-L3 fail regression #3518
+reason: The new bug's title, component, and the developer's explicit comment strongly indicate a re-emergence of the issue where 16+ titles appear in kids profiles due to a missing filter in the search component, even if the specific manifestation has shifted from direct search results to the 'Because you watched' row.
+r1:zf1-zb-05-P pass regression #618
+r1:zf1-zb-10-L2 pass new
+r1:zf1-zb-12-L3 fail regression #1311
+reason: This bug is a regression of #1311 because, like the previous issue where missing values defaulted to 0, this bug also results in an incorrect zero reading due to the system failing to properly handle an exceptional numerical state (integer overflow) rather than reporting it as an invalid or maximum value.
+r1:zf1-zb-13-L3 pass regression #2143
+r1:zf1-zb-05-L1 pass regression #618
+r1:zf1-zb-13-L0 pass regression #2143
+r1:zf1-zb-41-L0 pass regression #3374
+r1:zf1-zb-12-L2 pass new
+r1:zf1-zb-22-L3 pass regression #2522
+r1:zf1-zb-07-P pass new
+r1:zf1-zb-22-L0 pass regression #2522
+r1:zf1-zb-27-L1 pass new
+r1:zf1-zb-04-L2 pass regression #509
+r1:zf1-zb-34-L0 pass new
+r1:zf1-zb-41-L3 pass regression #3374
+r1:zf1-zb-44-L3 fail regression #3318
+reason: The senior developer who fixed #3318 explicitly states that the issue is back, and the symptoms of price alerts set overnight arriving late at market open are a direct match for the defect addressed in #3318, despite the specific point of failure possibly shifting to iOS push notification delivery.
+r1:zf1-zb-45-L2 fail regression #3518
+reason: The 'Because you watched' row is displaying 16+ titles on a kids profile, indicating a regression of the rating filter functionality within the search component that was addressed in #3518.
+r1:zf1-zb-15-L1 pass regression #2304
+r1:zf1-zb-14-L1 pass regression #2222
+r1:zf1-zb-34-L1 fail regression #2643
+reason: The new bug describes invoices from a specific day (the 31st) being excluded from an export, which is a common symptom of date boundary errors or timezone miscalculations, similar to how #2643 caused due dates to appear a day early due to timezone interpretation.
+r1:zf1-zb-09-P pass new
+r1:zf1-zb-45-P fail regression #3518
+reason: The search component, previously fixed to filter 16+ titles from direct search results for kids profiles, is now failing to filter them when generating recommendation rows for the home screen, indicating the same underlying 'missing filter' defect has re-emerged in a different search pathway.
+r1:zf1-zb-22-L2 pass regression #2522
+r1:zf1-zb-10-P pass new
+r1:zf1-zb-12-P pass new
+r1:zf1-zb-13-L2 pass regression #2143
+r1:zf1-zb-34-L3 pass new
+r1:zf1-zb-41-L1 pass regression #3374
+r1:zf1-zb-04-L0 pass regression #509
+r1:zf1-zb-12-L1 pass new
+r1:zf1-zb-44-L1 pass new
+r1:zf1-zb-09-L3 pass new
+r1:zf1-zb-22-L1 pass regression #2522
+r1:zf1-zb-15-P pass regression #2304
+r1:zf1-zb-09-L0 pass new
+r1:zf1-zb-04-L3 pass regression #509
+r1:zf1-zb-07-L0 pass new
+r1:zf1-zb-34-P fail regression #2611
+reason: The new bug describes invoices from a specific day (the 31st) missing from an export, which is a common symptom of date range calculations being off by one day due to timezone interpretations, similar to the underlying cause of #2611.
+r1:zf1-zb-14-L0 pass regression #2222
+r1:zf1-zb-09-L1 pass new
+r1:zf2-09-same pass regression #5911
+r1:zf2-09-different pass new
+r1:zf2-07-same pass regression #5711
+r1:zf2-08-same pass regression #5811
+r1:zf2-02-different pass new
+r1:zf2-05-same pass regression #5511
+r1:zf2-01-different fail regression #5111
+reason: The new bug report describes the identical symptom and underlying cause (timezone handling for date assignment) as bug #5111, specifically noting the issue in WarehouseScanner.service_day, which was explicitly mentioned as being outside the scope of the original #5111 fix, indicating an incomplete resolution of the original defect.
+r1:zf2-07-different pass new
+r1:zf2-04-same pass regression #5411
+r1:zf2-05-different fail regression #5511
+reason: The new bug describes the exact same race condition symptom and cause (check-then-write without a shared lock) as bug #5511, but specifically manifests in FleetReservation.claim, which was explicitly noted as an unaddressed route in the fix for #5511.
+r1:zf2-06-same pass regression #5611
+r1:zf2-06-different fail regression #5611
+reason: The new bug describes the exact same unit conversion defect (feet to meters without multiplication by 0.3048) in the `BulkRouteImport.height` function, which was explicitly noted as 'outside this patch' in the fix for bug #5611, confirming it's the same underlying defect that was incompletely addressed.

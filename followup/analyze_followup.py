@@ -49,7 +49,7 @@ def analyze():
     pooled=summarize(pooled_cases,pooled_rows,n_runs=2)
     ladder=pooled['exp1']['1']['all'];clean=ladder['L0'];planted=ladder['L2'];delta=ladder['contrasts']['causal']['accuracy_drop']
     if delta>0:
-        headline=(f'Across {len(included)} models and {clean["answered"]} paired reports, adding a confident wrong diagnosis reduced accuracy from {clean["correct"]}/{clean["answered"]} to {planted["correct"]}/{planted["answered"]} ({delta*100:.1f} percentage points).')
+        headline=(f'In a controlled test across {len(included)} models, adding a confident wrong diagnosis reduced accuracy from {clean["correct"]}/{clean["answered"]} to {planted["correct"]}/{planted["answered"]} ({delta*100:.1f} percentage points). Each comparison used the same report, with only the comment changed.')
     elif delta<0:
         headline=(f'Across {len(included)} models and {clean["answered"]} paired reports, the confident wrong comment did not reduce pooled accuracy: it rose from {clean["correct"]}/{clean["answered"]} to {planted["correct"]}/{planted["answered"]}.')
     else:

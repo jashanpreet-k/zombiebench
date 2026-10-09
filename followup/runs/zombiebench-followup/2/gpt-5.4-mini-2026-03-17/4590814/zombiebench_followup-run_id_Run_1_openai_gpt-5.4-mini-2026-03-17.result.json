@@ -1,0 +1,33 @@
+{
+  "task_name": "zombiebench_followup",
+  "trial_name": "zombiebench_followup-Run #1",
+  "trial_uri": "kbench://not-a-harbor-trial",
+  "task_id": {
+    "path": "kbench://not-a-harbor-task"
+  },
+  "task_checksum": "unknown (kbench)",
+  "config": {
+    "task": {
+      "path": "kbench://not-a-harbor-task"
+    }
+  },
+  "agent_info": {
+    "name": "kaggle-benchmarks",
+    "version": "0.6.1",
+    "model_info": {
+      "name": "openai/gpt-5.4-mini-2026-03-17"
+    }
+  },
+  "agent_result": {
+    "n_input_tokens": 138665,
+    "n_output_tokens": 5700,
+    "cost_usd": 0.09733515
+  },
+  "verifier_result": {
+    "rewards": {
+      "score": 0.9029126213592233
+    }
+  },
+  "started_at": "2026-10-09T03:47:45.317154Z",
+  "finished_at": "2026-10-09T03:51:49.940138Z"
+}

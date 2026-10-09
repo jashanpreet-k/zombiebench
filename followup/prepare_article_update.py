@@ -7,20 +7,24 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
 
 def percentage(g,metric='accuracy'):
- rate=g[metric];lo,hi=g[metric+'_wilson95']
+ rate=g[metric];ci_key={'followed_rate':'followed_wilson95','false_zombie_rate':'false_zombie_wilson95'}.get(metric,metric+'_wilson95');lo,hi=g[ci_key]
  return f'{rate*100:.1f}% (Wilson 95%: {lo*100:.1f}–{hi*100:.1f}%)'
 
 def main():
  d=json.loads((HERE/'analysis.json').read_text());cases=json.loads((HERE/'cases_followup.json').read_text())
- if d['excluded_incomplete_models']:raise SystemExit('Resolve or explicitly document incomplete models before writing the article.')
+ if not d['included_first_run_models']:raise SystemExit('No complete first runs to publish.')
  p=d['pooled'];e=p['exp1']['1']['all'];diff=p['exp2']['different'];same=p['exp2']['same'];n=len(d['included_first_run_models'])
  contrast=e['contrasts']['causal'];original=p['exp1']['1']['removed-comment']['contrasts']['causal']
  pair_count=len({c['pair_id'] for c in cases if c['experiment']=='exp1'});new_count=sum(c['experiment']=='exp2' and c['variant']=='different' for c in cases)
  note=(f'Each of {n} models saw the same {pair_count} reports in separate chats under five conditions: no comment (L0), an irrelevant confident meeting note (P), a hedged wrong diagnosis (L1), a confident wrong diagnosis (L2), and a developer claiming to have fixed that bug personally (L3). Only the terminal comment line changed; the correct answer did not. These are first-run results.\n\n')
- table='| Comment | Correct | Accuracy, Wilson 95% | Wrong target selected | Target rate, Wilson 95% |\n|---|---:|---|---:|---|\n'
+ table='Both rate columns include descriptive Wilson 95% intervals.\n\n| Comment | Correct: count; rate [95% CI] | Wrong target: count; rate [95% CI] |\n|---|---|---|\n'
+ def compact(g,metric):
+  ci=g['accuracy_wilson95' if metric=='accuracy' else 'followed_wilson95']
+  return f'{g[metric]*100:.1f}% [{ci[0]*100:.1f}–{ci[1]*100:.1f}]'
  for v in ('L0','P','L1','L2','L3'):
-  g=e[v];table+=f'| {v} | {g["correct"]}/{g["answered"]} | {percentage(g)} | {g["followed"]}/{g["answered"]} | {percentage(g,"followed_rate")} |\n'
- causal=(f'On the paired L0/L2 comparison, {contrast["correct_to_wrong"]} answers changed from correct to wrong and {contrast["wrong_to_correct"]} changed from wrong to correct. The observed accuracy drop was {contrast["accuracy_drop"]*100:.1f} percentage points. The placebo accuracy change was {-e["contrasts"]["placebo"]["accuracy_drop"]*100:.1f} points; wrong-target selection changed by {e["contrasts"]["hedge_to_authority"]["followed_increase"]*100:.1f} points from L1 to L3.\n\n'
+  g=e[v];table+=f'| {v} | {g["correct"]}/{g["answered"]}; {compact(g,"accuracy")} | {g["followed"]}/{g["answered"]}; {compact(g,"followed_rate")} |\n'
+ placebo_change=-e['contrasts']['placebo']['accuracy_drop']*100 or 0.0
+ causal=(f'On the paired L0/L2 comparison, {contrast["correct_to_wrong"]} answers changed from correct to wrong and {contrast["wrong_to_correct"]} changed from wrong to correct. The observed accuracy drop was {contrast["accuracy_drop"]*100:.1f} percentage points. The placebo accuracy change was {placebo_change:.1f} points; wrong-target selection changed by {e["contrasts"]["hedge_to_authority"]["followed_increase"]*100:.1f} points from L1 to L3.\n\n'
   f'Among the original planted-diagnosis cases, {original["correct_to_wrong"]}/{original["complete_pairs"]} model–case pairs were wrong at L2 and correct at L0. At L0 and P, “wrong target selected” means the ID named in the other conditions: there is no diagnostic comment to follow.\n\n')
  quote=d['l3_quote']
  if quote:causal+=f'One L3 answer from `{quote["model"]}` on `{quote["case_id"]}`:\n\n> '+quote['reason'].replace('\n',' ')+'\n\n'
@@ -32,14 +36,20 @@ def main():
   f'Models called {diff["false_zombies"]}/{diff["answered"]} different-code cases regressions: a false-zombie rate of {percentage(diff,"false_zombie_rate")}. '
   f'Both members were correct in {p["exp2"]["pair_both_correct"]["correct"]}/{p["exp2"]["pair_both_correct"]["answered"]} matched model–case pairs.\n\n'
   'The matching guards against rewarding a model that always says “new.” These cases use explicit source traces and a repeated scaffold; they extend coverage, but their difficulty is not calibrated to the original expert tier.\n')
- stable=p['stability']['all'];repeated=[m for m,r in d['models'].items() if r['stability']['all']['comparable_valid_answers']]
- limits=(f'- **Follow-up limits:** the added cases and comments are synthetic. All {n} included models have one full follow-up run; {len(repeated)} have a second Experiment 1 run. ')
+ stable=p['stability']['all'];repeated=[m for m,r in d['models'].items() if m in d['included_first_run_models'] and '2' in r['exp1'] and all(r['exp1']['2']['all'][v]['errors_or_missing']==0 for v in ('L0','P','L1','L2','L3'))]
+ limits=(f'- **Follow-up limits:** the added cases and comments are synthetic. All {n} included models have one full follow-up run; {len(repeated)} '+('has' if len(repeated)==1 else 'have')+' a second Experiment 1 run. ')
  if stable['comparable_valid_answers']:
   lo,hi=stable['identical_wilson95'];limits+=(f'Across valid comparable responses, {stable["identical"]}/{stable["comparable_valid_answers"]} answers were identical ({stable["identical_rate"]*100:.1f}%; Wilson 95% {lo*100:.1f}–{hi*100:.1f}%), and {stable["changed"]} changed. ')
  limits+='Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Two type-C selection exceptions were approved because only one eligible type-C source case was universally correct. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.\n'
- limits+='- **Run correction:** the CLI initially bound nano explicitly, so one run scheduled under Gemini actually called nano. Saved SDK metadata identified the error. That independent nano run supplies its repeat comparison; its extra expansion answers are excluded. The corrected task uses Kaggle’s selected-model placeholder, and actual model IDs are checked before pooling.\n'
+ limits+='- **Run correction:** the CLI initially bound nano explicitly, so one run scheduled under Gemini actually called nano. Saved SDK metadata identified the error. The platform’s extra initialization model is excluded from the headline comparison. That independent nano run supplies its repeat comparison; its extra expansion answers are excluded. The corrected task uses Kaggle’s selected-model placeholder, and actual model IDs are checked before pooling.\n'
  limits+='- **Availability:** Sonnet 4.5 was absent from Kaggle’s follow-up model catalog and was not replaced.\n'
- text=(ROOT/'post.md').read_text()
+ if d['excluded_incomplete_models']:limits+='- **Incomplete runs excluded from pooled comparisons:** '+', '.join('`'+m+'`' for m in d['excluded_incomplete_models'])+'. Partial outputs remain in the repository.\n'
+ limits+='\n| Follow-up model | Full first runs | Full Experiment 1 repeats | Changed / valid comparable answers |\n|---|---:|---:|---:|\n'
+ for model in d['included_first_run_models']:
+  r=d['models'][model];s=r['stability']['all'];repeat=int(model in repeated)
+  limits+=f'| {model.split("/")[-1].split("@")[0]} | 1 | {repeat} | '+(f'{s["changed"]}/{s["comparable_valid_answers"]}' if s['comparable_valid_answers'] else 'Not repeated')+' |\n'
+ limits+='\n'
+ text=(HERE/'artifacts/post_before_followup.md').read_text()
  if '### The follow-up: same report, different comment' in text:raise SystemExit('Follow-up already present; review edits instead of duplicating.')
  hook=d['headline'];assert len(hook.split())<60
  start=text.index('I gave AI models');text=text[:start]+hook+'\n\n'+text[start:]
@@ -50,6 +60,10 @@ def main():
  text=text.replace('This is the leaderboard the Kaggle link shows:', 'This is the saved leaderboard snapshot from publication:')
  text=text.replace('gpt-oss-120b and Gemini 3.8 Flash were still running on Kaggle when I published, so they aren\'t in this table.',"gpt-oss-120b and Gemini 3.8 Flash were still running on Kaggle when I published, so they aren't in this archived table.")
  text=text.replace('More "same mistake, different code" cases, since that\'s where models split, and several runs per model to measure how noisy the scores are.', 'Next I would test less templated reports from independent authors and repeat the comparisons across more sampling settings.')
+ text=text.replace("There was no run without that note, so these results don't show that it changed their answers.", 'That original observation alone was correlational; the follow-up above compares standardized comments with clean versions of the same reports.')
+ old_audit=next(line for line in text.splitlines() if line.startswith('- **Blind audits.**'))
+ text=text.replace(old_audit,'- **Blind audits.** The build log records blind audits and revisions for the original cases, but their raw audit answers were not archived. For the follow-up, fresh agents answered shuffled prompts without the answer key; the prompts, answers and agreement checks are archived in the repository.')
+ text=text.replace('The full Kaggle model ids, and both leaderboards, are in the repo\'s `results/` folder.', 'The original full Kaggle model ids and both original leaderboards are in the repo\'s `results/` folder. Follow-up raw responses, model identities, intervals and per-model stability are in `followup/`.')
  original_link='- **Kaggle task (official leaderboard):** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench'
  text=text.replace(original_link,original_link+'\n- **Controlled follow-up task:** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup',1)
  (HERE/'post_proposed.md').write_text(text)

@@ -18,6 +18,7 @@ def records(root=HERE):
   if matches:
    a=matches[0]
    if d['model']!=a['actual_model']:raise ValueError('Correction does not match actual model')
+   if a.get('exclude_from_analysis'):continue
    transformed={}
    for key,r in d['results'].items():
     if r['experiment']!='exp1':continue

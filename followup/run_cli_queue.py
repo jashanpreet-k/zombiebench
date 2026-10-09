@@ -40,42 +40,44 @@ def main():
  def current_runs(wanted):
   request=ApiListBenchmarkTaskRunsRequest();request.task_slug=task.slug;request.model_version_slugs=wanted
   with api.build_kaggle_client() as client:return client.benchmarks.benchmark_tasks_api_client.list_benchmark_task_runs(request).runs
- # Preserve priority boundaries: finish cheaper first runs before frontier controls.
- phases=[models[:9],models[9:]] if args.n_runs==1 else [models]
- for phase in phases:
-  pending=[]
-  data,_=records(HERE)
-  for model in phase:
-   if model not in slugs:
-    progress['unavailable'].append(model);save();print('UNAVAILABLE',model,flush=True);continue
-   if model in data and summarize(cs,data[model]['results'],n_runs=args.n_runs)['complete']:
-    progress['completed'].append(model);save();print('ALREADY SAVED',model,flush=True);continue
-   pending.append(model)
-  while pending:
+ # Launch in priority order, while reserving allocations for jobs still active.
+ pending=[]
+ data,_=records(HERE)
+ for model in models:
+  if model not in slugs:
+   progress['unavailable'].append(model);save();print('UNAVAILABLE',model,flush=True);continue
+  if model in data and summarize(cs,data[model]['results'],n_runs=args.n_runs)['complete']:
+   progress['completed'].append(model);save();print('ALREADY SAVED',model,flush=True);continue
+  pending.append(model)
+ while pending:
+  wanted=[slugs[m] for m in pending];runs=current_runs(wanted)
+  byslug={r.model_version_slug:r for r in runs}
+  finished=[m for m in pending if slugs[m] in byslug and byslug[slugs[m]].state in api._TERMINAL_RUN_STATES]
+  if finished:
+   cli('download',TASK,*[arg for model in finished for arg in ('-m',slugs[model])],'-o','followup/runs')
+   data,_=records(HERE)
+   for model in finished:
+    if model not in data or not summarize(cs,data[model]['results'],n_runs=args.n_runs)['complete']:
+     progress['stop']='Incomplete or actual-model mismatch: '+model;save();print('REVIEW STOP',progress['stop'],flush=True);return
+    progress['completed'].append(model);pending.remove(model);save();print('SAVED',model,flush=True)
+  if not pending:break
+  active=[m for m in pending if slugs[m] in byslug and byslug[slugs[m]].state not in api._TERMINAL_RUN_STATES]
+  waiting=[m for m in pending if slugs[m] not in byslug]
+  if waiting and len(active)<3:
    q=subprocess.run(['kaggle','quota','--format','json'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
    if q.returncode:raise RuntimeError('Accelerator quota command failed')
    quota=balances();progress['last_quota']=quota;save()
    remaining=min(x['remaining'] for x in quota)
-   capacity=min(3,int((remaining-2)//2))
-   print('QUOTA',json.dumps(quota),flush=True)
-   if capacity<1:
+   # Conservative: reserve the full $2 for each ongoing job even if some is spent.
+   capacity=min(3-len(active),max(0,int((remaining-2-2*len(active))//2)))
+   print('QUOTA',json.dumps(quota),'active',len(active),flush=True)
+   if capacity:
+    batch=waiting[:capacity]
+    cli('run',TASK,*[arg for model in batch for arg in ('-m',slugs[model])])
+    print('LAUNCHED',batch,flush=True)
+   elif not active:
     progress['stop']='Preserving $2 account reserve plus $2 per scheduled task.';save();print('BUDGET STOP',flush=True);return
-   batch=pending[:capacity];wanted=[slugs[m] for m in batch]
-   existing=current_runs(wanted);existing_slugs={r.model_version_slug for r in existing}
-   missing=[slug for slug in wanted if slug not in existing_slugs]
-   if missing:cli('run',TASK,*[arg for slug in missing for arg in ('-m',slug)])
-   print('WAITING',batch,flush=True)
-   while True:
-    runs=current_runs(wanted)
-    if len(runs)>=len(wanted) and all(r.state in api._TERMINAL_RUN_STATES for r in runs):break
-    time.sleep(30)
-   cli('download',TASK,*[arg for slug in wanted for arg in ('-m',slug)],'-o','followup/runs')
-   data,_=records(HERE)
-   for model in batch:
-    if model not in data or not summarize(cs,data[model]['results'],n_runs=args.n_runs)['complete']:
-     progress['stop']='Incomplete or actual-model mismatch: '+model;save();print('REVIEW STOP',progress['stop'],flush=True);return
-    progress['completed'].append(model);save();print('SAVED',model,flush=True)
-   pending=pending[len(batch):]
+  time.sleep(30)
  progress['complete']=True;save();print('QUEUE COMPLETE',flush=True)
 
 if __name__=='__main__':
