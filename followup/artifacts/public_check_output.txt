@@ -1,0 +1,80 @@
+{
+  "checked_at": "2026-10-09T15:54:28.941316+00:00",
+  "article_id": 4807743,
+  "api_status": 200,
+  "page_status": 200,
+  "title": "Same Kind of Bug Isn't the Same Bug: Where AI Models Get Fooled",
+  "url": "https://dev.to/jashanpreet_kaur_917e774f/same-kind-of-bug-isnt-the-same-bug-where-ai-models-get-fooled-21dd",
+  "tags": "devchallenge, kagglechallenge, ai, machinelearning",
+  "cover_set": true,
+  "sections_present": [
+    "### The follow-up: same report, different comment",
+    "### Nine more same-mistake cases"
+  ],
+  "images_present": [
+    "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-miss-types.png",
+    "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-heatmap.png",
+    "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-hardest-cases.png",
+    "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-code.png",
+    "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-ladder.png"
+  ],
+  "body_sha256": "4413c4c2c1dd38ae5e3cdeb1929aaecd51251f68b15422e5ba14baadc56d3785",
+  "links": [
+    {
+      "url": "https://dev.to/challenges/kaggle-2026-09-23",
+      "status": 200,
+      "final_url": "https://dev.to/challenges/kaggle-2026-09-23"
+    },
+    {
+      "url": "https://github.com/jashanpreet-k/zombiebench",
+      "status": 200,
+      "final_url": "https://github.com/jashanpreet-k/zombiebench"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/cover.png",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/cover.png",
+      "bytes": 32619
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-code.png",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-code.png",
+      "bytes": 122617
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-ladder.png",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-ladder.png",
+      "bytes": 274908
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-hardest-cases.png",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-hardest-cases.png",
+      "bytes": 67121
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-heatmap.png",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-heatmap.png",
+      "bytes": 163016
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-miss-types.png",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-miss-types.png",
+      "bytes": 77455
+    },
+    {
+      "url": "https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench",
+      "status": 200,
+      "final_url": "https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench"
+    },
+    {
+      "url": "https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup",
+      "status": 200,
+      "final_url": "https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup"
+    }
+  ]
+}
