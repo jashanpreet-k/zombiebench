@@ -37,6 +37,7 @@ def main():
  if stable['comparable_valid_answers']:
   lo,hi=stable['identical_wilson95'];limits+=(f'Across valid comparable responses, {stable["identical"]}/{stable["comparable_valid_answers"]} answers were identical ({stable["identical_rate"]*100:.1f}%; Wilson 95% {lo*100:.1f}–{hi*100:.1f}%), and {stable["changed"]} changed. ')
  limits+='Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Two type-C selection exceptions were approved because only one eligible type-C source case was universally correct. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.\n'
+ limits+='- **Run correction:** the CLI initially bound nano explicitly, so one run scheduled under Gemini actually called nano. Saved SDK metadata identified the error. That independent nano run supplies its repeat comparison; its extra expansion answers are excluded. The corrected task uses Kaggle’s selected-model placeholder, and actual model IDs are checked before pooling.\n'
  limits+='- **Availability:** Sonnet 4.5 was absent from Kaggle’s follow-up model catalog and was not replaced.\n'
  text=(ROOT/'post.md').read_text()
  if '### The follow-up: same report, different comment' in text:raise SystemExit('Follow-up already present; review edits instead of duplicating.')

@@ -1,0 +1,7 @@
+{
+  "runs/zombiebench-followup/1/gemini-3.1-flash-lite-preview/4590653/": {
+    "actual_model": "openai/gpt-5.4-nano-2026-03-17",
+    "exp1_repetition": 2,
+    "reason": "Version 1 incorrectly bound nano explicitly instead of the selected-model placeholder. SDK result metadata and all saved replies identify nano. Preserve the independent second nano Experiment 1 run as stability evidence, excluding its extra Experiment 2 repetition from headline metrics. Raw downloaded files are unchanged. This repetition happened early, in the same prompt order, before the remaining first runs."
+  }
+}

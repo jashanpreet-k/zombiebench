@@ -1,0 +1,31 @@
+{
+  "requested_models": [
+    "openai/gpt-5.4-nano-2026-03-17",
+    "google/gemini-3.1-flash-lite-preview",
+    "openai/gpt-oss-20b",
+    "anthropic/claude-haiku-4-5@20251001",
+    "google/gemini-2.5-flash",
+    "openai/gpt-5.4-mini-2026-03-17",
+    "qwen/qwen3-235b-a22b-instruct-2507",
+    "google/gemma-4-31b",
+    "anthropic/claude-sonnet-4-5@20250929",
+    "openai/gpt-6.1-sol",
+    "anthropic/claude-opus-5-5@default"
+  ],
+  "available_requested_models": [
+    "openai/gpt-5.4-nano-2026-03-17",
+    "google/gemini-3.1-flash-lite-preview",
+    "openai/gpt-oss-20b",
+    "anthropic/claude-haiku-4-5@20251001",
+    "google/gemini-2.5-flash",
+    "openai/gpt-5.4-mini-2026-03-17",
+    "qwen/qwen3-235b-a22b-instruct-2507",
+    "google/gemma-4-31b",
+    "openai/gpt-6.1-sol",
+    "anthropic/claude-opus-5-5@default"
+  ],
+  "unavailable_requested_models": [
+    "anthropic/claude-sonnet-4-5@20250929"
+  ],
+  "initialization_extras_excluded_from_headline": true
+}

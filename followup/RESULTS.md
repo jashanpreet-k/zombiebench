@@ -56,15 +56,28 @@ Original-five L2-wrong → L0-correct: 1
     }
   },
   "stability": {
-    "comparable_valid_answers": 0,
+    "comparable_valid_answers": 85,
     "planned": 85,
-    "changed": 0,
-    "changed_ids": [],
-    "identical": 0,
-    "identical_rate": null,
-    "identical_wilson95": null,
+    "changed": 9,
+    "changed_ids": [
+      "m0-zf1-zb-13-L1",
+      "m0-zf1-zb-14-L2",
+      "m0-zf1-zb-05-L3",
+      "m0-zf1-zb-22-L2",
+      "m0-zf1-zb-37-L1",
+      "m0-zf1-zb-44-L0",
+      "m0-zf1-zb-45-L0",
+      "m0-zf1-zb-45-P",
+      "m0-zf1-zb-45-L1"
+    ],
+    "identical": 76,
+    "identical_rate": 0.8941176470588236,
+    "identical_wilson95": [
+      0.8108648139957895,
+      0.9432875928801936
+    ],
     "unreadable_pair_ids": [],
-    "change_rate": null
+    "change_rate": 0.10588235294117647
   }
 }
 ```

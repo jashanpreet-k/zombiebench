@@ -74,3 +74,8 @@ kaggle benchmarks tasks publish zombiebench_followup
 For CLI second repetitions, download and review all first-run records, then build with `--n-runs 2`. The builder embeds those saved responses into the new backing notebook so they can be skipped. Without them it refuses to prepare a repeat for the selected model. Before any remote rerun, ensure the source's supplied balance is no greater than the freshly checked balance; stale balances must not authorize further spend.
 
 CLI task executions additionally cap their individual allocation at $2. Check at least $4 remaining before scheduling one (the task allocation plus the account reserve). This is separate from the shared notebook batch budget. Persisted first-run seed records are restored inside the task so server serialization can resume them.
+
+
+## Run identity correction
+
+The initial CLI entry point explicitly bound nano. Consequently, the version-1 run scheduled under Gemini Flash-Lite actually invoked nano, as confirmed by its SDK result metadata and raw response file. `run_adjustments.json` preserves that independent second nano Experiment 1 run as repetition 2, with raw files unchanged; its additional Experiment 2 answers are excluded. This repeat ran early and in the same order as the first run. The corrected entry point uses `kbench.llm`, Kaggle's selected-model placeholder. Scheduled labels are checked against actual saved model identities before analysis. No Gemini claim is made from the mislabeled run.

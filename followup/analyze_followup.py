@@ -6,20 +6,18 @@ import json
 from pathlib import Path
 from grading import build_prompt, judge
 from metrics import summarize, LEVELS
+from run_records import records
 HERE=Path(__file__).resolve().parent
 
 def analyze():
     cases=json.loads((HERE/'cases_followup.json').read_text())
     byid={c['id']:c for c in cases}
     sha=hashlib.sha256(json.dumps(cases,sort_keys=True).encode()).hexdigest()
-    merged={};sources={}
-    for path in sorted((HERE/'runs').rglob('*.json')):
-        d=json.loads(path.read_text())
-        if not isinstance(d,dict) or not {'model','dataset_sha256','results','calls'}<=d.keys():continue
-        if d['dataset_sha256']!=sha:raise ValueError('Different dataset in '+str(path))
-        model=d['model'];dest=merged.setdefault(model,{})
-        sources.setdefault(model,[]).append(str(path.relative_to(HERE)))
-        for key,r in d['results'].items():
+    merged_data,sources=records(HERE)
+    merged={model:data['results'] for model,data in merged_data.items()}
+    for model,data in merged_data.items():
+        if data['dataset_sha256']!=sha:raise ValueError('Different dataset for '+model)
+        for key,r in data['results'].items():
             rep,cid=key.split(':',1);c=byid[cid]
             if rep not in ('r1','r2') or (rep=='r2' and c['experiment']!='exp1'):raise ValueError('Unexpected repetition')
             if r['prompt_sha256']!=hashlib.sha256(build_prompt(c).encode()).hexdigest():raise ValueError('Prompt mismatch: '+key)
@@ -27,17 +25,14 @@ def analyze():
                 checked=judge(c,r['raw_reply'])
                 for field in ('status','verdict','bug_id','problem','reason'):
                     if checked[field]!=r[field]:raise ValueError('Saved grading mismatch: '+key+'/'+field)
-            if key in dest and dest[key]!=r:
-                # A completed retry may supersede the preserved API error.
-                if dest[key]['status']=='error' and r['status']!='error':dest[key]=r
-                elif r['status']=='error' and dest[key]['status']!='error':continue
-                else:raise ValueError('Conflicting saved answer: '+model+'/'+key)
-            else:dest[key]=r
     if not merged:raise SystemExit('No saved Kaggle follow-up model results. No claims or charts generated.')
-    reports={};pooled_cases=[];pooled_rows={};included=[];partial=[];quote_candidates=[]
+    plan=json.loads((HERE/'execution_plan.json').read_text()) if (HERE/'execution_plan.json').exists() else {}
+    allowed=set(plan.get('requested_models',merged))
+    reports={};pooled_cases=[];pooled_rows={};included=[];partial=[];quote_candidates=[];extra=[]
     for i,(model,rows) in enumerate(sorted(merged.items())):
         n=2 if any(k.startswith('r2:') for k in rows) else 1
         reports[model]=summarize(cases,rows,n_runs=n)
+        if model not in allowed:extra.append(model);continue
         first=summarize(cases,rows,n_runs=1)
         if not first['complete']:partial.append(model);continue
         included.append(model)
@@ -60,7 +55,7 @@ def analyze():
     else:
         headline=(f'Across {len(included)} models and {clean["answered"]} paired reports, clean and confidently misdiagnosed reports had the same pooled accuracy: {clean["correct"]}/{clean["answered"]}.')
     out=dict(dataset_sha256=sha,models=reports,included_first_run_models=included,excluded_incomplete_models=partial,
-      sources=sources,pooled=pooled,headline=headline,l3_quote=quote_candidates[0] if quote_candidates else None,
+      sources=sources,excluded_initialization_models=extra,pooled=pooled,headline=headline,l3_quote=quote_candidates[0] if quote_candidates else None,
       caveats=['Pooled headline uses first runs only.','Wilson intervals are descriptive binomial intervals; shared-case/model dependence is not modeled.',
        'Paired differences are observed contrasts, not independent-arm significance tests.','L1 to L3 combines confidence and authority.',
        'At L0/P, followed means choosing the counterfactual wrong target ID.'])
