@@ -56,10 +56,13 @@ Original-five L2-wrong → L0-correct: 12
     }
   },
   "stability": {
-    "comparable_valid_answers": 85,
+    "comparable_valid_answers": 340,
     "planned": 765,
-    "changed": 9,
+    "changed": 22,
     "changed_ids": [
+      "m0-zf1-zb-45-P",
+      "m3-zf1-zb-44-L0",
+      "m3-zf1-zb-45-L2",
       "m7-zf1-zb-13-L1",
       "m7-zf1-zb-14-L2",
       "m7-zf1-zb-05-L3",
@@ -68,16 +71,26 @@ Original-five L2-wrong → L0-correct: 12
       "m7-zf1-zb-44-L0",
       "m7-zf1-zb-45-L0",
       "m7-zf1-zb-45-P",
-      "m7-zf1-zb-45-L1"
+      "m7-zf1-zb-45-L1",
+      "m9-zf1-zb-22-L1",
+      "m9-zf1-zb-07-L3",
+      "m9-zf1-zb-27-P",
+      "m9-zf1-zb-39-L1",
+      "m9-zf1-zb-41-L3",
+      "m9-zf1-zb-44-P",
+      "m9-zf1-zb-44-L1",
+      "m9-zf1-zb-45-P",
+      "m9-zf1-zb-45-L1",
+      "m9-zf1-zb-45-L2"
     ],
-    "identical": 76,
-    "identical_rate": 0.8941176470588236,
+    "identical": 318,
+    "identical_rate": 0.9352941176470588,
     "identical_wilson95": [
-      0.8108648139957895,
-      0.9432875928801936
+      0.9039775761792218,
+      0.9568842902612577
     ],
     "unreadable_pair_ids": [],
-    "change_rate": 0.10588235294117647
+    "change_rate": 0.06470588235294118
   }
 }
 ```

@@ -1,0 +1,56 @@
+{"status":"BOUND","bound_ip":"34.53.15.171","bound_time":"2026-10-09T15:06:03Z","effective_expire_time":"2026-10-10T03:06:03Z"}
+r1:zf1-zb-39-L0 pass regression #3508
+r1:zf1-zb-27-L2 pass new
+r1:zf1-zb-44-L2 pass new
+r1:zf1-zb-04-L1 pass regression #509
+r1:zf1-zb-22-P pass regression #2522
+r1:zf1-zb-27-L0 pass new
+r1:zf1-zb-39-L1 pass regression #3508
+r1:zf1-zb-10-L0 pass new
+r1:zf1-zb-45-L0 fail regression #3518
+reason: The bug is a regression of #3518, where 16+ titles appear in recommendations for kids profiles due to the same missing rating filter in the search component.
+r1:zf1-zb-45-L1 pass new
+r1:zf1-zb-39-P pass regression #3508
+r1:zf1-zb-05-L2 fail None
+reason: '{"verdict": "new", "bug 618", "reason": "The issue occurs after daylight saving time ends, causing a session to be misattributed to the wrong day due to timezone handling, which matches the symptoms a'
+r1:zf1-zb-15-L2 fail new
+reason: The issue involves final answers being missing after auto-submit due to timing conflicts between autosave and submit, which is distinct from #2315 where the UI incorrectly showed 'Saved' despite failed saves due to authentication errors.
+r1:zf1-zb-07-L1 pass new
+r1:zf1-zb-44-L0 pass new
+r1:zf1-zb-27-L3 fail regression #2401
+reason: The new bug has the same symptom of an endless spinner during unlock and is related to the unlock component in Kotlin, but occurs specifically with new v3 locks at Kothrud stations, suggesting a re-emergence of the original Bluetooth check issue in a new context.
+r1:zf1-zb-05-L3 pass regression #618
+r1:zf1-zb-14-P pass regression #2222
+r1:zf1-zb-12-L0 pass new
+r1:zf1-zb-34-L2 pass new
+r1:zf1-zb-44-P fail regression #3318
+reason: The bug is a regression of #3318 where price alerts are delayed at market open due to a queue backlog, despite recent fixes, and now the issue is reappearing specifically for iOS users.
+r1:zf1-zb-13-L1 pass regression #2143
+r1:zf1-zb-15-L0 pass regression #2304
+r1:zf1-zb-04-P pass regression #509
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.13/site-packages/requests/models.py", line 820, in generate
+    yield from self.raw.stream(chunk_size, decode_content=True)
+  File "/opt/anaconda3/lib/python3.13/site-packages/urllib3/response.py", line 1088, in stream
+    yield from self.read_chunked(amt, decode_content=decode_content)
+  File "/opt/anaconda3/lib/python3.13/site-packages/urllib3/response.py", line 1248, in read_chunked
+    self._update_chunk_length()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/anaconda3/lib/python3.13/site-packages/urllib3/response.py", line 1178, in _update_chunk_length
+    raise ProtocolError("Response ended prematurely") from None
+urllib3.exceptions.ProtocolError: Response ended prematurely
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 8, in <module>
+  File "/opt/anaconda3/lib/python3.13/site-packages/requests/models.py", line 869, in iter_lines
+    for chunk in self.iter_content(
+                 ~~~~~~~~~~~~~~~~~^
+        chunk_size=chunk_size, decode_unicode=decode_unicode
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "/opt/anaconda3/lib/python3.13/site-packages/requests/models.py", line 822, in generate
+    raise ChunkedEncodingError(e)
+requests.exceptions.ChunkedEncodingError: Response ended prematurely

@@ -12,6 +12,7 @@ from analyze_followup import analyze
 from grading import judge
 from prepare_article_update import main as prepare_article
 from run_records import records
+from chart_data import signature,png_signature
 
 def main():
  with contextlib.redirect_stdout(io.StringIO()):
@@ -23,6 +24,8 @@ def main():
  published_source=(ROOT/'post.md').read_text()
  if '### The follow-up: same report, different comment' in published_source:
   assert proposed==published_source,'Article differs from script-generated reviewed claims'
+  for name in ('zombiebench-followup-ladder.png','zombiebench-followup-code.png'):
+   assert png_signature(ROOT/'charts'/name)==signature(followup),'Chart numbers are stale: '+name
  before=(HERE/'artifacts/post_before_followup.md').read_text()
  for title in ['### My runs (per tier, with every miss saved)','### Official Kaggle leaderboard']:
   def table(s):return '\n'.join(line for line in s.split(title)[1].split('\n### ')[0].splitlines() if line.startswith('|'))
@@ -80,7 +83,7 @@ def main():
  report=dict(status='passed',original=original,original_formula_score=baseline,original_zb41_wrong_target=len(case41),original_expert_d_same_kind_ids=16,
   historical_run_claims=historical,followup_headline=followup['headline'],followup_dataset_sha256=followup['dataset_sha256'],article_sha256=hashlib.sha256(proposed.encode()).hexdigest(),sdk_actual_models=sdk_models,
   evidence_limits=['Original leaderboard scores verified against archived snapshot, not independently downloaded original raw API replies.',
-  'Original blind-audit counts exist only in the build log; precise counts were removed from the updated article.',
+  'Original blind-audit counts exist only in the build log; preserved at user request and explicitly labeled as historical claims without archived raw answers.',
   'Original bug IDs, units and example quantities are case inputs, not inferred performance statistics.',
   'Baseline coefficients and model version numbers are definitions/identifiers, not empirical run claims.',
   'Follow-up is synthetic; repeated scaffolds and shared-case/model dependence limit inference beyond these observations.'],

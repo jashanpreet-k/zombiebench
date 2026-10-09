@@ -86,4 +86,4 @@ def main():
 
 if __name__=='__main__':
  try:main()
- except Exception as err:raise SystemExit('Queue stopped: '+type(err).__name__+': '+str(err)) from None
+ except Exception as err:raise SystemExit('Queue stopped: '+type(err).__name__+'. Saved outputs retained; no request details printed.') from None

@@ -78,14 +78,49 @@
       "finished_at": "2026-10-09T15:13:25.413715Z"
     },
     {
+      "path": "runs/zombiebench-followup/3/gemini-3.7-flash/4600817/zombiebench_followup-run_id_Run_1_google_gemini-3.7-flash.result.json",
+      "model": "google/gemini-3.7-flash",
+      "cost_usd": null,
+      "started_at": "2026-10-09T13:55:01.448556Z",
+      "finished_at": "2026-10-09T13:55:01.462450Z"
+    },
+    {
       "path": "runs/zombiebench-followup/3/gpt-6.1-sol/4601190/zombiebench_followup-run_id_Run_1_openai_gpt-6.1-sol.result.json",
       "model": "openai/gpt-6.1-sol",
       "cost_usd": 0.331,
       "started_at": "2026-10-09T15:06:10.076068Z",
       "finished_at": "2026-10-09T15:14:02.744389Z"
+    },
+    {
+      "path": "runs/zombiebench-followup/4/claude-haiku-4-5-20251001/4601227/zombiebench_followup-run_id_Run_1_anthropic_claude-haiku-4-520251001.result.json",
+      "model": "anthropic/claude-haiku-4-5@20251001",
+      "cost_usd": 0.15638,
+      "started_at": "2026-10-09T15:30:37.689244Z",
+      "finished_at": "2026-10-09T15:34:38.045827Z"
+    },
+    {
+      "path": "runs/zombiebench-followup/4/gemini-3.1-flash-lite-preview/4601225/zombiebench_followup-run_id_Run_1_google_gemini-3.1-flash-lite-preview.result.json",
+      "model": "google/gemini-3.1-flash-lite-preview",
+      "cost_usd": 0.03620725,
+      "started_at": "2026-10-09T15:30:34.923015Z",
+      "finished_at": "2026-10-09T15:41:50.241221Z"
+    },
+    {
+      "path": "runs/zombiebench-followup/4/gemini-3.7-flash/4601224/zombiebench_followup-run_id_Run_1_google_gemini-3.7-flash.result.json",
+      "model": "google/gemini-3.7-flash",
+      "cost_usd": null,
+      "started_at": "2026-10-09T15:27:33.499841Z",
+      "finished_at": "2026-10-09T15:27:33.512621Z"
+    },
+    {
+      "path": "runs/zombiebench-followup/4/gpt-oss-20b/4601226/zombiebench_followup-run_id_Run_1_openai_gpt-oss-20b.result.json",
+      "model": "openai/gpt-oss-20b",
+      "cost_usd": 0.014391308,
+      "started_at": "2026-10-09T15:30:30.325158Z",
+      "finished_at": "2026-10-09T15:48:55.435882Z"
     }
   ],
-  "total_recorded_sdk_cost_usd": 2.753688153,
-  "missing_cost_records": 0,
+  "total_recorded_sdk_cost_usd": 2.960666711,
+  "missing_cost_records": 2,
   "note": "Includes initialization and the extra expansion in the mislabeled nano run; deduplicates copied SDK result records. Quota also reflects active reservations."
 }

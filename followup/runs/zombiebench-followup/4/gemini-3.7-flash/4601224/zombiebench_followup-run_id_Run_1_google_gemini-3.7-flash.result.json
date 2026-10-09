@@ -1,0 +1,28 @@
+{
+  "task_name": "zombiebench_followup",
+  "trial_name": "zombiebench_followup-Run #1",
+  "trial_uri": "kbench://not-a-harbor-trial",
+  "task_id": {
+    "path": "kbench://not-a-harbor-task"
+  },
+  "task_checksum": "unknown (kbench)",
+  "config": {
+    "task": {
+      "path": "kbench://not-a-harbor-task"
+    }
+  },
+  "agent_info": {
+    "name": "kaggle-benchmarks",
+    "version": "0.6.1",
+    "model_info": {
+      "name": "google/gemini-3.7-flash"
+    }
+  },
+  "verifier_result": {
+    "rewards": {
+      "score": 1.0
+    }
+  },
+  "started_at": "2026-10-09T15:27:33.499841Z",
+  "finished_at": "2026-10-09T15:27:33.512621Z"
+}

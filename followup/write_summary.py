@@ -27,10 +27,10 @@ def main():
  (HERE/'cost_actual.json').write_text(json.dumps(manifest,indent=2)+'\n')
  summary=d['headline']+'\n\n'+table+'\n\n'
  summary+='Accuracy denominators are answered prompts; full first runs are required for inclusion. Repeat changes compare verdict plus ID, excluding unreadable/API-error pairs. The original test and follow-up use distinct datasets.\n\n'
- summary+='[Full rates and Wilson 95% intervals](followup/RESULTS.md) · [Raw responses](followup/runs/) · [Design and audit](followup/README.md) · [Public follow-up task](https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup)\n'
+ summary+='[Full rates and Wilson 95% intervals](followup/results_summary.md) · [Raw responses](followup/runs/) · [Design and audit](followup/README.md) · [Public follow-up task](https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup)\n'
  start='<!-- FOLLOWUP RESULTS START -->';end='<!-- FOLLOWUP RESULTS END -->'
  readme=(ROOT/'README.md').read_text()
- block=start+'\n## Controlled follow-up\n\n'+summary+end+'\n\n'
+ block=start+'\n## Follow-up experiment\n\n'+summary+end+'\n\n'
  if start in readme:readme=readme[:readme.index(start)]+block+readme[readme.index(end)+len(end):].lstrip('\n')
  else:readme=readme.replace('## Key findings\n',block+'## Key findings\n',1)
  readme=readme.replace('There was no control run without the note, so this does not establish that the\nnote caused those answers.', 'The original study had no clean control, so that observation alone does not establish causation.\nThe controlled follow-up above tests standardized comment insertions separately.')

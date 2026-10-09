@@ -70,7 +70,7 @@ def analyze():
     lines+=['','Original-five L2-wrong → L0-correct: '+str(pooled['exp1']['1']['removed-comment']['contrasts']['causal']['correct_to_wrong']),
             '\n```json',json.dumps(dict(exp2=pooled['exp2'],stability=pooled['stability']['all']),indent=2),'```']
     (HERE/'RESULTS.md').write_text('\n'.join(lines)+'\n')
-    print(headline)
+    print((HERE/'RESULTS.md').read_text())
     print(json.dumps(dict(complete_models=included,partial_models=partial,stability=pooled['stability']['all']),indent=2))
     return out
 

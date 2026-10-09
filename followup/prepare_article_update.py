@@ -50,6 +50,8 @@ def main():
  if stable['comparable_valid_answers']:
   lo,hi=stable['identical_wilson95'];limits+=(f'Across valid comparable responses, {stable["identical"]}/{stable["comparable_valid_answers"]} answers were identical ({stable["identical_rate"]*100:.1f}%; Wilson 95% {lo*100:.1f}–{hi*100:.1f}%), and {stable["changed"]} changed. ')
  limits+='Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Two type-C selection exceptions were approved because only one eligible type-C source case was universally correct. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.\n'
+ partial_repeats=[m for m,r in d['models'].items() if m in d['included_first_run_models'] and m not in repeated and r['stability']['all']['comparable_valid_answers']]
+ if partial_repeats:limits+='Partial repeat outputs contribute only returned valid pairs to the stability comparison: '+', '.join(short(m) for m in partial_repeats)+'.\n'
  limits+='- **Run correction:** the CLI initially bound nano explicitly, so one run scheduled under Gemini actually called nano. Saved SDK metadata identified the error. The platform’s extra initialization model is excluded from the headline comparison. That independent nano run supplies its repeat comparison; its extra expansion answers are excluded. The corrected task uses Kaggle’s selected-model placeholder, and actual model IDs are checked before pooling.\n'
  limits+='- **Availability:** Sonnet 4.5 was absent from Kaggle’s follow-up model catalog and was not replaced.\n'
  if d['excluded_incomplete_models']:limits+='- **Incomplete runs excluded from pooled comparisons:** '+', '.join('`'+m+'`' for m in d['excluded_incomplete_models'])+'. Partial outputs remain in the repository.\n'
@@ -71,7 +73,7 @@ def main():
  text=text.replace('More "same mistake, different code" cases, since that\'s where models split, and several runs per model to measure how noisy the scores are.', 'Next I would test less templated reports from independent authors and repeat the comparisons across more sampling settings.')
  text=text.replace("There was no run without that note, so these results don't show that it changed their answers.", 'That original observation alone was correlational; the follow-up above compares standardized comments with clean versions of the same reports.')
  old_audit=next(line for line in text.splitlines() if line.startswith('- **Blind audits.**'))
- text=text.replace(old_audit,'- **Blind audits.** The build log records blind audits and revisions for the original cases, but their raw audit answers were not archived. For the follow-up, fresh agents answered shuffled prompts without the answer key; the prompts, answers and agreement checks are archived in the repository.')
+ text=text.replace(old_audit,old_audit+' The original audit counts are historical build-log claims; their raw answers were not archived. Follow-up audit prompts, answers and agreement checks are archived in the repository.')
  text=text.replace('The full Kaggle model ids, and both leaderboards, are in the repo\'s `results/` folder.', 'The original full Kaggle model ids and both original leaderboards are in the repo\'s `results/` folder. Follow-up raw responses, model identities, intervals and per-model stability are in `followup/`.')
  text=text.replace('the top models got every case right, and the cheaper ones are where these mistakes showed up.', 'the top models got every original case right, and the cheaper ones are where these mistakes showed up.')
  text=text.replace('### 5. The top tier is solved, so the rest is where it matters', '### 5. The original top tier is solved, so the rest is where it matters')
@@ -80,6 +82,11 @@ def main():
  text=text.replace('Scores varied by up to 7 cases between runs', 'On a 48-case scale, the scores differed by about 7 cases between runs')
  original_link='- **Kaggle task (official leaderboard):** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench'
  text=text.replace(original_link,original_link+'\n- **Controlled follow-up task:** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup',1)
+ text=text.replace('Only 17 went the other way.', 'Only 17 went the other way. The other 8 were 7 wrong bug ids and 1 unreadable reply.',1)
+ note_line=next(line for line in text.splitlines() if line.startswith('> **Note:**'))
+ text=text.replace(note_line,note_line+"\n\nGemini 3.7 Flash and Gemini 3.8 Flash are different models; 3.8 Flash's official run hadn't finished.",1)
+ next_section='\n## My Benchmark'
+ text=text.replace(next_section,"\n- An agentic version: give the model git log, git blame and grep over a small sandbox repo with a tool budget, and check whether investigating reduces false zombies.\n- Procedural renaming of components, ids and comment authors at runtime, so models can't lean on memorized keywords.\n"+next_section,1)
  (HERE/'post_proposed.md').write_text(text)
  print('Prepared followup/post_proposed.md for review; local post.md and DEV remain unchanged.')
 if __name__=='__main__':main()

@@ -13,10 +13,12 @@ def download(version,model_slug,run_id):
  out.parent.mkdir(parents=True,exist_ok=True)
  staging=out.with_name(out.name+'.download');archive=out.with_suffix('.zip')
  request=ApiDownloadBenchmarkTaskRunOutputRequest();request.run_id=int(run_id);request.include_source=False
- with api.build_kaggle_client() as client:
-  response=client.benchmarks.benchmark_tasks_api_client.download_benchmark_task_run_output(request)
-  # Response may contain a signed download URL. Never print or persist it.
-  api.download_file(response,str(archive),client.http_client(),quiet=True)
+ try:
+  with api.build_kaggle_client() as client:
+   response=client.benchmarks.benchmark_tasks_api_client.download_benchmark_task_run_output(request)
+   # Response may contain a signed download URL. Never print or persist it.
+   api.download_file(response,str(archive),client.http_client(),quiet=True)
+ except Exception as error:raise RuntimeError('Exact-run download failed: '+type(error).__name__+'. No request details printed.') from None
  if staging.exists():shutil.rmtree(staging)
  staging.mkdir()
  with zipfile.ZipFile(archive) as z:

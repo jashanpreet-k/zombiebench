@@ -13,7 +13,7 @@ I gave AI models (14 in my own runs, 17 on the official Kaggle leaderboard) a li
 
 ![Miss types across 14 ZombieBench model runs](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-miss-types.png)
 
-Across 672 attempts (14 models × 48 cases), models got 592 right. Of the 80 misses, 55 were *false zombies*: a new bug called a regression. Only 17 went the other way. In these runs, the errors mostly went one way: the models labeled new defects as old regressions.
+Across 672 attempts (14 models × 48 cases), models got 592 right. Of the 80 misses, 55 were *false zombies*: a new bug called a regression. Only 17 went the other way. The other 8 were 7 wrong bug ids and 1 unreadable reply. In these runs, the errors mostly went one way: the models labeled new defects as old regressions.
 
 ## What I Benchmarked
 
@@ -60,7 +60,7 @@ Free shares, one for one, is a bonus issue, and the symptom matches #3374. The r
 - **Invented data.** Every project, bug and report is made up. Nothing is copied from GitHub or an existing dataset.
 - **Graded by code, not an LLM judge.** The answer must match exactly, and a reply that isn't the JSON I asked for counts as wrong. A call that fails (rate limits, or an empty reply from the model proxy) is retried with backoff and then reported as an error, not scored.
 - **Leak checks.** My validator fails if a cue phrase like "again", "still" or "used to" (or a missing component) appears only in regressions or only in new bugs. Otherwise a model could score just by spotting "again".
-- **Blind audits.** The build log records blind audits and revisions for the original cases, but their raw audit answers were not archived. For the follow-up, fresh agents answered shuffled prompts without the answer key; the prompts, answers and agreement checks are archived in the repository.
+- **Blind audits.** A fresh AI agent that never saw the answer key answered every case. On the first 36 it agreed on 34. Its disagreements showed that a report blaming a *new* feature for repeating an old mistake reads as a new bug, so I reworded 6 cases (no answers changed), and a second blind audit agreed on all 6. On the expert tier it agreed on 12 of 12; I fixed its one doubt and re-audited that case. The original audit counts are historical build-log claims; their raw answers were not archived. Follow-up audit prompts, answers and agreement checks are archived in the repository.
 - **Baselines.** Always answering "new" scores 24/48, so that's the floor to beat. My Bug Graveyard formula scores 15/48, below the always-new baseline.
 
 ## Models Tested
@@ -117,6 +117,8 @@ This is the saved leaderboard snapshot from publication: Kaggle's own run, one r
 gpt-oss-120b and Gemini 3.8 Flash were still running on Kaggle when I published, so they aren't in this archived table.
 
 > **Note:** the original 48-case findings and quotes come from my own notebook runs, which saved every miss; Kaggle's official leaderboard run is separate. The controlled follow-up below was run through Kaggle's CLI and saved every response. On a 48-case scale, the scores differed by about 7 cases between runs (Gemini 2.5 Flash: 42/48 in my run, 0.73 or about 35/48 on Kaggle), so small gaps between models aren't meaningful.
+
+Gemini 3.7 Flash and Gemini 3.8 Flash are different models; 3.8 Flash's official run hadn't finished.
 
 ![Heatmap of misses by model, tier, and case type](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-heatmap.png)
 
@@ -210,22 +212,22 @@ Perfect scores in my runs (48/48): gpt-6.1-sol, claude-opus-5-5, gemini-3.1-pro-
 
 ### Honest limits
 
-- **Follow-up limits:** the added cases and comments are synthetic. All 9 included models have one full follow-up run; 1 has a second Experiment 1 run. Across valid comparable responses, 76/85 answers were identical (89.4%; Wilson 95% 81.1–94.3%), and 9 changed. Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Two type-C selection exceptions were approved because only one eligible type-C source case was universally correct. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.
+- **Follow-up limits:** the added cases and comments are synthetic. All 9 included models have one full follow-up run; 4 have a second Experiment 1 run. Across valid comparable responses, 318/340 answers were identical (93.5%; Wilson 95% 90.4–95.7%), and 22 changed. Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Two type-C selection exceptions were approved because only one eligible type-C source case was universally correct. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.
 - **Run correction:** the CLI initially bound nano explicitly, so one run scheduled under Gemini actually called nano. Saved SDK metadata identified the error. The platform’s extra initialization model is excluded from the headline comparison. That independent nano run supplies its repeat comparison; its extra expansion answers are excluded. The corrected task uses Kaggle’s selected-model placeholder, and actual model IDs are checked before pooling.
 - **Availability:** Sonnet 4.5 was absent from Kaggle’s follow-up model catalog and was not replaced.
 - **Incomplete runs excluded from pooled comparisons:** `qwen/qwen3-235b-a22b-instruct-2507`. Partial outputs remain in the repository.
 
 | Follow-up model | Full first runs | Full Experiment 1 repeats | Changed / valid comparable answers |
 |---|---:|---:|---:|
-| claude-haiku-4-5 | 1 | 0 | Not repeated |
+| claude-haiku-4-5 | 1 | 1 | 1/85 |
 | claude-opus-5-5 | 1 | 0 | Not repeated |
 | gemini-2.5-flash | 1 | 0 | Not repeated |
-| gemini-3.1-flash-lite-preview | 1 | 0 | Not repeated |
+| gemini-3.1-flash-lite-preview | 1 | 1 | 2/85 |
 | gemma-4-31b | 1 | 0 | Not repeated |
 | gpt-5.4-mini | 1 | 0 | Not repeated |
 | gpt-5.4-nano | 1 | 1 | 9/85 |
 | gpt-6.1-sol | 1 | 0 | Not repeated |
-| gpt-oss-20b | 1 | 0 | Not repeated |
+| gpt-oss-20b | 1 | 1 | 10/85 |
 
 
 - **It's small:** 48 cases, and the expert tier has only 3 per type, so one case is a third of an expert type.
@@ -236,6 +238,9 @@ Perfect scores in my runs (48/48): gpt-6.1-sol, claude-opus-5-5, gemini-3.1-pro-
 ### What I'd measure next
 
 Next I would test less templated reports from independent authors and repeat the comparisons across more sampling settings.
+
+- An agentic version: give the model git log, git blame and grep over a small sandbox repo with a tool budget, and check whether investigating reduces false zombies.
+- Procedural renaming of components, ids and comment authors at runtime, so models can't lean on memorized keywords.
 
 ## My Benchmark
 

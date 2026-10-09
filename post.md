@@ -7,11 +7,13 @@ tags: devchallenge, kagglechallenge, ai, machinelearning
 
 *This is a submission for the [Kaggle Benchmarking Challenge](https://dev.to/challenges/kaggle-2026-09-23)*
 
+In a controlled test across 9 models, adding a confident wrong diagnosis reduced accuracy from 145/153 to 121/153 (15.7 percentage points). Each comparison used the same report, with only the comment changed.
+
 I gave AI models (14 in my own runs, 17 on the official Kaggle leaderboard) a list of fixed bugs and one new bug report, and asked: is this an old bug coming back, or a new one? Most handle it well until the new bug is the same *kind* of mistake, made again in different code. In my runs, models missed 18 of 42 attempts on those cases, almost always by naming the old bug with the same kind of mistake. One model wrote that the bug was "now reoccurring in the night audit due to the scheduler change": it saw the code was different and still called it the same bug.
 
 ![Miss types across 14 ZombieBench model runs](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-miss-types.png)
 
-Across 672 attempts (14 models × 48 cases), models got 592 right. Of the 80 misses, 55 were *false zombies*: a new bug called a regression. Only 17 went the other way. When these models are wrong, they're usually wrong in one direction: they see a familiar pattern and assume it's the old bug back.
+Across 672 attempts (14 models × 48 cases), models got 592 right. Of the 80 misses, 55 were *false zombies*: a new bug called a regression. Only 17 went the other way. The other 8 were 7 wrong bug ids and 1 unreadable reply. In these runs, the errors mostly went one way: the models labeled new defects as old regressions.
 
 ## What I Benchmarked
 
@@ -58,8 +60,8 @@ Free shares, one for one, is a bonus issue, and the symptom matches #3374. The r
 - **Invented data.** Every project, bug and report is made up. Nothing is copied from GitHub or an existing dataset.
 - **Graded by code, not an LLM judge.** The answer must match exactly, and a reply that isn't the JSON I asked for counts as wrong. A call that fails (rate limits, or an empty reply from the model proxy) is retried with backoff and then reported as an error, not scored.
 - **Leak checks.** My validator fails if a cue phrase like "again", "still" or "used to" (or a missing component) appears only in regressions or only in new bugs. Otherwise a model could score just by spotting "again".
-- **Blind audits.** A fresh AI agent that never saw the answer key answered every case. On the first 36 it agreed on 34. Its disagreements showed that a report blaming a *new* feature for repeating an old mistake reads as a new bug, so I reworded 6 cases (no answers changed), and a second blind audit agreed on all 6. On the expert tier it agreed on 12 of 12; I fixed its one doubt and re-audited that case.
-- **Baselines.** Always answering "new" scores 24/48, so that's the floor to beat. My Bug Graveyard formula scores 15/48, worse than guessing.
+- **Blind audits.** A fresh AI agent that never saw the answer key answered every case. On the first 36 it agreed on 34. Its disagreements showed that a report blaming a *new* feature for repeating an old mistake reads as a new bug, so I reworded 6 cases (no answers changed), and a second blind audit agreed on all 6. On the expert tier it agreed on 12 of 12; I fixed its one doubt and re-audited that case. The original audit counts are historical build-log claims; their raw answers were not archived. Follow-up audit prompts, answers and agreement checks are archived in the repository.
+- **Baselines.** Always answering "new" scores 24/48, so that's the floor to beat. My Bug Graveyard formula scores 15/48, below the always-new baseline.
 
 ## Models Tested
 
@@ -90,7 +92,7 @@ I ran 16 models, from frontier down to small and open-weight ones, on the same 4
 
 ### Official Kaggle leaderboard
 
-This is the leaderboard the Kaggle link shows: Kaggle's own run, one run per model, scored as accuracy over answered cases.
+This is the saved leaderboard snapshot from publication: Kaggle's own run, one run per model, scored as accuracy over answered cases.
 
 | Model | Kaggle score |
 |---|---|
@@ -112,9 +114,11 @@ This is the leaderboard the Kaggle link shows: Kaggle's own run, one run per mod
 | Gemini 2.5 Flash | 0.73 |
 | GPT-5.4 nano | 0.55 |
 
-gpt-oss-120b and Gemini 3.8 Flash were still running on Kaggle when I published, so they aren't in this table.
+gpt-oss-120b and Gemini 3.8 Flash were still running on Kaggle when I published, so they aren't in this archived table.
 
-> **Note:** all findings and quotes below come from my own notebook runs, which saved every miss; Kaggle's official run is separate. Scores varied by up to 7 cases between runs (Gemini 2.5 Flash: 42/48 in my run, 0.73 or about 35/48 on Kaggle), so small gaps between models aren't meaningful.
+> **Note:** the original 48-case findings and quotes come from my own notebook runs, which saved every miss; Kaggle's official leaderboard run is separate. The controlled follow-up below was run through Kaggle's CLI and saved every response. On a 48-case scale, the scores differed by about 7 cases between runs (Gemini 2.5 Flash: 42/48 in my run, 0.73 or about 35/48 on Kaggle), so small gaps between models aren't meaningful.
+
+Gemini 3.7 Flash and Gemini 3.8 Flash are different models; 3.8 Flash's official run hadn't finished.
 
 ![Heatmap of misses by model, tier, and case type](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-heatmap.png)
 
@@ -134,6 +138,14 @@ Models missed expert D cases 18 times out of 42 (43%). The next hardest categori
 
 It noticed the different code and still called it the same bug.
 
+### Nine more same-mistake cases
+
+![Accuracy on matched different-code and same-code cases](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-code.png)
+
+I added 9 different-code cases and 9 matched same-code regressions using the same histories. Different-code accuracy was 53/81, or 65.4% (Wilson 95%: 54.6–74.9%). Same-code accuracy was 81/81, or 100.0% (Wilson 95%: 95.5–100.0%). Models called 28/81 different-code cases regressions: a false-zombie rate of 34.6% (Wilson 95%: 25.1–45.4%). Both members were correct in 53/81 matched model–case pairs.
+
+The matching guards against rewarding a model that always says “new.” These cases use explicit source traces and a repeated scaffold; they extend coverage, but their difficulty is not calibrated to the original expert tier.
+
 ### 2. Five models picked the bug a wrong support comment named
 
 In zb-41 (the example above), 5 models selected the bug ID named in the support note: gpt-5.4-nano, gpt-5.4-mini, gemini-2.5-flash, gpt-oss-20b and qwen3-235b. From gpt-5.4-mini:
@@ -143,6 +155,34 @@ In zb-41 (the example above), 5 models selected the bug ID named in the support 
 The expert tier has 5 planted wrong diagnoses. gpt-5.4-nano followed all 5, and no other model followed any of them except zb-41's. In zb-44 a developer writes "definitely #3318 again", while the alert log in the same report shows the alerts firing on time. From gpt-5.4-nano:
 
 > "The developer comment and matching symptom indicate the same queue/batch processing issue from #3318 has reappeared on iOS."
+
+### The follow-up: same report, different comment
+
+![Wrong-target selection across comment conditions](https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/charts/zombiebench-followup-ladder.png)
+
+Each of 9 models saw the same 17 reports in separate chats under five conditions: no comment (L0), an irrelevant confident meeting note (P), a hedged wrong diagnosis (L1), a confident wrong diagnosis (L2), and a developer claiming to have fixed that bug personally (L3). Only the terminal comment line changed; the correct answer did not. These are first-run results.
+
+Both rate columns include descriptive Wilson 95% intervals.
+
+| Comment | Correct: count; rate [95% CI] | Wrong target: count; rate [95% CI] |
+|---|---|---|
+| L0 | 145/153; 94.8% [90.0–97.3] | 6/153; 3.9% [1.8–8.3] |
+| P | 143/153; 93.5% [88.4–96.4] | 6/153; 3.9% [1.8–8.3] |
+| L1 | 138/153; 90.2% [84.5–94.0] | 6/153; 3.9% [1.8–8.3] |
+| L2 | 121/153; 79.1% [72.0–84.8] | 18/153; 11.8% [7.6–17.8] |
+| L3 | 122/153; 79.7% [72.7–85.3] | 27/153; 17.6% [12.4–24.5] |
+
+On the paired L0/L2 comparison, 24 answers changed from correct to wrong and 0 changed from wrong to correct. The observed accuracy drop was 15.7 percentage points. The placebo accuracy change was -1.3 points; wrong-target selection changed by 13.7 points from L1 to L3.
+
+Among the original planted-diagnosis cases, 12/45 model–case pairs were wrong at L2 and correct at L0. At L0 and P, “wrong target selected” means the ID named in the other conditions: there is no diagnostic comment to follow.
+
+The effect was uneven: claude-opus-5-5, gemma-4-31b, gpt-6.1-sol had no observed L0/L2 accuracy drop. The largest drop was for gpt-5.4-nano, from 11/17 to 2/17.
+
+One illustrative L3 answer from `google/gemini-3.1-flash-lite-preview` on `zf1-zb-22-L3`. The correct answer was regression #2522; the comment named #2511:
+
+> The report shows a value magnitude error consistent with unit conversion issues, and the developer confirmed the fix for #2511 is failing.
+
+This comparison measures the effect of the whole inserted comment in this synthetic task. The L1-to-L3 comparison changes confidence and claimed authority together, so it cannot separate their effects. The placebo controls for one kind of extra text, not every semantic difference.
 
 ### 3. Right rejection, wrong answer
 
@@ -160,17 +200,35 @@ gemma-4-31b scored 47/48 in my run and 1.00 on Kaggle's official run. Its only m
 
 But 88/98 is 89.8%, so rounding down would show 89%. The real bug is a wrong denominator.
 
-### 5. The top tier is solved, so the rest is where it matters
+### 5. The original top tier is solved, so the rest is where it matters
 
 Perfect scores in my runs (48/48): gpt-6.1-sol, claude-opus-5-5, gemini-3.1-pro-preview, gpt-5.5 and gemini-3.8-flash. On Kaggle's official run (1.00): GPT-6.1 Sol, GPT-5.5, Claude Opus 5.5, Gemini 3.1 Pro Preview, Gemini 3.7 Flash, Gemini 3.5 Flash and Gemma 4 31B. ZombieBench can't rank these. Below them, my runs go from 47 down to 26 and Kaggle's from 0.98 (GLM-5) to 0.55 (GPT-5.4 nano), and in my runs the misses cluster in the same places: same mistake in different code, planted diagnoses and keyword decoys. If you'd triage bug reports with a smaller model, those are the failure modes to check.
 
 ### What I'd do if I used AI for bug triage
 
 - **Don't let a "regression" verdict close a ticket on its own:** most misses were false zombies, so check which code path the old fix touched.
-- **Strip or flag comments that name a bug:** in zb-41, five models selected #3325, the ID named in the support note. There was no run without that note, so these results don't show that it changed their answers.
-- **Use a frontier model, or check the small one:** the top models got every case right, and the cheaper ones are where these mistakes showed up. These single runs on synthetic cases don't establish real-world reliability.
+- **Strip or flag comments that name a bug:** in zb-41, five models selected #3325, the ID named in the support note. That original observation alone was correlational; the follow-up above compares standardized comments with clean versions of the same reports.
+- **Use a frontier model, or check the small one:** the top models got every original case right, and the cheaper ones are where these mistakes showed up. These single runs on synthetic cases don't establish real-world reliability.
 
 ### Honest limits
+
+- **Follow-up limits:** the added cases and comments are synthetic. All 9 included models have one full follow-up run; 4 have a second Experiment 1 run. Across valid comparable responses, 318/340 answers were identical (93.5%; Wilson 95% 90.4–95.7%), and 22 changed. Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Two type-C selection exceptions were approved because only one eligible type-C source case was universally correct. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.
+- **Run correction:** the CLI initially bound nano explicitly, so one run scheduled under Gemini actually called nano. Saved SDK metadata identified the error. The platform’s extra initialization model is excluded from the headline comparison. That independent nano run supplies its repeat comparison; its extra expansion answers are excluded. The corrected task uses Kaggle’s selected-model placeholder, and actual model IDs are checked before pooling.
+- **Availability:** Sonnet 4.5 was absent from Kaggle’s follow-up model catalog and was not replaced.
+- **Incomplete runs excluded from pooled comparisons:** `qwen/qwen3-235b-a22b-instruct-2507`. Partial outputs remain in the repository.
+
+| Follow-up model | Full first runs | Full Experiment 1 repeats | Changed / valid comparable answers |
+|---|---:|---:|---:|
+| claude-haiku-4-5 | 1 | 1 | 1/85 |
+| claude-opus-5-5 | 1 | 0 | Not repeated |
+| gemini-2.5-flash | 1 | 0 | Not repeated |
+| gemini-3.1-flash-lite-preview | 1 | 1 | 2/85 |
+| gemma-4-31b | 1 | 0 | Not repeated |
+| gpt-5.4-mini | 1 | 0 | Not repeated |
+| gpt-5.4-nano | 1 | 1 | 9/85 |
+| gpt-6.1-sol | 1 | 0 | Not repeated |
+| gpt-oss-20b | 1 | 1 | 10/85 |
+
 
 - **It's small:** 48 cases, and the expert tier has only 3 per type, so one case is a third of an expert type.
 - **Scores vary between runs.** Gemini 2.5 Flash scored 42/48 in my notebook run and 0.73 (about 35/48) on Kaggle's official run, and gpt-5.4-nano scored 24/36 and then 22/36 on the same 36 cases in two of my runs. Small gaps between models aren't meaningful.
@@ -179,11 +237,15 @@ Perfect scores in my runs (48/48): gpt-6.1-sol, claude-opus-5-5, gemini-3.1-pro-
 
 ### What I'd measure next
 
-More "same mistake, different code" cases, since that's where models split, and several runs per model to measure how noisy the scores are.
+Next I would test less templated reports from independent authors and repeat the comparisons across more sampling settings.
+
+- An agentic version: give the model git log, git blame and grep over a small sandbox repo with a tool budget, and check whether investigating reduces false zombies.
+- Procedural renaming of components, ids and comment authors at runtime, so models can't lean on memorized keywords.
 
 ## My Benchmark
 
 - **Kaggle task (official leaderboard):** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench
+- **Controlled follow-up task:** https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup
 - **GitHub (code, all 48 cases, and every model's misses with its reason):** https://github.com/jashanpreet-k/zombiebench
 
-Model names in "My runs" are shortened. The full Kaggle model ids, and both leaderboards, are in the repo's `results/` folder.
+Model names in "My runs" are shortened. The original full Kaggle model ids and both original leaderboards are in the repo's `results/` folder. Follow-up raw responses, model identities, intervals and per-model stability are in `followup/`.

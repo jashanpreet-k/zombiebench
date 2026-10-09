@@ -1,0 +1,39 @@
+{
+  "schema_version": "ATIF-v1.7",
+  "session_id": "zombiebench_followup-Run #1",
+  "trajectory_id": "zombiebench_followup-Run #1",
+  "agent": {
+    "name": "kaggle-benchmarks",
+    "version": "0.6.1",
+    "model_name": "google/gemini-3.7-flash"
+  },
+  "steps": [
+    {
+      "step_id": 1,
+      "source": "system",
+      "message": "[placeholder] No conversation recorded.",
+      "timestamp": "2026-10-09T15:27:33.499841Z"
+    }
+  ],
+  "notes": "Converted from kbench run.json for task 'zombiebench_followup'. No model turn was recorded, so total_steps is 0 and the first step below is a placeholder.",
+  "final_metrics": {
+    "total_steps": 0,
+    "extra": {
+      "kbench_result": {
+        "score": 1.0
+      }
+    }
+  },
+  "extra": {
+    "kbench": {
+      "task_version": {
+        "version_number": 1,
+        "name": "zombiebench_followup",
+        "description": "Controlled bug-comment ablations with repeat runs and matched same-code versus different-code defects.",
+        "definition": "@kbench.task(name='zombiebench_followup',description='Controlled bug-comment ablations with repeat runs and matched same-code versus different-code defects.')\ndef zombiebench_followup(llm, remaining_usd: float = 0.0, max_calls: int = 0, n_runs: int = 1, max_session_usd: float = 2.0) -> float:\n    model=getattr(llm,'model',None) or getattr(llm,'name',None)\n    if not model:raise ValueError('Model must have a stable identifier.')\n    # Repeats are planned only for the cheaper requested models. A platform\n    # initialization model must not trigger an unrequested extra repetition.\n    if str(model) not in CHEAPER_MODELS:n_runs=1\n    budget=ACTIVE_BUDGET or Budget(remaining_usd)\n    if ACTIVE_BUDGET is None:\n        if not 0 < max_session_usd <= remaining_usd-2:raise ValueError('Session allocation exceeds available quota minus reserve.')\n        budget.allowance=min(budget.allowance,max_session_usd)\n    return execute_model(llm,str(model),budget,max_calls=max_calls,n_runs=n_runs)\n"
+      },
+      "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+      "end_time": "2026-10-09T15:27:33.512621Z"
+    }
+  }
+}

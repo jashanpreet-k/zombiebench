@@ -197,60 +197,80 @@
   ],
   "followup_headline": "In a controlled test across 9 models, adding a confident wrong diagnosis reduced accuracy from 145/153 to 121/153 (15.7 percentage points). Each comparison used the same report, with only the comment changed.",
   "followup_dataset_sha256": "1fb7d035af88be567b9f3eb2939660e656a13bcd40e044b95b57766844a67631",
-  "article_sha256": "4ee70295d6f7fb284d38949842ae3c476f79b3acf49c597350f2caef2229528d",
+  "article_sha256": "4413c4c2c1dd38ae5e3cdeb1929aaecd51251f68b15422e5ba14baadc56d3785",
   "sdk_actual_models": [
     {
-      "path": "runs/zombiebench-followup/2/gpt-5.4-mini-2026-03-17/4590814/zombiebench_followup-run_id_Run_1_openai_gpt-5.4-mini-2026-03-17.result.json",
-      "actual_model": "openai/gpt-5.4-mini-2026-03-17"
-    },
-    {
-      "path": "runs/zombiebench-followup/2/gemini-3.7-flash/4590760/zombiebench_followup-run_id_Run_1_google_gemini-3.7-flash.result.json",
-      "actual_model": "google/gemini-3.7-flash"
-    },
-    {
-      "path": "runs/zombiebench-followup/2/gemini-2.5-flash/4590813/zombiebench_followup-run_id_Run_1_google_gemini-2.5-flash.result.json",
-      "actual_model": "google/gemini-2.5-flash"
-    },
-    {
-      "path": "runs/zombiebench-followup/2/gemini-3.1-flash-lite-preview/4590762/zombiebench_followup-run_id_Run_1_google_gemini-3.1-flash-lite-preview.result.json",
-      "actual_model": "google/gemini-3.1-flash-lite-preview"
-    },
-    {
-      "path": "runs/zombiebench-followup/2/gemma-4-31b-it/4593307/zombiebench_followup-run_id_Run_1_google_gemma-4-31b.result.json",
-      "actual_model": "google/gemma-4-31b"
-    },
-    {
-      "path": "runs/zombiebench-followup/2/claude-haiku-4-5-20251001/4590764/zombiebench_followup-run_id_Run_1_anthropic_claude-haiku-4-520251001.result.json",
-      "actual_model": "anthropic/claude-haiku-4-5@20251001"
-    },
-    {
-      "path": "runs/zombiebench-followup/2/gpt-oss-20b/4590763/zombiebench_followup-run_id_Run_1_openai_gpt-oss-20b.result.json",
-      "actual_model": "openai/gpt-oss-20b"
-    },
-    {
-      "path": "runs/zombiebench-followup/2/qwen3-235b-a22b-instruct-2507/4590848/zombiebench_followup-run_id_Run_1_qwen_qwen3-235b-a22b-instruct-2507.result.json",
-      "actual_model": "qwen/qwen3-235b-a22b-instruct-2507"
-    },
-    {
-      "path": "runs/zombiebench-followup/3/claude-opus-5-5-default/4601191/zombiebench_followup-run_id_Run_1_anthropic_claude-opus-5-5default.result.json",
-      "actual_model": "anthropic/claude-opus-5-5@default"
-    },
-    {
-      "path": "runs/zombiebench-followup/3/gpt-6.1-sol/4601190/zombiebench_followup-run_id_Run_1_openai_gpt-6.1-sol.result.json",
-      "actual_model": "openai/gpt-6.1-sol"
+      "path": "runs/zombiebench-followup/1/gemini-3.1-flash-lite-preview/4590653/zombiebench_followup-run_id_Run_1_openai_gpt-5.4-nano-2026-03-17.result.json",
+      "actual_model": "openai/gpt-5.4-nano-2026-03-17"
     },
     {
       "path": "runs/zombiebench-followup/1/gpt-5.4-nano-2026-03-17/4590650/zombiebench_followup-run_id_Run_1_openai_gpt-5.4-nano-2026-03-17.result.json",
       "actual_model": "openai/gpt-5.4-nano-2026-03-17"
     },
     {
-      "path": "runs/zombiebench-followup/1/gemini-3.1-flash-lite-preview/4590653/zombiebench_followup-run_id_Run_1_openai_gpt-5.4-nano-2026-03-17.result.json",
-      "actual_model": "openai/gpt-5.4-nano-2026-03-17"
+      "path": "runs/zombiebench-followup/4/gpt-oss-20b/4601226/zombiebench_followup-run_id_Run_1_openai_gpt-oss-20b.result.json",
+      "actual_model": "openai/gpt-oss-20b"
+    },
+    {
+      "path": "runs/zombiebench-followup/4/claude-haiku-4-5-20251001/4601227/zombiebench_followup-run_id_Run_1_anthropic_claude-haiku-4-520251001.result.json",
+      "actual_model": "anthropic/claude-haiku-4-5@20251001"
+    },
+    {
+      "path": "runs/zombiebench-followup/4/gemini-3.1-flash-lite-preview/4601225/zombiebench_followup-run_id_Run_1_google_gemini-3.1-flash-lite-preview.result.json",
+      "actual_model": "google/gemini-3.1-flash-lite-preview"
+    },
+    {
+      "path": "runs/zombiebench-followup/4/gemini-3.7-flash/4601224/zombiebench_followup-run_id_Run_1_google_gemini-3.7-flash.result.json",
+      "actual_model": "google/gemini-3.7-flash"
+    },
+    {
+      "path": "runs/zombiebench-followup/3/gpt-6.1-sol/4601190/zombiebench_followup-run_id_Run_1_openai_gpt-6.1-sol.result.json",
+      "actual_model": "openai/gpt-6.1-sol"
+    },
+    {
+      "path": "runs/zombiebench-followup/3/claude-opus-5-5-default/4601191/zombiebench_followup-run_id_Run_1_anthropic_claude-opus-5-5default.result.json",
+      "actual_model": "anthropic/claude-opus-5-5@default"
+    },
+    {
+      "path": "runs/zombiebench-followup/3/gemini-3.7-flash/4600817/zombiebench_followup-run_id_Run_1_google_gemini-3.7-flash.result.json",
+      "actual_model": "google/gemini-3.7-flash"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/qwen3-235b-a22b-instruct-2507/4590848/zombiebench_followup-run_id_Run_1_qwen_qwen3-235b-a22b-instruct-2507.result.json",
+      "actual_model": "qwen/qwen3-235b-a22b-instruct-2507"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/gpt-oss-20b/4590763/zombiebench_followup-run_id_Run_1_openai_gpt-oss-20b.result.json",
+      "actual_model": "openai/gpt-oss-20b"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/claude-haiku-4-5-20251001/4590764/zombiebench_followup-run_id_Run_1_anthropic_claude-haiku-4-520251001.result.json",
+      "actual_model": "anthropic/claude-haiku-4-5@20251001"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/gemma-4-31b-it/4593307/zombiebench_followup-run_id_Run_1_google_gemma-4-31b.result.json",
+      "actual_model": "google/gemma-4-31b"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/gemini-3.1-flash-lite-preview/4590762/zombiebench_followup-run_id_Run_1_google_gemini-3.1-flash-lite-preview.result.json",
+      "actual_model": "google/gemini-3.1-flash-lite-preview"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/gemini-2.5-flash/4590813/zombiebench_followup-run_id_Run_1_google_gemini-2.5-flash.result.json",
+      "actual_model": "google/gemini-2.5-flash"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/gemini-3.7-flash/4590760/zombiebench_followup-run_id_Run_1_google_gemini-3.7-flash.result.json",
+      "actual_model": "google/gemini-3.7-flash"
+    },
+    {
+      "path": "runs/zombiebench-followup/2/gpt-5.4-mini-2026-03-17/4590814/zombiebench_followup-run_id_Run_1_openai_gpt-5.4-mini-2026-03-17.result.json",
+      "actual_model": "openai/gpt-5.4-mini-2026-03-17"
     }
   ],
   "evidence_limits": [
     "Original leaderboard scores verified against archived snapshot, not independently downloaded original raw API replies.",
-    "Original blind-audit counts exist only in the build log; precise counts were removed from the updated article.",
+    "Original blind-audit counts exist only in the build log; preserved at user request and explicitly labeled as historical claims without archived raw answers.",
     "Original bug IDs, units and example quantities are case inputs, not inferred performance statistics.",
     "Baseline coefficients and model version numbers are definitions/identifiers, not empirical run claims.",
     "Follow-up is synthetic; repeated scaffolds and shared-case/model dependence limit inference beyond these observations."
