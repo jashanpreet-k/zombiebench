@@ -1,5 +1,5 @@
 {
-  "phase": "A validated; B awaiting restored OAuth",
+  "phase": "B running",
   "updated_at_utc": "2026-10-08T08:27:17.097422+00:00",
   "blind_audit": {
     "exp1": [
@@ -15,10 +15,11 @@
     23,
     103
   ],
-  "kaggle_inference_started": false,
-  "followup_task_public": false,
+  "kaggle_inference_started": true,
+  "followup_task_public": true,
   "live_dev_modified": false,
-  "blocker": "Cached OAuth rejected. New OAuth browser flow pending; Computer Use permission unavailable.",
-  "next_action": "Complete pending Kaggle OAuth login; check inference dollar quota, catalog, build CLI entry point and push only follow-up task.",
-  "dev_key": "Left in place for authorized later article update; never read during phase A."
+  "blocker": null,
+  "next_action": "Complete available first runs, then repeat cheaper models; unavailable Sonnet 4.5 is not substituted.",
+  "dev_key": "Left in place for authorized later article update; never read during phase A.",
+  "task_url": "https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup"
 }

@@ -46,6 +46,11 @@ def load(model):
         data=json.loads(path.read_text())
         if data['dataset_sha256']!=DATA_SHA or data['model']!=model:raise ValueError('Incompatible saved run.')
         return data
+    seed=globals().get('SEED_RUNS',{}).get(model)
+    if seed is not None:
+        if seed['dataset_sha256']!=DATA_SHA:raise ValueError('Seed dataset mismatch.')
+        import copy
+        data=copy.deepcopy(seed);save(path,data);return data
     return {'model':model,'dataset_sha256':DATA_SHA,'settings':'provider defaults; no response cache',
             'results':{},'calls':[],'created_at':datetime.now(timezone.utc).isoformat()}
 
@@ -57,7 +62,7 @@ class Budget:
     """Session guard, NOT a guaranteed pre-call billing cap or account quota reader.
 
     User supplies currently displayed remaining quota. Keep $2 reserve. Stop if
-    usage is absent or remaining allocation is below max($1, 3 * largest call).
+    usage is absent or remaining allocation is below max($0.10, 3 * largest call).
     One retry per API error; failed calls can still consume quota. The platform's
     daily quota is the final cap; avoid concurrent sessions and recheck the UI.
     """
@@ -66,7 +71,7 @@ class Budget:
         self.allowance=remaining_usd-2;self.spent=0.0;self.largest=0.0;self.unknown=False
     def before(self):
         if self.unknown:raise BudgetStop('Missing cost metadata: check Kaggle quota before continuing.')
-        if self.allowance-self.spent<max(1.0,3*self.largest):raise BudgetStop('Budget reserve reached. Save outputs and continue after quota refill.')
+        if self.allowance-self.spent<max(0.10,3*self.largest):raise BudgetStop('Budget reserve reached. Save outputs and continue after quota refill.')
     def record(self,usage):
         a=usage.get('input_tokens_cost_nanodollars');b=usage.get('output_tokens_cost_nanodollars')
         if a is None or b is None:self.unknown=True;return
@@ -128,10 +133,13 @@ def execute_model(llm, model, budget, max_calls=0, n_runs=1):
 
 
 @kbench.task(name='zombiebench_followup',description='Controlled bug-comment ablations with repeat runs and matched same-code versus different-code defects.')
-def zombiebench_followup(llm, remaining_usd: float = 0.0, max_calls: int = 0, n_runs: int = 1) -> float:
+def zombiebench_followup(llm, remaining_usd: float = 0.0, max_calls: int = 0, n_runs: int = 1, max_session_usd: float = 2.0) -> float:
     model=getattr(llm,'model',None) or getattr(llm,'name',None)
     if not model:raise ValueError('Model must have a stable identifier.')
     budget=ACTIVE_BUDGET or Budget(remaining_usd)
+    if ACTIVE_BUDGET is None:
+        if not 0 < max_session_usd <= remaining_usd-2:raise ValueError('Session allocation exceeds available quota minus reserve.')
+        budget.allowance=min(budget.allowance,max_session_usd)
     return execute_model(llm,str(model),budget,max_calls=max_calls,n_runs=n_runs)
 
 

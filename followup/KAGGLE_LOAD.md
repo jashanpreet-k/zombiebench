@@ -9,7 +9,7 @@ Use this only if the CLI login/push/run cannot be restored. No follow-up task is
 ```python
 import hashlib, urllib.request
 source = urllib.request.urlopen("https://raw.githubusercontent.com/jashanpreet-k/zombiebench/main/followup/kaggle_followup.py").read()
-assert hashlib.sha256(source).hexdigest() == "ede411ee37b9ad8cc8946722ad3772dbc4a8017af80ca37d91b037a1eafd57ad", "Source changed; review before running."
+assert hashlib.sha256(source).hexdigest() == "1e2aac07adec4dfdc8e1e469cbb55bb9a4e46eb3e20e6541d7f0a7d26fe13fe4", "Source changed; review before running."
 exec(compile(source, "zombiebench_followup.py", "exec"))
 remaining = float(input("Current remaining AI inference dollars (min of daily/monthly, up to 10): "))
 run_plan(remaining_usd=remaining)

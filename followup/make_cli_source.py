@@ -21,7 +21,12 @@ for path in sorted((HERE/'runs').rglob('*.json')):
     d=json.loads(path.read_text())
     if not isinstance(d,dict) or not {'model','results','calls','dataset_sha256'}<=d.keys():continue
     if d['dataset_sha256']!=sha:raise SystemExit('Dataset mismatch: '+str(path))
-    if d['model'] in seeds and d!=seeds[d['model']]:raise SystemExit('Conflicting run records: '+d['model'])
+    if d['model'] in seeds:
+        previous=seeds[d['model']]
+        shared=previous['results'].keys() & d['results'].keys()
+        if any(previous['results'][k]!=d['results'][k] for k in shared):raise SystemExit('Conflicting raw answers: '+d['model'])
+        if previous['results'].keys()>=d['results'].keys():continue
+        if not d['results'].keys()>=previous['results'].keys():raise SystemExit('Non-nested partial runs: '+d['model'])
     seeds[d['model']]=d
 if args.n_runs==2:
     needed={'r1:'+c['id'] for c in cases}

@@ -64,6 +64,16 @@ class FollowupTests(unittest.TestCase):
             self.mod.execute_model(model,model.model,self.mod.Budget(10),n_runs=2)
         self.assertEqual(len(model.calls),188)
         self.assertEqual(self.mod.load(model.model)['summary']['stability']['all']['identical'],85)
+    def test_serialized_seed_resumes_in_fresh_filesystem(self):
+        model=FakeModel()
+        with contextlib.redirect_stdout(io.StringIO()):self.mod.execute_model(model,model.model,self.mod.Budget(10))
+        seed=self.mod.load(model.model)
+        self.mod.output_path(model.model).unlink()
+        self.mod.SEED_RUNS={model.model:seed}
+        model.calls.clear()
+        with contextlib.redirect_stdout(io.StringIO()):self.mod.execute_model(model,model.model,self.mod.Budget(10),n_runs=2)
+        self.assertEqual(len(model.calls),85)
+        self.assertEqual(self.mod.load(model.model)['summary']['stability']['all']['identical'],85)
     def test_error_retried_once_and_raw_attempt_saved(self):
         model=FakeModel();original=model.prompt;attempts=[0]
         def flaky(prompt):
@@ -93,7 +103,7 @@ class FollowupTests(unittest.TestCase):
     def test_missing_cost_and_reserve_fail_closed(self):
         b=self.mod.Budget(10);b.record({})
         with self.assertRaises(self.mod.BudgetStop):b.before()
-        b=self.mod.Budget(10);b.spent=7.5
+        b=self.mod.Budget(10);b.spent=7.95
         with self.assertRaises(self.mod.BudgetStop):b.before()
         with self.assertRaises(ValueError):self.mod.Budget(0)
     def test_errors_excluded_not_stable(self):

@@ -1,0 +1,232 @@
+[
+  {
+    "slug": "gemini-3.7-flash",
+    "display": "Gemini 3.7 Flash",
+    "proxy": "google/gemini-3.7-flash"
+  },
+  {
+    "slug": "claude-haiku-4-5-20251001",
+    "display": "Claude Haiku 4.5",
+    "proxy": "anthropic/claude-haiku-4-5@20251001"
+  },
+  {
+    "slug": "claude-haiku-5-5",
+    "display": "Claude Haiku 5.5",
+    "proxy": "anthropic/claude-haiku-5-5"
+  },
+  {
+    "slug": "claude-opus-4-5-20251101",
+    "display": "Claude Opus 4.5",
+    "proxy": "anthropic/claude-opus-4-5@20251101"
+  },
+  {
+    "slug": "claude-opus-4-6-default",
+    "display": "Claude Opus 4.6",
+    "proxy": "anthropic/claude-opus-4-6@default"
+  },
+  {
+    "slug": "claude-opus-4-7-default",
+    "display": "Claude Opus 4.7",
+    "proxy": "anthropic/claude-opus-4-7@default"
+  },
+  {
+    "slug": "claude-opus-4-8-default",
+    "display": "Claude Opus 4.8",
+    "proxy": "anthropic/claude-opus-4-8@default"
+  },
+  {
+    "slug": "claude-opus-5-default",
+    "display": "Claude Opus 5",
+    "proxy": "anthropic/claude-opus-5@default"
+  },
+  {
+    "slug": "claude-opus-5-5-default",
+    "display": "Claude Opus 5.5",
+    "proxy": "anthropic/claude-opus-5-5@default"
+  },
+  {
+    "slug": "claude-sonnet-4-6-default",
+    "display": "Claude Sonnet 4.6",
+    "proxy": "anthropic/claude-sonnet-4-6@default"
+  },
+  {
+    "slug": "claude-sonnet-5-default",
+    "display": "Claude Sonnet 5",
+    "proxy": "anthropic/claude-sonnet-5@default"
+  },
+  {
+    "slug": "claude-sonnet-5-5-default",
+    "display": "Claude Sonnet 5.5",
+    "proxy": "anthropic/claude-sonnet-5-5@default"
+  },
+  {
+    "slug": "deepseek-r1-0528",
+    "display": "DeepSeek-R1",
+    "proxy": "deepseek-ai/deepseek-r1-0528"
+  },
+  {
+    "slug": "gemini-2.5-flash",
+    "display": "Gemini 2.5 Flash",
+    "proxy": "google/gemini-2.5-flash"
+  },
+  {
+    "slug": "gemini-2.5-pro",
+    "display": "Gemini 2.5 Pro",
+    "proxy": "google/gemini-2.5-pro"
+  },
+  {
+    "slug": "gemini-3-flash-preview",
+    "display": "Gemini 3 Flash Preview",
+    "proxy": "google/gemini-3-flash-preview"
+  },
+  {
+    "slug": "gemini-3.1-flash-lite-preview",
+    "display": "Gemini 3.1 Flash-Lite Preview",
+    "proxy": "google/gemini-3.1-flash-lite-preview"
+  },
+  {
+    "slug": "gemini-3.1-pro-preview",
+    "display": "Gemini 3.1 Pro Preview",
+    "proxy": "google/gemini-3.1-pro-preview"
+  },
+  {
+    "slug": "gemini-3.5-flash",
+    "display": "Gemini 3.5 Flash",
+    "proxy": "google/gemini-3.5-flash"
+  },
+  {
+    "slug": "gemini-3.5-flash-lite",
+    "display": "Gemini 3.5 Flash-Lite",
+    "proxy": "google/gemini-3.5-flash-lite"
+  },
+  {
+    "slug": "gemini-3.6-flash",
+    "display": "Gemini 3.6 Flash",
+    "proxy": "google/gemini-3.6-flash"
+  },
+  {
+    "slug": "gemini-3.8-flash",
+    "display": "Gemini 3.8 Flash",
+    "proxy": "google/gemini-3.8-flash"
+  },
+  {
+    "slug": "gemma-4-26b-a4b-it",
+    "display": "Gemma 4 26B A4B",
+    "proxy": "google/gemma-4-26b-a4b"
+  },
+  {
+    "slug": "gemma-4-31b-it",
+    "display": "Gemma 4 31B",
+    "proxy": "google/gemma-4-31b"
+  },
+  {
+    "slug": "glm-5",
+    "display": "GLM-5",
+    "proxy": "zai/glm-5"
+  },
+  {
+    "slug": "gpt-5.4-2026-03-05",
+    "display": "GPT-5.4",
+    "proxy": "openai/gpt-5.4-2026-03-05"
+  },
+  {
+    "slug": "gpt-5.4-mini-2026-03-17",
+    "display": "GPT-5.4 mini",
+    "proxy": "openai/gpt-5.4-mini-2026-03-17"
+  },
+  {
+    "slug": "gpt-5.4-nano-2026-03-17",
+    "display": "GPT-5.4 nano",
+    "proxy": "openai/gpt-5.4-nano-2026-03-17"
+  },
+  {
+    "slug": "gpt-5.5-2026-04-23",
+    "display": "GPT-5.5",
+    "proxy": "openai/gpt-5.5-2026-04-23"
+  },
+  {
+    "slug": "gpt-5.6-luna",
+    "display": "GPT-5.6 Luna",
+    "proxy": "openai/gpt-5.6-luna"
+  },
+  {
+    "slug": "gpt-5.6-sol",
+    "display": "GPT-5.6 Sol",
+    "proxy": "openai/gpt-5.6-sol"
+  },
+  {
+    "slug": "gpt-5.6-terra",
+    "display": "GPT-5.6 Terra",
+    "proxy": "openai/gpt-5.6-terra"
+  },
+  {
+    "slug": "gpt-6-astra",
+    "display": "GPT-6 Astra",
+    "proxy": "openai/gpt-6-astra"
+  },
+  {
+    "slug": "gpt-6-luna",
+    "display": "GPT-6 Luna",
+    "proxy": "openai/gpt-6-luna"
+  },
+  {
+    "slug": "gpt-6-sol",
+    "display": "GPT-6 Sol",
+    "proxy": "openai/gpt-6-sol"
+  },
+  {
+    "slug": "gpt-6.1-sol",
+    "display": "GPT-6.1 Sol",
+    "proxy": "openai/gpt-6.1-sol"
+  },
+  {
+    "slug": "gpt-oss-120b",
+    "display": "gpt-oss-120b",
+    "proxy": "openai/gpt-oss-120b"
+  },
+  {
+    "slug": "gpt-oss-20b",
+    "display": "gpt-oss-20b",
+    "proxy": "openai/gpt-oss-20b"
+  },
+  {
+    "slug": "grok-4.20-0309-non-reasoning",
+    "display": "Grok 4.20 (Non-Reasoning)",
+    "proxy": "xai/grok-4.20-0309-non-reasoning"
+  },
+  {
+    "slug": "grok-4.20-0309-reasoning",
+    "display": "Grok 4.20 Reasoning",
+    "proxy": "xai/grok-4.20-0309-reasoning"
+  },
+  {
+    "slug": "grok-4.5-0708",
+    "display": "Grok 4.5",
+    "proxy": "xai/grok-4.5-0708"
+  },
+  {
+    "slug": "grok-4.6",
+    "display": "Grok 4.6",
+    "proxy": "xai/grok-4.6"
+  },
+  {
+    "slug": "qwen3-235b-a22b-instruct-2507",
+    "display": "Qwen 3 235B A22B Instruct",
+    "proxy": "qwen/qwen3-235b-a22b-instruct-2507"
+  },
+  {
+    "slug": "qwen3-coder-480b-a35b-instruct",
+    "display": "Qwen 3 Coder 480B",
+    "proxy": "qwen/qwen3-coder-480b-a35b-instruct"
+  },
+  {
+    "slug": "qwen3-next-80b-a3b-instruct",
+    "display": "Qwen 3 Next 80B Instruct",
+    "proxy": "qwen/qwen3-next-80b-a3b-instruct"
+  },
+  {
+    "slug": "qwen3-next-80b-a3b-thinking",
+    "display": "Qwen 3 Next 80B Thinking",
+    "proxy": "qwen/qwen3-next-80b-a3b-thinking"
+  }
+]

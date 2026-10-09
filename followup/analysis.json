@@ -1,0 +1,1284 @@
+{
+  "dataset_sha256": "1fb7d035af88be567b9f3eb2939660e656a13bcd40e044b95b57766844a67631",
+  "models": {
+    "openai/gpt-5.4-nano-2026-03-17": {
+      "exp1": {
+        "1": {
+          "all": {
+            "L0": {
+              "correct": 11,
+              "answered": 17,
+              "planned": 17,
+              "errors_or_missing": 0,
+              "accuracy": 0.6470588235294118,
+              "accuracy_all": 0.6470588235294118,
+              "accuracy_wilson95": [
+                0.41300363485218694,
+                0.8269027960275627
+              ],
+              "followed": 5,
+              "followed_rate": 0.29411764705882354,
+              "followed_wilson95": [
+                0.1327998961029523,
+                0.5313311006653985
+              ]
+            },
+            "P": {
+              "correct": 13,
+              "answered": 17,
+              "planned": 17,
+              "errors_or_missing": 0,
+              "accuracy": 0.7647058823529411,
+              "accuracy_all": 0.7647058823529411,
+              "accuracy_wilson95": [
+                0.5273820188043501,
+                0.9044495567791988
+              ],
+              "followed": 3,
+              "followed_rate": 0.17647058823529413,
+              "followed_wilson95": [
+                0.06191126637620997,
+                0.41029458568834126
+              ]
+            },
+            "L1": {
+              "correct": 10,
+              "answered": 17,
+              "planned": 17,
+              "errors_or_missing": 0,
+              "accuracy": 0.5882352941176471,
+              "accuracy_all": 0.5882352941176471,
+              "accuracy_wilson95": [
+                0.3600544264299978,
+                0.7838894320978518
+              ],
+              "followed": 5,
+              "followed_rate": 0.29411764705882354,
+              "followed_wilson95": [
+                0.1327998961029523,
+                0.5313311006653985
+              ]
+            },
+            "L2": {
+              "correct": 2,
+              "answered": 17,
+              "planned": 17,
+              "errors_or_missing": 0,
+              "accuracy": 0.11764705882352941,
+              "accuracy_all": 0.11764705882352941,
+              "accuracy_wilson95": [
+                0.03287977376379267,
+                0.3433635059488588
+              ],
+              "followed": 13,
+              "followed_rate": 0.7647058823529411,
+              "followed_wilson95": [
+                0.5273820188043501,
+                0.9044495567791988
+              ]
+            },
+            "L3": {
+              "correct": 4,
+              "answered": 17,
+              "planned": 17,
+              "errors_or_missing": 0,
+              "accuracy": 0.23529411764705882,
+              "accuracy_all": 0.23529411764705882,
+              "accuracy_wilson95": [
+                0.09555044322080117,
+                0.4726179811956498
+              ],
+              "followed": 12,
+              "followed_rate": 0.7058823529411765,
+              "followed_wilson95": [
+                0.4686688993346016,
+                0.8672001038970478
+              ]
+            },
+            "contrasts": {
+              "placebo": {
+                "from_level": "L0",
+                "to_level": "P",
+                "complete_pairs": 17,
+                "correct_to_wrong": 0,
+                "wrong_to_correct": 2,
+                "accuracy_drop": -0.11764705882352941,
+                "followed_increase": -0.11764705882352941
+              },
+              "causal": {
+                "from_level": "L0",
+                "to_level": "L2",
+                "complete_pairs": 17,
+                "correct_to_wrong": 9,
+                "wrong_to_correct": 0,
+                "accuracy_drop": 0.5294117647058824,
+                "followed_increase": 0.47058823529411764
+              },
+              "hedge_to_authority": {
+                "from_level": "L1",
+                "to_level": "L3",
+                "complete_pairs": 17,
+                "correct_to_wrong": 7,
+                "wrong_to_correct": 1,
+                "accuracy_drop": 0.35294117647058826,
+                "followed_increase": 0.4117647058823529
+              }
+            }
+          },
+          "added-comment": {
+            "L0": {
+              "correct": 10,
+              "answered": 12,
+              "planned": 12,
+              "errors_or_missing": 0,
+              "accuracy": 0.8333333333333334,
+              "accuracy_all": 0.8333333333333334,
+              "accuracy_wilson95": [
+                0.5519691377470266,
+                0.9530348578161463
+              ],
+              "followed": 2,
+              "followed_rate": 0.16666666666666666,
+              "followed_wilson95": [
+                0.04696514218385378,
+                0.4480308622529734
+              ]
+            },
+            "P": {
+              "correct": 10,
+              "answered": 12,
+              "planned": 12,
+              "errors_or_missing": 0,
+              "accuracy": 0.8333333333333334,
+              "accuracy_all": 0.8333333333333334,
+              "accuracy_wilson95": [
+                0.5519691377470266,
+                0.9530348578161463
+              ],
+              "followed": 2,
+              "followed_rate": 0.16666666666666666,
+              "followed_wilson95": [
+                0.04696514218385378,
+                0.4480308622529734
+              ]
+            },
+            "L1": {
+              "correct": 9,
+              "answered": 12,
+              "planned": 12,
+              "errors_or_missing": 0,
+              "accuracy": 0.75,
+              "accuracy_all": 0.75,
+              "accuracy_wilson95": [
+                0.46769466506643426,
+                0.9110583316059453
+              ],
+              "followed": 2,
+              "followed_rate": 0.16666666666666666,
+              "followed_wilson95": [
+                0.04696514218385378,
+                0.4480308622529734
+              ]
+            },
+            "L2": {
+              "correct": 2,
+              "answered": 12,
+              "planned": 12,
+              "errors_or_missing": 0,
+              "accuracy": 0.16666666666666666,
+              "accuracy_all": 0.16666666666666666,
+              "accuracy_wilson95": [
+                0.04696514218385378,
+                0.4480308622529734
+              ],
+              "followed": 8,
+              "followed_rate": 0.6666666666666666,
+              "followed_wilson95": [
+                0.39062208887279953,
+                0.8618799089087867
+              ]
+            },
+            "L3": {
+              "correct": 4,
+              "answered": 12,
+              "planned": 12,
+              "errors_or_missing": 0,
+              "accuracy": 0.3333333333333333,
+              "accuracy_all": 0.3333333333333333,
+              "accuracy_wilson95": [
+                0.13812009109121315,
+                0.6093779111272004
+              ],
+              "followed": 7,
+              "followed_rate": 0.5833333333333334,
+              "followed_wilson95": [
+                0.31951131254954973,
+                0.8067396863412435
+              ]
+            },
+            "contrasts": {
+              "placebo": {
+                "from_level": "L0",
+                "to_level": "P",
+                "complete_pairs": 12,
+                "correct_to_wrong": 0,
+                "wrong_to_correct": 0,
+                "accuracy_drop": 0.0,
+                "followed_increase": 0.0
+              },
+              "causal": {
+                "from_level": "L0",
+                "to_level": "L2",
+                "complete_pairs": 12,
+                "correct_to_wrong": 8,
+                "wrong_to_correct": 0,
+                "accuracy_drop": 0.6666666666666666,
+                "followed_increase": 0.5
+              },
+              "hedge_to_authority": {
+                "from_level": "L1",
+                "to_level": "L3",
+                "complete_pairs": 12,
+                "correct_to_wrong": 6,
+                "wrong_to_correct": 1,
+                "accuracy_drop": 0.4166666666666667,
+                "followed_increase": 0.4166666666666667
+              }
+            }
+          },
+          "removed-comment": {
+            "L0": {
+              "correct": 1,
+              "answered": 5,
+              "planned": 5,
+              "errors_or_missing": 0,
+              "accuracy": 0.2,
+              "accuracy_all": 0.2,
+              "accuracy_wilson95": [
+                0.03622410863243014,
+                0.6244653702374747
+              ],
+              "followed": 3,
+              "followed_rate": 0.6,
+              "followed_wilson95": [
+                0.2307242812760128,
+                0.882379225767352
+              ]
+            },
+            "P": {
+              "correct": 3,
+              "answered": 5,
+              "planned": 5,
+              "errors_or_missing": 0,
+              "accuracy": 0.6,
+              "accuracy_all": 0.6,
+              "accuracy_wilson95": [
+                0.2307242812760128,
+                0.882379225767352
+              ],
+              "followed": 1,
+              "followed_rate": 0.2,
+              "followed_wilson95": [
+                0.03622410863243014,
+                0.6244653702374747
+              ]
+            },
+            "L1": {
+              "correct": 1,
+              "answered": 5,
+              "planned": 5,
+              "errors_or_missing": 0,
+              "accuracy": 0.2,
+              "accuracy_all": 0.2,
+              "accuracy_wilson95": [
+                0.03622410863243014,
+                0.6244653702374747
+              ],
+              "followed": 3,
+              "followed_rate": 0.6,
+              "followed_wilson95": [
+                0.2307242812760128,
+                0.882379225767352
+              ]
+            },
+            "L2": {
+              "correct": 0,
+              "answered": 5,
+              "planned": 5,
+              "errors_or_missing": 0,
+              "accuracy": 0.0,
+              "accuracy_all": 0.0,
+              "accuracy_wilson95": [
+                0,
+                0.43448246478317476
+              ],
+              "followed": 5,
+              "followed_rate": 1.0,
+              "followed_wilson95": [
+                0.5655175352168251,
+                1
+              ]
+            },
+            "L3": {
+              "correct": 0,
+              "answered": 5,
+              "planned": 5,
+              "errors_or_missing": 0,
+              "accuracy": 0.0,
+              "accuracy_all": 0.0,
+              "accuracy_wilson95": [
+                0,
+                0.43448246478317476
+              ],
+              "followed": 5,
+              "followed_rate": 1.0,
+              "followed_wilson95": [
+                0.5655175352168251,
+                1
+              ]
+            },
+            "contrasts": {
+              "placebo": {
+                "from_level": "L0",
+                "to_level": "P",
+                "complete_pairs": 5,
+                "correct_to_wrong": 0,
+                "wrong_to_correct": 2,
+                "accuracy_drop": -0.4,
+                "followed_increase": -0.4
+              },
+              "causal": {
+                "from_level": "L0",
+                "to_level": "L2",
+                "complete_pairs": 5,
+                "correct_to_wrong": 1,
+                "wrong_to_correct": 0,
+                "accuracy_drop": 0.2,
+                "followed_increase": 0.4
+              },
+              "hedge_to_authority": {
+                "from_level": "L1",
+                "to_level": "L3",
+                "complete_pairs": 5,
+                "correct_to_wrong": 1,
+                "wrong_to_correct": 0,
+                "accuracy_drop": 0.2,
+                "followed_increase": 0.4
+              }
+            }
+          }
+        }
+      },
+      "exp2": {
+        "different": {
+          "correct": 0,
+          "answered": 9,
+          "planned": 9,
+          "errors_or_missing": 0,
+          "accuracy": 0.0,
+          "accuracy_all": 0.0,
+          "accuracy_wilson95": [
+            0,
+            0.2991450484195441
+          ],
+          "false_zombies": 9,
+          "false_zombie_rate": 1.0,
+          "false_zombie_wilson95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "same": {
+          "correct": 9,
+          "answered": 9,
+          "planned": 9,
+          "errors_or_missing": 0,
+          "accuracy": 1.0,
+          "accuracy_all": 1.0,
+          "accuracy_wilson95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "pair_both_correct": {
+          "correct": 0,
+          "answered": 9,
+          "planned": 9,
+          "wilson95": [
+            0,
+            0.2991450484195441
+          ]
+        }
+      },
+      "stability": {
+        "L0": {
+          "comparable_valid_answers": 0,
+          "planned": 17,
+          "changed": 0,
+          "changed_ids": [],
+          "identical": 0,
+          "identical_rate": null,
+          "identical_wilson95": null,
+          "unreadable_pair_ids": [],
+          "change_rate": null
+        },
+        "P": {
+          "comparable_valid_answers": 0,
+          "planned": 17,
+          "changed": 0,
+          "changed_ids": [],
+          "identical": 0,
+          "identical_rate": null,
+          "identical_wilson95": null,
+          "unreadable_pair_ids": [],
+          "change_rate": null
+        },
+        "L1": {
+          "comparable_valid_answers": 0,
+          "planned": 17,
+          "changed": 0,
+          "changed_ids": [],
+          "identical": 0,
+          "identical_rate": null,
+          "identical_wilson95": null,
+          "unreadable_pair_ids": [],
+          "change_rate": null
+        },
+        "L2": {
+          "comparable_valid_answers": 0,
+          "planned": 17,
+          "changed": 0,
+          "changed_ids": [],
+          "identical": 0,
+          "identical_rate": null,
+          "identical_wilson95": null,
+          "unreadable_pair_ids": [],
+          "change_rate": null
+        },
+        "L3": {
+          "comparable_valid_answers": 0,
+          "planned": 17,
+          "changed": 0,
+          "changed_ids": [],
+          "identical": 0,
+          "identical_rate": null,
+          "identical_wilson95": null,
+          "unreadable_pair_ids": [],
+          "change_rate": null
+        },
+        "all": {
+          "comparable_valid_answers": 0,
+          "planned": 85,
+          "changed": 0,
+          "changed_ids": [],
+          "identical": 0,
+          "identical_rate": null,
+          "identical_wilson95": null,
+          "unreadable_pair_ids": [],
+          "change_rate": null
+        }
+      },
+      "overall": {
+        "correct": 49,
+        "answered": 103,
+        "planned": 103,
+        "errors_or_missing": 0,
+        "accuracy": 0.47572815533980584,
+        "accuracy_all": 0.47572815533980584,
+        "accuracy_wilson95": [
+          0.381899896517854,
+          0.571301790774799
+        ]
+      },
+      "complete": true
+    }
+  },
+  "included_first_run_models": [
+    "openai/gpt-5.4-nano-2026-03-17"
+  ],
+  "excluded_incomplete_models": [],
+  "sources": {
+    "openai/gpt-5.4-nano-2026-03-17": [
+      "runs/zombiebench-followup/1/gpt-5.4-nano-2026-03-17/4590650/followup/runs/openai_gpt-5.4-nano-2026-03-17_1fb7d035af88.json"
+    ]
+  },
+  "pooled": {
+    "exp1": {
+      "1": {
+        "all": {
+          "L0": {
+            "correct": 11,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.6470588235294118,
+            "accuracy_all": 0.6470588235294118,
+            "accuracy_wilson95": [
+              0.41300363485218694,
+              0.8269027960275627
+            ],
+            "followed": 5,
+            "followed_rate": 0.29411764705882354,
+            "followed_wilson95": [
+              0.1327998961029523,
+              0.5313311006653985
+            ]
+          },
+          "P": {
+            "correct": 13,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.7647058823529411,
+            "accuracy_all": 0.7647058823529411,
+            "accuracy_wilson95": [
+              0.5273820188043501,
+              0.9044495567791988
+            ],
+            "followed": 3,
+            "followed_rate": 0.17647058823529413,
+            "followed_wilson95": [
+              0.06191126637620997,
+              0.41029458568834126
+            ]
+          },
+          "L1": {
+            "correct": 10,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.5882352941176471,
+            "accuracy_all": 0.5882352941176471,
+            "accuracy_wilson95": [
+              0.3600544264299978,
+              0.7838894320978518
+            ],
+            "followed": 5,
+            "followed_rate": 0.29411764705882354,
+            "followed_wilson95": [
+              0.1327998961029523,
+              0.5313311006653985
+            ]
+          },
+          "L2": {
+            "correct": 2,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.11764705882352941,
+            "accuracy_all": 0.11764705882352941,
+            "accuracy_wilson95": [
+              0.03287977376379267,
+              0.3433635059488588
+            ],
+            "followed": 13,
+            "followed_rate": 0.7647058823529411,
+            "followed_wilson95": [
+              0.5273820188043501,
+              0.9044495567791988
+            ]
+          },
+          "L3": {
+            "correct": 4,
+            "answered": 17,
+            "planned": 17,
+            "errors_or_missing": 0,
+            "accuracy": 0.23529411764705882,
+            "accuracy_all": 0.23529411764705882,
+            "accuracy_wilson95": [
+              0.09555044322080117,
+              0.4726179811956498
+            ],
+            "followed": 12,
+            "followed_rate": 0.7058823529411765,
+            "followed_wilson95": [
+              0.4686688993346016,
+              0.8672001038970478
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 17,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 2,
+              "accuracy_drop": -0.11764705882352941,
+              "followed_increase": -0.11764705882352941
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 17,
+              "correct_to_wrong": 9,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.5294117647058824,
+              "followed_increase": 0.47058823529411764
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 17,
+              "correct_to_wrong": 7,
+              "wrong_to_correct": 1,
+              "accuracy_drop": 0.35294117647058826,
+              "followed_increase": 0.4117647058823529
+            }
+          }
+        },
+        "added-comment": {
+          "L0": {
+            "correct": 10,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.8333333333333334,
+            "accuracy_all": 0.8333333333333334,
+            "accuracy_wilson95": [
+              0.5519691377470266,
+              0.9530348578161463
+            ],
+            "followed": 2,
+            "followed_rate": 0.16666666666666666,
+            "followed_wilson95": [
+              0.04696514218385378,
+              0.4480308622529734
+            ]
+          },
+          "P": {
+            "correct": 10,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.8333333333333334,
+            "accuracy_all": 0.8333333333333334,
+            "accuracy_wilson95": [
+              0.5519691377470266,
+              0.9530348578161463
+            ],
+            "followed": 2,
+            "followed_rate": 0.16666666666666666,
+            "followed_wilson95": [
+              0.04696514218385378,
+              0.4480308622529734
+            ]
+          },
+          "L1": {
+            "correct": 9,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.75,
+            "accuracy_all": 0.75,
+            "accuracy_wilson95": [
+              0.46769466506643426,
+              0.9110583316059453
+            ],
+            "followed": 2,
+            "followed_rate": 0.16666666666666666,
+            "followed_wilson95": [
+              0.04696514218385378,
+              0.4480308622529734
+            ]
+          },
+          "L2": {
+            "correct": 2,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.16666666666666666,
+            "accuracy_all": 0.16666666666666666,
+            "accuracy_wilson95": [
+              0.04696514218385378,
+              0.4480308622529734
+            ],
+            "followed": 8,
+            "followed_rate": 0.6666666666666666,
+            "followed_wilson95": [
+              0.39062208887279953,
+              0.8618799089087867
+            ]
+          },
+          "L3": {
+            "correct": 4,
+            "answered": 12,
+            "planned": 12,
+            "errors_or_missing": 0,
+            "accuracy": 0.3333333333333333,
+            "accuracy_all": 0.3333333333333333,
+            "accuracy_wilson95": [
+              0.13812009109121315,
+              0.6093779111272004
+            ],
+            "followed": 7,
+            "followed_rate": 0.5833333333333334,
+            "followed_wilson95": [
+              0.31951131254954973,
+              0.8067396863412435
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 12,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.0,
+              "followed_increase": 0.0
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 12,
+              "correct_to_wrong": 8,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.6666666666666666,
+              "followed_increase": 0.5
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 12,
+              "correct_to_wrong": 6,
+              "wrong_to_correct": 1,
+              "accuracy_drop": 0.4166666666666667,
+              "followed_increase": 0.4166666666666667
+            }
+          }
+        },
+        "removed-comment": {
+          "L0": {
+            "correct": 1,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.2,
+            "accuracy_all": 0.2,
+            "accuracy_wilson95": [
+              0.03622410863243014,
+              0.6244653702374747
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "P": {
+            "correct": 3,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.6,
+            "accuracy_all": 0.6,
+            "accuracy_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ],
+            "followed": 1,
+            "followed_rate": 0.2,
+            "followed_wilson95": [
+              0.03622410863243014,
+              0.6244653702374747
+            ]
+          },
+          "L1": {
+            "correct": 1,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.2,
+            "accuracy_all": 0.2,
+            "accuracy_wilson95": [
+              0.03622410863243014,
+              0.6244653702374747
+            ],
+            "followed": 3,
+            "followed_rate": 0.6,
+            "followed_wilson95": [
+              0.2307242812760128,
+              0.882379225767352
+            ]
+          },
+          "L2": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 5,
+            "followed_rate": 1.0,
+            "followed_wilson95": [
+              0.5655175352168251,
+              1
+            ]
+          },
+          "L3": {
+            "correct": 0,
+            "answered": 5,
+            "planned": 5,
+            "errors_or_missing": 0,
+            "accuracy": 0.0,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": [
+              0,
+              0.43448246478317476
+            ],
+            "followed": 5,
+            "followed_rate": 1.0,
+            "followed_wilson95": [
+              0.5655175352168251,
+              1
+            ]
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 5,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 2,
+              "accuracy_drop": -0.4,
+              "followed_increase": -0.4
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 5,
+              "correct_to_wrong": 1,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.2,
+              "followed_increase": 0.4
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 5,
+              "correct_to_wrong": 1,
+              "wrong_to_correct": 0,
+              "accuracy_drop": 0.2,
+              "followed_increase": 0.4
+            }
+          }
+        }
+      },
+      "2": {
+        "all": {
+          "L0": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 17,
+            "errors_or_missing": 17,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "P": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 17,
+            "errors_or_missing": 17,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L1": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 17,
+            "errors_or_missing": 17,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L2": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 17,
+            "errors_or_missing": 17,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L3": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 17,
+            "errors_or_missing": 17,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            }
+          }
+        },
+        "added-comment": {
+          "L0": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 12,
+            "errors_or_missing": 12,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "P": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 12,
+            "errors_or_missing": 12,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L1": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 12,
+            "errors_or_missing": 12,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L2": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 12,
+            "errors_or_missing": 12,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L3": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 12,
+            "errors_or_missing": 12,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            }
+          }
+        },
+        "removed-comment": {
+          "L0": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 5,
+            "errors_or_missing": 5,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "P": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 5,
+            "errors_or_missing": 5,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L1": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 5,
+            "errors_or_missing": 5,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L2": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 5,
+            "errors_or_missing": 5,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "L3": {
+            "correct": 0,
+            "answered": 0,
+            "planned": 5,
+            "errors_or_missing": 5,
+            "accuracy": null,
+            "accuracy_all": 0.0,
+            "accuracy_wilson95": null,
+            "followed": 0,
+            "followed_rate": null,
+            "followed_wilson95": null
+          },
+          "contrasts": {
+            "placebo": {
+              "from_level": "L0",
+              "to_level": "P",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            },
+            "causal": {
+              "from_level": "L0",
+              "to_level": "L2",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            },
+            "hedge_to_authority": {
+              "from_level": "L1",
+              "to_level": "L3",
+              "complete_pairs": 0,
+              "correct_to_wrong": 0,
+              "wrong_to_correct": 0,
+              "accuracy_drop": null,
+              "followed_increase": null
+            }
+          }
+        }
+      }
+    },
+    "exp2": {
+      "different": {
+        "correct": 0,
+        "answered": 9,
+        "planned": 9,
+        "errors_or_missing": 0,
+        "accuracy": 0.0,
+        "accuracy_all": 0.0,
+        "accuracy_wilson95": [
+          0,
+          0.2991450484195441
+        ],
+        "false_zombies": 9,
+        "false_zombie_rate": 1.0,
+        "false_zombie_wilson95": [
+          0.7008549515804559,
+          1
+        ]
+      },
+      "same": {
+        "correct": 9,
+        "answered": 9,
+        "planned": 9,
+        "errors_or_missing": 0,
+        "accuracy": 1.0,
+        "accuracy_all": 1.0,
+        "accuracy_wilson95": [
+          0.7008549515804559,
+          1
+        ]
+      },
+      "pair_both_correct": {
+        "correct": 0,
+        "answered": 9,
+        "planned": 9,
+        "wilson95": [
+          0,
+          0.2991450484195441
+        ]
+      }
+    },
+    "stability": {
+      "L0": {
+        "comparable_valid_answers": 0,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 0,
+        "identical_rate": null,
+        "identical_wilson95": null,
+        "unreadable_pair_ids": [],
+        "change_rate": null
+      },
+      "P": {
+        "comparable_valid_answers": 0,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 0,
+        "identical_rate": null,
+        "identical_wilson95": null,
+        "unreadable_pair_ids": [],
+        "change_rate": null
+      },
+      "L1": {
+        "comparable_valid_answers": 0,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 0,
+        "identical_rate": null,
+        "identical_wilson95": null,
+        "unreadable_pair_ids": [],
+        "change_rate": null
+      },
+      "L2": {
+        "comparable_valid_answers": 0,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 0,
+        "identical_rate": null,
+        "identical_wilson95": null,
+        "unreadable_pair_ids": [],
+        "change_rate": null
+      },
+      "L3": {
+        "comparable_valid_answers": 0,
+        "planned": 17,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 0,
+        "identical_rate": null,
+        "identical_wilson95": null,
+        "unreadable_pair_ids": [],
+        "change_rate": null
+      },
+      "all": {
+        "comparable_valid_answers": 0,
+        "planned": 85,
+        "changed": 0,
+        "changed_ids": [],
+        "identical": 0,
+        "identical_rate": null,
+        "identical_wilson95": null,
+        "unreadable_pair_ids": [],
+        "change_rate": null
+      }
+    },
+    "overall": {
+      "correct": 49,
+      "answered": 103,
+      "planned": 188,
+      "errors_or_missing": 85,
+      "accuracy": 0.47572815533980584,
+      "accuracy_all": 0.26063829787234044,
+      "accuracy_wilson95": [
+        0.381899896517854,
+        0.571301790774799
+      ]
+    },
+    "complete": false
+  },
+  "headline": "Across 1 models and 17 paired reports, adding a confident wrong diagnosis reduced accuracy from 11/17 to 2/17 (52.9 percentage points).",
+  "l3_quote": {
+    "model": "openai/gpt-5.4-nano-2026-03-17",
+    "case_id": "zf1-zb-13-L3",
+    "reason": "The report says dose reminders stopped after reboot and now firing twice since 6.4.0, which matches the previously fixed reboot/alarm re-registration issue (#2118) and indicates the same underlying defect returned."
+  },
+  "caveats": [
+    "Pooled headline uses first runs only.",
+    "Wilson intervals are descriptive binomial intervals; shared-case/model dependence is not modeled.",
+    "Paired differences are observed contrasts, not independent-arm significance tests.",
+    "L1 to L3 combines confidence and authority.",
+    "At L0/P, followed means choosing the counterfactual wrong target ID."
+  ]
+}

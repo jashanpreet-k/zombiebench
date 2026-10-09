@@ -37,7 +37,7 @@ python followup/estimate_cost.py
 
 Check both daily and monthly **inference dollars** before each batch. Installed CLI 2.2.4's `kaggle quota` reports accelerator hours; `python followup/inference_quota.py` reads the official SDK dollar-quota endpoint. Newer CLI releases offer `kaggle benchmarks quota`. Never print access tokens or proxy credentials.
 
-The session guard subtracts $2 from the supplied remaining balance, accounts for reported nanodollar usage, and stops when less than max($1, three times the largest observed call) remains in that allocation. Missing cost metadata stops the plan. This is a conservative heuristic, not a provable pre-call cap: unusually large reasoning output can exceed the allowance. Check quota again after each batch and avoid concurrent jobs. Resume only after the actual refill shown by Kaggle, preserving the saved files; do not infer a reset from the local calendar date.
+The session guard subtracts $2 from the supplied remaining balance, accounts for reported nanodollar usage, and stops when less than max($0.10, three times the largest observed call) remains in that allocation. Missing cost metadata stops the plan. This is a conservative heuristic, not a provable pre-call cap: unusually large reasoning output can exceed the allowance. Check quota again after each batch and avoid concurrent jobs. Resume only after the actual refill shown by Kaggle, preserving the saved files; do not infer a reset from the local calendar date.
 
 `cost_plan.json` gives hypothetical tariff scenarios, not verified Kaggle prices: $5.93 / $13.02 / $33.44 total for short / buffered / long-reasoning assumptions. Actual completion within two $8 spend allocations is unverified until rates and usage are available.
 
@@ -72,3 +72,5 @@ kaggle benchmarks tasks publish zombiebench_followup
 ```
 
 For CLI second repetitions, download and review all first-run records, then build with `--n-runs 2`. The builder embeds those saved responses into the new backing notebook so they can be skipped. Without them it refuses to prepare a repeat for the selected model. Before any remote rerun, ensure the source's supplied balance is no greater than the freshly checked balance; stale balances must not authorize further spend.
+
+CLI task executions additionally cap their individual allocation at $2. Check at least $4 remaining before scheduling one (the task allocation plus the account reserve). This is separate from the shared notebook batch budget. Persisted first-run seed records are restored inside the task so server serialization can resume them.
