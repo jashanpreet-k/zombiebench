@@ -7,7 +7,13 @@ tags: devchallenge, kagglechallenge, ai, machinelearning
 
 *This is a submission for the [Kaggle Benchmarking Challenge](https://dev.to/challenges/kaggle-2026-09-23)*
 
-In a controlled test across 9 models, adding a confident wrong diagnosis reduced accuracy from 145/153 to 121/153 (15.7 percentage points). The effect was uneven: gpt-6.1-sol, claude-opus-5-5 and gemma-4-31b didn't drop at all, while gpt-5.4-nano fell from 11/17 to 2/17. Each comparison used the same report, with only the comment changed.
+> **TL;DR**
+>
+> - One confident wrong comment cut accuracy from 145/153 to 121/153 across 9 models. An irrelevant comment of similar length barely mattered.
+> - The strongest models didn't move; gpt-5.4-nano fell from 11/17 to 2/17.
+> - Models confuse "same kind of mistake" with "same bug": 100.0% right when it really was the same code, 65.4% when it wasn't.
+
+In a controlled test across 9 models, adding a confident wrong diagnosis reduced accuracy from 145/153 to 121/153 (15.7 percentage points). The effect was uneven: gpt-6.1-sol, claude-opus-5-5 and gemma-4-31b didn't drop at all, while gpt-5.4-nano fell from 11/17 to 2/17. The follow-up used 9 of the original 14 models; Sonnet 4.5 was unavailable, and Qwen hadn't finished at the results cutoff. Each comparison used the same report, with only the comment changed.
 
 I gave AI models (14 in my own runs, 17 on the official Kaggle leaderboard) a list of fixed bugs and one new bug report, and asked: is this an old bug coming back, or a new one? Most handle it well until the new bug is the same *kind* of mistake, made again in different code. In my runs, models missed 18 of 42 attempts on those cases, almost always by naming the old bug with the same kind of mistake. One model wrote that the bug was "now reoccurring in the night audit due to the scheduler change": it saw the code was different and still called it the same bug.
 
@@ -212,7 +218,7 @@ Perfect scores in my runs (48/48): gpt-6.1-sol, claude-opus-5-5, gemini-3.1-pro-
 
 ### Honest limits
 
-- **Follow-up limits:** the added cases and comments are synthetic. All 9 included models have one full follow-up run; 4 have a second Experiment 1 run. Across valid comparable responses, 318/340 answers were identical (93.5%; Wilson 95% 90.4–95.7%), and 22 changed. Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Two type-C selection exceptions were approved because only one eligible type-C source case was universally correct. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.
+- **Follow-up limits:** the added cases and comments are synthetic. All 9 included models have one full follow-up run; 4 have a second Experiment 1 run. Across valid comparable responses, 318/340 answers were identical (93.5%; Wilson 95% 90.4–95.7%), and 22 changed. Repeat agreement is not proof of general reliability. Pooled Wilson intervals treat observations as binomial trials and do not model dependence from shared cases or models. The headline uses first runs only. Only one easy/hard type-C case was answered correctly by every model, so I used the two least-missed type-C cases as well. Each case's clean version was re-run in the same experiment, so the comparison is still within-run. Original planted comments were moved to the same terminal position; zb-39 now explicitly names its diagnosis’s ID.
 - **Run correction:** the CLI initially bound nano explicitly, so one run scheduled under Gemini actually called nano. Saved SDK metadata identified the error. The platform’s extra initialization model is excluded from the headline comparison. That independent nano run supplies its repeat comparison; its extra expansion answers are excluded. The corrected task uses Kaggle’s selected-model placeholder, and actual model IDs are checked before pooling.
 - **Availability:** Sonnet 4.5 was absent from Kaggle’s follow-up model catalog and was not replaced.
 - **Incomplete runs excluded from pooled comparisons:** `qwen/qwen3-235b-a22b-instruct-2507`. Partial outputs remain in the repository.
