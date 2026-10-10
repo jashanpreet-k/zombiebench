@@ -26,6 +26,8 @@ In a controlled test across 9 models, adding a confident wrong diagnosis reduced
 Accuracy denominators are answered prompts; full first runs are required for inclusion. Repeat changes compare verdict plus ID, excluding unreadable/API-error pairs. The original test and follow-up use distinct datasets.
 
 [Full rates and Wilson 95% intervals](followup/results_summary.md) · [Raw responses](followup/runs/) · [Design and audit](followup/README.md) · [Public follow-up task](https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench-followup)
+
+Original task: https://www.kaggle.com/benchmarks/tasks/jashanpreetkaur24/zombiebench
 <!-- FOLLOWUP RESULTS END -->
 
 ## Key findings
