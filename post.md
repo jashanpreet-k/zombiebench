@@ -7,7 +7,7 @@ tags: devchallenge, kagglechallenge, ai, machinelearning
 
 *This is a submission for the [Kaggle Benchmarking Challenge](https://dev.to/challenges/kaggle-2026-09-23)*
 
-In a controlled test across 9 models, adding a confident wrong diagnosis reduced accuracy from 145/153 to 121/153 (15.7 percentage points). Each comparison used the same report, with only the comment changed.
+In a controlled test across 9 models, adding a confident wrong diagnosis reduced accuracy from 145/153 to 121/153 (15.7 percentage points). The effect was uneven: gpt-6.1-sol, claude-opus-5-5 and gemma-4-31b didn't drop at all, while gpt-5.4-nano fell from 11/17 to 2/17. Each comparison used the same report, with only the comment changed.
 
 I gave AI models (14 in my own runs, 17 on the official Kaggle leaderboard) a list of fixed bugs and one new bug report, and asked: is this an old bug coming back, or a new one? Most handle it well until the new bug is the same *kind* of mistake, made again in different code. In my runs, models missed 18 of 42 attempts on those cases, almost always by naming the old bug with the same kind of mistake. One model wrote that the bug was "now reoccurring in the night audit due to the scheduler change": it saw the code was different and still called it the same bug.
 
